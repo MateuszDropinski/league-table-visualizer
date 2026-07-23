@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import { computeGrid, type GridRow } from '../lib/layout-engine'
 import type { LeagueAccent } from '../lib/league-accent'
@@ -32,6 +32,26 @@ export function LeagueTable({ standings, accent }: LeagueTableProps) {
     [standings.teams, size.height],
   )
   const metrics = useMemo(() => rowMetrics(grid.rowHeight), [grid.rowHeight])
+
+  /*
+    Row height on every resize, for picking the floor and ceiling it should
+    eventually have. The container height is in there too, so a row height that
+    reads well can be turned straight into the viewport it needs.
+
+    Dev only: `import.meta.env.DEV` is a literal false in a production build, so
+    the whole body folds away.
+  */
+  useEffect(() => {
+    if (!import.meta.env.DEV || size.height === 0 || grid.rows.length === 0) return
+
+    console.log(
+      `[axis] ${standings.league.slug} ${standings.snapshot?.index ?? '-'}/5  ` +
+        `${size.height}px / ${grid.rows.length} rows = ${grid.rowHeight.toFixed(2)}px  ` +
+        `spread ${grid.spread} pts  ` +
+        `logo ${metrics.logoSize.toFixed(1)}  pts ${metrics.pointsFontSize.toFixed(1)}  ` +
+        `name ${metrics.showName ? metrics.nameFontSize.toFixed(1) : 'hidden'}`,
+    )
+  }, [standings.league.slug, standings.snapshot?.index, size.height, grid, metrics])
 
   return (
     <div ref={ref} className="h-full w-full overflow-hidden">
