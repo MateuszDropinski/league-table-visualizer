@@ -9,9 +9,9 @@ next. Updated at the end of each task.
 | ---- | ----- | ----- |
 | 01 Scaffolding | Done | Commit `bca6b89`, pushed |
 | 02 Mock data and dev switcher | Done | Commit `acebe73`, not yet pushed |
-| 03 Layout engine | Done | Pure module plus 15 tests, not yet wired to the UI |
-| 04 Table UI | Next | Renders the engine output, replaces the placeholder list |
-| 05 Leagues and shell | Not started | |
+| 03 Layout engine | Done | Pure module plus 17 tests |
+| 04 Table UI | Done | Points axis on screen, zone bands deferred to task 05 |
+| 05 Leagues and shell | Next | Also owns the league config the table now needs |
 | 06 Data pipeline | Not started | |
 | 07 Polish and launch | Not started | Now also owns the Pages deploy |
 
@@ -22,7 +22,9 @@ scripts/            mock generation and validation, run by node directly
 tests/              node:test unit tests, also run by node directly
 src/types/          standings.ts is the contract shared with the future pipeline
 src/data/           asset url resolution and the static JSON fetchers
-src/lib/            layout-engine.ts, the points axis maths, plus relative time
+src/lib/            layout-engine.ts, the points axis maths, plus the content
+                    ladder, the accent colours and the resize hook
+src/components/     the table, the header, the chips and the fallback panel
 src/dev/            mock switcher, dropped from production builds
 public/crests/      24 generated SVG crests
 public/data/mock/   25 snapshots plus index.json
@@ -81,8 +83,30 @@ change league.
 - **Small gaps do clamp to the floor on tight screens**, and that is intended.
   At 900px the 1 and 2 point gaps in a 75 point spread sit at 8px while every
   larger gap stays exactly proportional. The alternative is gaps that vanish.
-- **Layout output carries `top` offsets** as well as heights, so task 04 can
+- **Layout output carries `top` offsets** as well as heights, so the table can
   absolutely position rows and animate resizes rather than reflowing a stack.
+- **A tier that flattens the axis is refused, even when it fits.** This is the
+  one place the implementation reads CLAUDE.md against its own letter. Picking
+  the largest tier that fits put a 20 team final table in Comfortable rows on a
+  900px screen, where 640px of rows left 195px of axis for 75 points, 13 of the
+  19 gaps sat on their floor, and the 19 point chasm rendered 4.9 times the
+  smallest gap instead of 19. So `computeLayout` now solves every tier that fits
+  and takes the largest whose tallest gap reaches at least 60 percent of its
+  true ratio against the shortest (`MIN_GAP_TRUTH`). The same table now renders
+  Compact with an exact axis. This is the core principle applied literally:
+  degrade row content, never the proportionality of gaps.
+- **Gap floors dropped to 8/4/3/2 across the ladder** (CLAUDE.md allows 2 to 8).
+  At 6px, Compact started misrepresenting a wide spread at around 780px and the
+  table gave up its names for Dense far too early. At 4px, names survive down to
+  roughly 700px of axis.
+- **Tier choice is monotonic in container height** across all 25 snapshots, so
+  dragging a window never flips the table back and forth. There is a test.
+- **Zone bands are not built.** They are optional in task 04 and the bands are
+  per league data (title, Europe, relegation) that belongs in the config task 05
+  introduces. Inventing them for five fictional leagues first would have meant
+  throwing the guesses away.
+- **`src/lib/league-accent.ts` is a placeholder for the league config.** The
+  table needs an identity colour now, task 05 owns the file that should hold it.
 
 ## Open questions for later
 
@@ -90,33 +114,28 @@ change league.
   passes on it. Pin to `^5` if any tooling turns out to disagree with it.
 - **React 18** is pinned per CLAUDE.md while 19 is the current default from
   pnpm. Worth revisiting whether CLAUDE.md should move to 19 instead.
-- The current screen is still the **placeholder ranked list**, not the product.
-  The engine exists but nothing renders it yet. Task 04 replaces the list.
-- **A crowded level cannot grow taller**, because row height is uniform by
-  invariant. `nordic-serien-1` puts all 20 teams on one row, so task 04 has to
-  degrade those chips to logo-only rather than wrapping onto a second line.
-- **Gap minimums and the 14px per point cap are guesses** that hold up against
-  the 25 snapshots but have never been looked at. Worth revisiting once the
-  table is on screen in task 04.
+- **`MIN_GAP_TRUTH` at 0.6 is a judgement call.** It reads well on all 25
+  snapshots but it is the number that decides when a table gives up its names,
+  so it is the first thing to reach for if the ladder ever feels wrong.
+- **The chip width thresholds are eyeballed**, not measured. `chipMode` switches
+  on 170px and 104px per team, which suits the mock names at the mock type
+  sizes. Real club names are longer and may want measuring properly.
+- **Micro rows leave the right hand side of a wide screen empty**, since the
+  content is a 9px crest and a points number. It is honest but stark. Worth a
+  look in task 07.
+- **No favicon**, so every load logs a 404 for `/favicon.ico`. Task 07.
 
-## Next: task 04, the table UI
+## Next: task 05, leagues and shell
 
-Per `plan/04-table-ui.md`: a component that measures its container with a
-ResizeObserver, calls `computeLayout`, and renders what comes back. The engine
-answers every geometry question already, so the work is entirely visual.
+Per `plan/05-leagues-and-shell.md`. Two things there are already waiting:
 
-What the engine hands over, from `src/lib/layout-engine.ts`:
+- The **leagues config file** should absorb `src/lib/league-accent.ts`, which
+  holds the gradient per league slug and a hash fallback for anything missing.
+- **Zone bands** were left out of task 04 because they need that same config.
+  The table positions everything from `layout.items[].top`, so a band is an
+  absolutely positioned element behind the rows, in the same coordinate space.
 
-- `computeLayout(teams, availableHeight)` returns either `fits: true` with a
-  tier, one uniform `rowHeight`, and `items` (rows and gaps interleaved, each
-  with `height` and `top`), or `fits: false` with the `requiredHeight` that
-  drives the too small fallback panel.
-- `gap.showLabel` marks the gaps that have earned their "12 pts" caption.
-- `surplus` is greater than zero when the table should top align and stay
-  compact rather than stretch.
-- `TIERS` carries the four tiers by id, which is what the chip content ladder
-  keys off.
-
-The 25 snapshots are the test set. The two extremes to keep checking are
+The 25 snapshots stay the test set. The two extremes to keep checking are
 `nordic-serien-1` (every team level, one row, no gaps at all) and
 `albion-league-5` (20 rows and a 75 point spread including one 19 point gap).
+`pnpm dev` plus the arrow keys walks all of them.

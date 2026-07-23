@@ -17,6 +17,7 @@ import {
   computeLayout,
   GAP_LABEL_MIN_HEIGHT,
   MAX_PIXELS_PER_POINT,
+  MIN_GAP_TRUTH,
   minimumViableHeight,
   TIERS,
   type FittedLayout,
@@ -79,37 +80,57 @@ test('late season spread fits a normal viewport and stays proportional', () => {
 
   assert.equal(layout.rows.length, 20)
   assert.equal(layout.gaps.length, 19)
-  assert.ok(layout.height <= 900)
+  assert.ok(layout.height <= 900 + 1e-9)
 
   // The 19 point drop from the champion to second is the story of this table,
   // and it has to read as the tallest thing on the axis by some distance.
   const dominant = layout.gaps[0]
   assert.equal(dominant.size, 19)
   assert.ok(
-    dominant.height > layout.rowHeight * 1.5,
+    dominant.height > layout.rowHeight * 3,
     `the dominant gap should dwarf a row, got ${dominant.height}px against ${layout.rowHeight}px rows`,
   )
-  for (const gap of layout.gaps.slice(1)) {
-    assert.ok(dominant.height > gap.height * 3, `a ${gap.size} pt gap came within a third of 19 pts`)
-  }
   assert.ok(dominant.showLabel)
 
-  // 900px is tight for a 75 point spread, so the 1 and 2 point gaps sit on the
-  // 8px floor while everything above it stays exactly proportional. That is the
-  // intended trade: small gaps keep their air, big gaps keep their meaning.
-  const free = layout.gaps.filter((gap) => gap.height > layout.tier.minGapHeight)
+  // Nothing is clamped at this height, so the whole axis is exact.
   const perPoint = dominant.height / dominant.size
-  for (const gap of free) {
-    assert.ok(Math.abs(gap.height / gap.size - perPoint) < 1e-9)
-  }
   for (const gap of layout.gaps) {
-    if (gap.size <= 2) assert.equal(gap.height, layout.tier.minGapHeight)
+    assert.ok(
+      Math.abs(gap.height / gap.size - perPoint) < 1e-9,
+      `${gap.size} pt gap is ${gap.height / gap.size}px per point against ${perPoint}px`,
+    )
   }
 })
 
+test('a starved axis costs row content rather than proportionality', () => {
+  const teams = table(...LATE_SEASON)
+
+  // Comfortable rows clear the floor rule at 900px with room to spare, so the
+  // old "largest tier that fits" answer would have been Comfortable.
+  assert.ok(20 * COMFORTABLE.minRowHeight + 19 * COMFORTABLE.minGapHeight < 900)
+
+  // It is refused anyway: 640px of rows leaves 260px of axis for 75 points, and
+  // most of the small gaps end up on the floor rather than in proportion. The
+  // tier below spends 160px less on rows and buys back the whole axis.
+  const layout = fitted(teams, 900)
+  assert.equal(layout.tier.id, 'compact')
+  assert.equal(layout.rowHeight, COMPACT.minRowHeight)
+
+  const truth =
+    Math.max(...layout.gaps.map((gap) => gap.height)) /
+    Math.min(...layout.gaps.map((gap) => gap.height)) /
+    (Math.max(...layout.gaps.map((gap) => gap.size)) /
+      Math.min(...layout.gaps.map((gap) => gap.size)))
+  assert.ok(truth >= MIN_GAP_TRUTH, `axis truth ratio ${truth} is below the threshold`)
+
+  // Tall enough and Comfortable comes back, because the axis is no longer the
+  // thing under pressure.
+  assert.equal(fitted(teams, 1400).tier.id, 'comfortable')
+})
+
 test('one dominant gap does not distort the small gaps around it', () => {
-  // 19, 3, 2, 5: nothing here is anywhere near a cap or a minimum at 900px, so
-  // the ratios have to be exact.
+  // 19, 3, 2, 5 across five levels: a table this small has height to spare at
+  // 900px, so nothing is clamped and the ratios have to be exact.
   const layout = fitted(table(97, 78, 75, 73, 68), 900)
   const [big, three, two, five] = layout.gaps
 
@@ -157,9 +178,9 @@ test('a tall screen early in the season caps gaps and top aligns instead of stre
 test('rows only grow once the gaps have taken everything they can use', () => {
   const teams = table(...LATE_SEASON)
 
-  // 900px is nowhere near enough for 75 points of gap at the cap, so rows sit
-  // at the tier minimum and every spare pixel goes to the axis.
-  const tight = fitted(teams, 900)
+  // 1400px is nowhere near enough for 75 points of gap at the 14px per point
+  // cap, so rows sit at the tier minimum and every spare pixel goes to the axis.
+  const tight = fitted(teams, 1400)
   assert.equal(tight.rowHeight, COMFORTABLE.minRowHeight)
   assert.equal(tight.surplus, 0)
 
@@ -171,14 +192,37 @@ test('rows only grow once the gaps have taken everything they can use', () => {
 })
 
 test('steps down the tier ladder as the viewport shrinks', () => {
-  const teams = table(...LATE_SEASON)
+  // Twenty levels a single point apart. Gaps this uniform cannot be
+  // misrepresented by any tier, which leaves the floors as the only thing
+  // deciding, so this is the ladder on its own.
+  const teams = table(...Array.from({ length: 20 }, (_, i) => 40 - i))
   const tierAt = (height: number) => fitted(teams, height).tier.id
+  const floor = (tier: typeof COMFORTABLE) => 20 * tier.minRowHeight + 19 * tier.minGapHeight
 
-  // Each tier's floor is 20 rows plus 19 gap minimums.
-  assert.equal(tierAt(20 * COMFORTABLE.minRowHeight + 19 * COMFORTABLE.minGapHeight), 'comfortable')
-  assert.equal(tierAt(20 * COMFORTABLE.minRowHeight + 19 * COMFORTABLE.minGapHeight - 1), 'compact')
-  assert.equal(tierAt(20 * COMPACT.minRowHeight + 19 * COMPACT.minGapHeight - 1), 'dense')
-  assert.equal(tierAt(20 * DENSE.minRowHeight + 19 * DENSE.minGapHeight - 1), 'micro')
+  assert.equal(tierAt(floor(COMFORTABLE)), 'comfortable')
+  assert.equal(tierAt(floor(COMFORTABLE) - 1), 'compact')
+  assert.equal(tierAt(floor(COMPACT)), 'compact')
+  assert.equal(tierAt(floor(COMPACT) - 1), 'dense')
+  assert.equal(tierAt(floor(DENSE)), 'dense')
+  assert.equal(tierAt(floor(DENSE) - 1), 'micro')
+  assert.equal(tierAt(floor(MICRO)), 'micro')
+  assert.equal(computeLayout(teams, floor(MICRO) - 1).fits, false)
+})
+
+test('the tier only ever improves as the container grows', () => {
+  // Resizing a window must not flip the table between ladders. Both rules that
+  // pick a tier, the floors and the truth threshold, have to move the same way.
+  const ladder = TIERS.map((tier) => tier.id)
+  const teams = table(...LATE_SEASON)
+
+  let previous = ladder.length
+  for (let height = 150; height <= 2400; height += 1) {
+    const layout = computeLayout(teams, height)
+    if (!layout.fits) continue
+    const rank = ladder.indexOf(layout.tier.id)
+    assert.ok(rank <= previous, `${height}px stepped back down to ${layout.tier.id}`)
+    previous = rank
+  }
 })
 
 test('the micro floor is the last layout, one pixel less is the fallback panel', () => {

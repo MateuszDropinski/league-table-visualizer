@@ -44,8 +44,8 @@ export interface Tier {
 /** Largest first. Tier selection walks this in order and takes the first that fits. */
 export const TIERS: readonly Tier[] = [
   { id: 'comfortable', minRowHeight: 32, maxRowHeight: 56, minGapHeight: 8 },
-  { id: 'compact', minRowHeight: 24, maxRowHeight: 24, minGapHeight: 6 },
-  { id: 'dense', minRowHeight: 16, maxRowHeight: 16, minGapHeight: 4 },
+  { id: 'compact', minRowHeight: 24, maxRowHeight: 24, minGapHeight: 4 },
+  { id: 'dense', minRowHeight: 16, maxRowHeight: 16, minGapHeight: 3 },
   { id: 'micro', minRowHeight: 11, maxRowHeight: 11, minGapHeight: 2 },
 ]
 
@@ -60,6 +60,22 @@ export const MAX_PIXELS_PER_POINT = 14
 
 /** Below this a gap is plain whitespace. At or above it, it earns its "12 pts" label. */
 export const GAP_LABEL_MIN_HEIGHT = 24
+
+/**
+ * How much of the truth a tier has to tell before it is allowed to be used.
+ *
+ * The tallest gap should be as many times the shortest as it is in points. Per
+ * gap minimums mean it never quite is, so this is the share of that ratio a
+ * tier has to reach. Below it, the axis is flat enough to be misleading and the
+ * engine steps down a tier: rows lose content, which CLAUDE.md asks for, rather
+ * than the distances losing their meaning, which it forbids.
+ *
+ * 0.6 comes from the mock tables. A 20 team final standing on a 900px screen
+ * renders its 19 point chasm at 4.9 times the smallest gap in the Comfortable
+ * tier and 14.9 times in Compact, against a true 19, so this is what separates
+ * them.
+ */
+export const MIN_GAP_TRUTH = 0.6
 
 export interface LayoutRow<T> {
   kind: 'row'
@@ -97,7 +113,10 @@ export interface FittedLayout<T> {
   items: LayoutItem<T>[]
   rows: LayoutRow<T>[]
   gaps: LayoutGap[]
-  /** Sum of every item height. Never greater than the height passed in. */
+  /**
+   * Sum of every item height. Never greater than the height passed in, give or
+   * take the float epsilon that summing twenty divisions leaves behind.
+   */
   height: number
   /**
    * Height left over once gaps hit their per point caps. Positive means the
@@ -209,6 +228,58 @@ function distributeGapHeights(total: number, sizes: readonly number[], minHeight
   return heights
 }
 
+interface Solution {
+  tier: Tier
+  rowHeight: number
+  gapHeights: number[]
+}
+
+/** Rows and gaps for one tier, with no judgement about whether it is a good fit. */
+function solve(
+  tier: Tier,
+  levelCount: number,
+  gapSizes: readonly number[],
+  gapPoints: number,
+  availableHeight: number,
+): Solution {
+  // Rows only grow past the tier minimum with height the gaps have no use for,
+  // which is what keeps proportionality ahead of row comfort. Once every gap
+  // sits at its per point cap, the leftover is the rows' to take, continuously
+  // up to the Comfortable maximum.
+  const spareForRows = availableHeight - MAX_PIXELS_PER_POINT * gapPoints
+  const rowHeight = clamp(spareForRows / levelCount, tier.minRowHeight, tier.maxRowHeight)
+
+  return {
+    tier,
+    rowHeight,
+    gapHeights: distributeGapHeights(
+      availableHeight - rowHeight * levelCount,
+      gapSizes,
+      tier.minGapHeight,
+    ),
+  }
+}
+
+/**
+ * Whether a tier flattens the axis far enough to misrepresent it.
+ *
+ * Compares the tallest and shortest gap against the ratio their point sizes
+ * demand. A table whose gaps are all the same size can never be misrepresented,
+ * which is why the comparison is a ratio of ratios rather than a count of gaps
+ * sitting on the floor.
+ */
+function misrepresents({ gapHeights }: Solution, gapSizes: readonly number[]): boolean {
+  if (gapSizes.length < 2) return false
+
+  const largest = Math.max(...gapSizes)
+  const smallest = Math.min(...gapSizes)
+  if (largest === smallest) return false
+
+  const tallest = Math.max(...gapHeights)
+  const shortest = Math.min(...gapHeights)
+  return tallest / shortest < (largest / smallest) * MIN_GAP_TRUTH
+}
+
 /**
  * Computes the layout for one league at one viewport size.
  *
@@ -239,23 +310,19 @@ export function computeLayout<T extends Placeable>(
   const floorFor = (tier: Tier) =>
     levels.length * tier.minRowHeight + gapSizes.length * tier.minGapHeight
 
-  const tier = TIERS.find((candidate) => floorFor(candidate) <= availableHeight)
-  if (!tier) {
+  const affordable = TIERS.filter((candidate) => floorFor(candidate) <= availableHeight)
+  if (affordable.length === 0) {
     return { fits: false, requiredHeight: floorFor(MICRO), levelCount: levels.length }
   }
 
-  // Rows only grow past the tier minimum with height the gaps have no use for,
-  // which is what keeps proportionality ahead of row comfort. Once every gap
-  // sits at its per point cap, the leftover is the rows' to take, continuously
-  // up to the Comfortable maximum.
-  const spareForRows = availableHeight - MAX_PIXELS_PER_POINT * gapPoints
-  const rowHeight = clamp(spareForRows / levels.length, tier.minRowHeight, tier.maxRowHeight)
-
-  const gapHeights = distributeGapHeights(
-    availableHeight - rowHeight * levels.length,
-    gapSizes,
-    tier.minGapHeight,
+  // Largest tier whose axis still tells the truth. When every tier that fits
+  // would flatten it, stepping down buys nothing, so the largest one is kept
+  // and the rows at least stay readable.
+  const solved = affordable.map((candidate) =>
+    solve(candidate, levels.length, gapSizes, gapPoints, availableHeight),
   )
+  const { tier, rowHeight, gapHeights } =
+    solved.find((candidate) => !misrepresents(candidate, gapSizes)) ?? solved[0]
 
   const items: LayoutItem<T>[] = []
   const rows: LayoutRow<T>[] = []
