@@ -1,0 +1,13 @@
+@import 'tailwindcss';
+
+/*
+  The table always fits the viewport, so the document itself never scrolls.
+  Locking it here keeps mobile browsers from adding rubber-band scroll on top
+  of a layout that is already sized to the visible area.
+*/
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
+}
