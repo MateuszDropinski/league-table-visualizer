@@ -49,12 +49,16 @@ export function LeagueTable({ standings, accent }: LeagueTableProps) {
         `${size.height}px / ${grid.rows.length} rows = ${grid.rowHeight.toFixed(2)}px  ` +
         `spread ${grid.spread} pts  ` +
         `logo ${metrics.logoSize.toFixed(1)}  pts ${metrics.pointsFontSize.toFixed(1)}  ` +
-        `name ${metrics.showName ? metrics.nameFontSize.toFixed(1) : 'hidden'}`,
+        `name ${metrics.nameFontSize.toFixed(1)}` +
+        (grid.scrolls ? `  SCROLLS, ${Math.ceil(grid.height - size.height)}px over` : ''),
     )
   }, [standings.league.slug, standings.snapshot?.index, size.height, grid, metrics])
 
   return (
-    <div ref={ref} className="h-full w-full overflow-hidden">
+    // Measuring the content box gives the visible height even once this
+    // scrolls, which is exactly what the engine needs: it decides whether the
+    // grid overflows, so it must never be handed the overflowing height back.
+    <div ref={ref} className="h-full w-full overflow-y-auto overflow-x-hidden">
       {size.height > 0 && grid.rows.length > 0 && (
         <table className="w-full table-fixed border-collapse" style={{ height: grid.height }}>
           <tbody>
@@ -87,13 +91,7 @@ function PointRow({ row, height, metrics, accent, width }: PointRowProps) {
   const occupied = row.teams.length > 0
   const contentWidth = Math.max(0, width - metrics.pointsColumnWidth - metrics.cellPadding * 2)
   const mode = chipMode(metrics, row.teams.length, contentWidth)
-
-  // What one crest may take once the total is shared several ways. In logo mode
-  // this is the only thing keeping twenty level teams inside one row.
-  const maxLogoSize = occupied
-    ? (contentWidth - metrics.chipGap * (row.teams.length - 1)) / row.teams.length -
-      (mode === 'logo' ? 2 : 0)
-    : metrics.logoSize
+  const shared = row.teams.length > 1
 
   return (
     <tr style={{ height }} className="border-b border-slate-800/80 last:border-b-0">
@@ -121,13 +119,7 @@ function PointRow({ row, height, metrics, accent, width }: PointRowProps) {
         {occupied && (
           <div className="flex items-center" style={{ gap: metrics.chipGap }}>
             {row.teams.map((team) => (
-              <TeamChip
-                key={team.id}
-                team={team}
-                mode={mode}
-                metrics={metrics}
-                maxLogoSize={maxLogoSize}
-              />
+              <TeamChip key={team.id} team={team} mode={mode} metrics={metrics} shared={shared} />
             ))}
           </div>
         )}

@@ -13,7 +13,7 @@ import { dirname, join } from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 
-import { computeGrid, type Placeable } from '../src/lib/layout-engine.ts'
+import { computeGrid, MIN_ROW_HEIGHT, type Placeable } from '../src/lib/layout-engine.ts'
 import type { StandingsFile } from '../src/types/standings.ts'
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -75,27 +75,48 @@ test('teams sharing a total share a row, in input order', () => {
   )
 })
 
-test('the grid fills exactly the height it is given', () => {
-  for (const height of [200, 480, 720, 900, 1440, 2400]) {
-    const grid = computeGrid(table(...LATE_SEASON), height)
-    assert.ok(Math.abs(grid.height - height) < 1e-9, `${height}px grid came to ${grid.height}px`)
-    assert.ok(Math.abs(grid.rowHeight * grid.rows.length - height) < 1e-9)
-  }
-})
-
-test('row height is the container divided by the point spread, with no floor', () => {
-  // 97 down to 22 is 76 rows. At 900px that is 11.8px a row, and at 300px it is
-  // under 4, which the engine returns rather than refusing. Nothing clamps.
+test('the grid fills exactly the height it is given, until the floor stops it', () => {
+  // 97 down to 22 is 76 rows, so the floor bites below 76 * 24 = 1824px.
   const teams = table(...LATE_SEASON)
 
-  assert.equal(computeGrid(teams, 900).rows.length, 76)
-  assert.ok(Math.abs(computeGrid(teams, 900).rowHeight - 900 / 76) < 1e-9)
-  assert.ok(Math.abs(computeGrid(teams, 300).rowHeight - 300 / 76) < 1e-9)
-  assert.ok(computeGrid(teams, 300).rowHeight < 4)
+  for (const height of [1824, 2000, 2400]) {
+    const grid = computeGrid(teams, height)
+    assert.ok(Math.abs(grid.height - height) < 1e-9, `${height}px grid came to ${grid.height}px`)
+    assert.equal(grid.scrolls, false)
+  }
 
-  // A six point early season table gets enormous rows at the same height, which
-  // is the behaviour worth looking at before any cap is added back.
+  // A six point early season table has height to spare everywhere, so it always
+  // fills exactly and never scrolls.
+  for (const height of [200, 480, 900, 2400]) {
+    const grid = computeGrid(table(...EARLY_SEASON), height)
+    assert.ok(Math.abs(grid.height - height) < 1e-9)
+    assert.equal(grid.scrolls, false)
+  }
   assert.ok(Math.abs(computeGrid(table(...EARLY_SEASON), 900).rowHeight - 150) < 1e-9)
+})
+
+test('rows never go below the floor, and the table scrolls instead', () => {
+  const teams = table(...LATE_SEASON)
+  const exact = 76 * MIN_ROW_HEIGHT
+
+  // One pixel under the point where 76 rows fit at the floor, and the grid
+  // stops shrinking: it keeps 24px rows and overflows by a pixel.
+  const tight = computeGrid(teams, exact - 1)
+  assert.equal(tight.rowHeight, MIN_ROW_HEIGHT)
+  assert.equal(tight.height, exact)
+  assert.equal(tight.scrolls, true)
+
+  // A laptop is a long way under it, and the answer is the same shape.
+  const laptop = computeGrid(teams, 900)
+  assert.equal(laptop.rowHeight, MIN_ROW_HEIGHT)
+  assert.equal(laptop.height, exact)
+  assert.equal(laptop.scrolls, true)
+  assert.equal(laptop.height - 900, 924, 'nine hundred pixels of the table are off screen')
+
+  // Exactly at the floor it fits, and one pixel more starts sharing out again.
+  assert.equal(computeGrid(teams, exact).scrolls, false)
+  assert.equal(computeGrid(teams, exact).rowHeight, MIN_ROW_HEIGHT)
+  assert.ok(computeGrid(teams, exact + 76).rowHeight > MIN_ROW_HEIGHT)
 })
 
 test('a league where every team is level is a single row', () => {
@@ -107,6 +128,7 @@ test('a league where every team is level is a single row', () => {
   assert.equal(grid.rows[0].teams.length, 20)
   assert.equal(grid.rowHeight, 800)
   assert.equal(grid.height, 800)
+  assert.equal(grid.scrolls, false)
 })
 
 test('an empty table lays out to nothing rather than throwing', () => {
@@ -127,7 +149,7 @@ test('negative point totals are laid out like any other range', () => {
   assert.equal(grid.rows[1].teams.length, 0)
 })
 
-test('every snapshot fills its container exactly, at any height', () => {
+test('every snapshot either fills its container or scrolls, never both', () => {
   const files = readdirSync(mockDir).filter((f) => f.endsWith('.json') && f !== 'index.json')
   assert.ok(files.length === 25, `expected 25 snapshots, found ${files.length}`)
 
@@ -142,8 +164,16 @@ test('every snapshot fills its container exactly, at any height', () => {
       const where = `${file} at ${height}px`
 
       assert.equal(grid.rows.length, expectedRows, `${where} row count`)
-      assert.ok(grid.height <= height + 1e-9, `${where} overflows by ${grid.height - height}`)
-      assert.ok(grid.height >= height - 1e-9, `${where} leaves ${height - grid.height} unused`)
+      assert.ok(grid.rowHeight >= MIN_ROW_HEIGHT - 1e-9, `${where} row under the floor`)
+
+      if (grid.scrolls) {
+        // Scrolling only ever happens at the floor, never at some height in
+        // between, so a scrolling table is always as short as it is allowed.
+        assert.equal(grid.rowHeight, MIN_ROW_HEIGHT, `${where} scrolls above the floor`)
+        assert.ok(grid.height > height, `${where} says it scrolls but fits`)
+      } else {
+        assert.ok(Math.abs(grid.height - height) < 1e-9, `${where} neither fills nor scrolls`)
+      }
 
       // No team is dropped, duplicated or moved off its own total.
       let seen = 0

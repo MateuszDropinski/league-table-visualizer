@@ -11,14 +11,23 @@
   Deliberately pure and free of React, the DOM and the standings type, so it can
   be unit tested in node and driven from a ResizeObserver by the table UI.
 
-  The one invariant: the grid occupies exactly the height it was given, so the
-  table always fits the viewport and never scrolls.
+  Rows have a floor and the grid does not shrink below it. A wide spread on a
+  short screen therefore overflows, and the table scrolls. That is a change of
+  mind about the product, not an accident: a row too short to hold a team name
+  is not worth fitting on screen, so the height a row needs wins over showing
+  the whole table at once.
 */
 
 /** Anything with a points total can be laid out. Standings rows are the usual input. */
 export interface Placeable {
   points: number
 }
+
+/**
+ * The shortest a row may be, which is what a crest and a readable name need.
+ * Rows never go below it, so this is also what decides when a table scrolls.
+ */
+export const MIN_ROW_HEIGHT = 24
 
 export interface GridRow<T> {
   /** The point total this row stands for, occupied or not. */
@@ -33,12 +42,14 @@ export interface GridRow<T> {
 export interface Grid<T> {
   /** One per point value, from the leader's total down to the last team's. */
   rows: GridRow<T>[]
-  /** Uniform across every row, by invariant. Fractional, so the grid fills exactly. */
+  /** Uniform across every row, by invariant. Never below `MIN_ROW_HEIGHT`. */
   rowHeight: number
   /** Points from the leader to the last team, which is one less than the row count. */
   spread: number
-  /** What the grid occupies, which is the height it was given. */
+  /** What the grid occupies. Greater than the container height when it scrolls. */
   height: number
+  /** True once the row floor pushes the grid past the height it was given. */
+  scrolls: boolean
 }
 
 /**
@@ -47,17 +58,16 @@ export interface Grid<T> {
  * `availableHeight` is the whole space the table may occupy, since nothing sits
  * above or below it.
  *
- * There is no minimum row height and no fallback for a short screen: rows get
- * whatever `availableHeight / rowCount` comes to, however small. That is
- * deliberate for now, so the behaviour of a 76 row table on a laptop screen is
- * visible rather than hidden behind a floor.
+ * Rows share out the height when there is enough of it and sit on
+ * `MIN_ROW_HEIGHT` when there is not, in which case `scrolls` is true and the
+ * grid is taller than the container on purpose.
  */
 export function computeGrid<T extends Placeable>(
   teams: readonly T[],
   availableHeight: number,
 ): Grid<T> {
   if (teams.length === 0) {
-    return { rows: [], rowHeight: 0, spread: 0, height: 0 }
+    return { rows: [], rowHeight: 0, spread: 0, height: 0, scrolls: false }
   }
 
   const byPoints = new Map<number, T[]>()
@@ -76,12 +86,19 @@ export function computeGrid<T extends Placeable>(
   // Inclusive of both ends, so a league whose leader and last team share a
   // total is one row rather than none.
   const rowCount = top - bottom + 1
-  const rowHeight = availableHeight / rowCount
+  const rowHeight = Math.max(MIN_ROW_HEIGHT, availableHeight / rowCount)
+  const height = rowHeight * rowCount
 
   const rows: GridRow<T>[] = []
   for (let points = top; points >= bottom; points -= 1) {
     rows.push({ points, teams: byPoints.get(points) ?? [] })
   }
 
-  return { rows, rowHeight, spread: top - bottom, height: rowHeight * rowCount }
+  return {
+    rows,
+    rowHeight,
+    spread: top - bottom,
+    height,
+    scrolls: height > availableHeight + 1e-9,
+  }
 }

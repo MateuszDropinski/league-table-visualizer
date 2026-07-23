@@ -6,41 +6,43 @@ interface TeamChipProps {
   team: TeamStanding
   mode: ChipMode
   metrics: RowMetrics
-  /** Cap for the crest when a level is crowded enough to squeeze even the logo. */
-  maxLogoSize: number
+  /** True when the total is shared, so the teams split the row between them. */
+  shared: boolean
 }
 
 /*
-  One team on its point level.
+  One team on its point total.
 
-  The title attribute is always set, not only in logo mode, because a truncated
-  name and a crest on its own have the same problem: on a desktop the tooltip is
-  the way back to the full name, and on touch a long press does the same.
+  The name is always rendered. When several teams share a total they split the
+  row evenly and each name truncates, which is why every chip carries a title:
+  an ellipsis needs a way back to the full name, on desktop by hover and on
+  touch by long press.
 */
-export function TeamChip({ team, mode, metrics, maxLogoSize }: TeamChipProps) {
-  const logoSize = Math.max(4, Math.min(metrics.logoSize, maxLogoSize))
+export function TeamChip({ team, mode, metrics, shared }: TeamChipProps) {
   const record = `${team.name}, ${team.points} pts, ${team.played} played, ${
     team.goalDifference > 0 ? `+${team.goalDifference}` : team.goalDifference
   } GD`
 
   return (
-    <div className="flex min-w-0 items-center gap-2" title={record}>
+    <div
+      className={`flex min-w-0 items-center ${shared ? 'flex-1' : ''}`}
+      style={{ gap: Math.max(3, metrics.chipGap * 0.55) }}
+      title={record}
+    >
       <img
         src={resolveAssetUrl(team.logo)}
-        alt={mode === 'logo' ? team.name : ''}
-        width={logoSize}
-        height={logoSize}
-        style={{ width: logoSize, height: logoSize }}
+        alt=""
+        width={metrics.logoSize}
+        height={metrics.logoSize}
+        style={{ width: metrics.logoSize, height: metrics.logoSize }}
         className="shrink-0"
       />
-      {mode !== 'logo' && (
-        <span
-          className="truncate font-medium text-slate-200"
-          style={{ fontSize: metrics.nameFontSize }}
-        >
-          {mode === 'full' ? team.name : team.shortName}
-        </span>
-      )}
+      <span
+        className="truncate font-medium text-slate-200"
+        style={{ fontSize: metrics.nameFontSize }}
+      >
+        {mode === 'full' ? team.name : team.shortName}
+      </span>
     </div>
   )
 }
