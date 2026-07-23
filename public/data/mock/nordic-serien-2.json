@@ -439,20 +439,20 @@
       "shortName": "Trollhaug",
       "logo": "crests/crest-24.svg",
       "rank": 20,
-      "points": 11,
-      "played": 10,
-      "won": 3,
-      "drawn": 2,
-      "lost": 5,
-      "goalsFor": 12,
-      "goalsAgainst": 14,
+      "points": 7,
+      "played": 7,
+      "won": 2,
+      "drawn": 1,
+      "lost": 4,
+      "goalsFor": 8,
+      "goalsAgainst": 10,
       "goalDifference": -2,
       "form": [
+        "L",
+        "L",
         "D",
-        "L",
-        "L",
         "W",
-        "D"
+        "L"
       ]
     }
   ]

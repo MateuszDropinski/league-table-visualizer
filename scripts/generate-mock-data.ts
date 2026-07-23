@@ -108,13 +108,27 @@ function buildForm(won: number, drawn: number, lost: number, rnd: () => number):
 }
 
 function buildSnapshot(league: MockLeague, leagueIndex: number, snapshotIndex: number): StandingsFile {
-  const played = league.rounds[snapshotIndex]
+  const rounds = league.rounds[snapshotIndex]
   const totalRounds = (league.teams.length - 1) * 2
   const allSquare = league.allSquareOpener === true && snapshotIndex === 0
 
   const rows = league.teams.map((entry, teamIndex) => {
     const [name, shortName] = entry.split('|')
     const rnd = createRandom(league.id * 7919 + teamIndex * 131 + snapshotIndex * 17)
+
+    /*
+      A postponement is played for real: the team gets the points of the games
+      it did play, not a pro rated share of a full round count. That is what
+      makes the mark worth showing, since the team sits lower on the axis than
+      its season is going to leave it. An all square opener ignores this, being
+      defined by every team having played the same single round.
+    */
+    const missed = allSquare
+      ? 0
+      : (league.missed ?? [])
+          .filter((m) => m.snapshot === snapshotIndex + 1 && m.team === teamIndex)
+          .reduce((total, m) => total + m.games, 0)
+    const played = Math.max(1, rounds - missed)
 
     let points: number
     let won: number
@@ -203,7 +217,7 @@ function buildSnapshot(league: MockLeague, leagueIndex: number, snapshotIndex: n
     snapshot: {
       index: snapshotIndex + 1,
       label: SNAPSHOT_LABELS[snapshotIndex],
-      roundsPlayed: played,
+      roundsPlayed: rounds,
       totalRounds,
       character: league.character,
     },

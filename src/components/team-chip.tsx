@@ -10,6 +10,8 @@ interface TeamChipProps {
   maxWidth: string
   /** False on a crowded row, where the position costs more than it is worth. */
   showRank: boolean
+  /** Fixtures this team is behind the rest of the league, 0 when level. */
+  gamesInHand: number
 }
 
 /*
@@ -26,11 +28,29 @@ interface TeamChipProps {
   next to each other from the left rather than spread across the row. Past the
   cap it truncates, which is why every chip carries a title: an ellipsis needs a
   way back to the full name, on desktop by hover and on touch by long press.
+
+  A team with games in hand carries a mark after its name, because its place on
+  the axis is provisional and the axis does not say so on its own. The mark
+  survives crowding: on a row too tight for the count it becomes a dot, which
+  costs almost nothing and still says "this one is not settled". It never
+  disappears, since a distance that may be wrong is worth more of the row than
+  the position that sits next to it.
 */
-export function TeamChip({ team, mode, metrics, maxWidth, showRank }: TeamChipProps) {
+export function TeamChip({
+  team,
+  mode,
+  metrics,
+  maxWidth,
+  showRank,
+  gamesInHand,
+}: TeamChipProps) {
   const record = `${team.name}, ${team.rank}. on ${team.points} pts, ${team.played} played, ${
     team.goalDifference > 0 ? `+${team.goalDifference}` : team.goalDifference
-  } GD`
+  } GD${
+    gamesInHand > 0
+      ? `, ${gamesInHand} game${gamesInHand === 1 ? '' : 's'} in hand`
+      : ''
+  }`
 
   return (
     <div
@@ -60,6 +80,29 @@ export function TeamChip({ team, mode, metrics, maxWidth, showRank }: TeamChipPr
       >
         {mode === 'full' ? team.name : team.shortName}
       </span>
+
+      {gamesInHand > 0 &&
+        (showRank ? (
+          <span
+            aria-hidden="true"
+            className="shrink-0 rounded-sm bg-amber-400/15 font-semibold tabular-nums text-amber-300"
+            style={{
+              fontSize: metrics.rankFontSize,
+              paddingInline: Math.max(2, metrics.rankFontSize * 0.25),
+            }}
+          >
+            +{gamesInHand}
+          </span>
+        ) : (
+          <span
+            aria-hidden="true"
+            className="shrink-0 rounded-full bg-amber-300"
+            style={{
+              width: Math.max(3, metrics.logoSize * 0.22),
+              height: Math.max(3, metrics.logoSize * 0.22),
+            }}
+          />
+        ))}
     </div>
   )
 }

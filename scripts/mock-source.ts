@@ -12,6 +12,21 @@
   shared point levels and exact ties get built.
 */
 
+/**
+ * A team that has not played every round yet, which is what puts a games in
+ * hand mark on its chip. Their points come from the games they did play, so
+ * they sit lower on the axis than the season says they should, which is the
+ * whole reason the mark exists.
+ */
+export interface MissedFixtures {
+  /** 1-based, matching the snapshot suffix in the file name. */
+  snapshot: number
+  /** Index into `teams`, so final table order. */
+  team: number
+  /** Rounds not played by this snapshot. */
+  games: number
+}
+
 export interface MockLeague {
   id: number
   slug: string
@@ -36,6 +51,13 @@ export interface MockLeague {
    * into one row, which is the emptiest axis the engine has to survive.
    */
   allSquareOpener?: boolean
+  /**
+   * Postponements, so the games in hand mark has something to mark. Never on
+   * snapshot 5, since a finished season has no games left in hand, and never on
+   * an all square opener, which is defined by every team having played the same
+   * single round.
+   */
+  missed?: MissedFixtures[]
 }
 
 export const MOCK_LEAGUES: MockLeague[] = [
@@ -75,6 +97,13 @@ export const MOCK_LEAGUES: MockLeague[] = [
       1.24, 1.18, 1.13, 1.05, 0.97, 0.87, 0.74, 0.58,
     ],
     rounds: [3, 10, 19, 29, 38],
+    // The runaway leader is two games light, which is the case the mark exists
+    // for: the double digit lead below them is smaller than the axis makes it
+    // look, and nothing else on screen would say so.
+    missed: [
+      { snapshot: 4, team: 0, games: 2 },
+      { snapshot: 4, team: 9, games: 1 },
+    ],
   },
   {
     id: 9002,
@@ -112,6 +141,12 @@ export const MOCK_LEAGUES: MockLeague[] = [
       1.29, 1.24, 1.18, 1.11, 1.03, 0.95, 0.84, 0.66,
     ],
     rounds: [3, 10, 19, 29, 38],
+    // One of the two teams in the title race, so a near tie has to be read with
+    // a caveat, and one near the foot with two games missing.
+    missed: [
+      { snapshot: 3, team: 1, games: 1 },
+      { snapshot: 3, team: 17, games: 2 },
+    ],
   },
   {
     id: 9003,
@@ -147,6 +182,12 @@ export const MOCK_LEAGUES: MockLeague[] = [
       1.26, 1.15, 1.03, 0.91, 0.76, 0.59,
     ],
     rounds: [3, 9, 17, 26, 34],
+    // Two teams from the mid-table cluster, so the mark has to work on a row
+    // shared by several teams rather than only on a row of its own.
+    missed: [
+      { snapshot: 2, team: 5, games: 1 },
+      { snapshot: 2, team: 6, games: 1 },
+    ],
   },
   {
     id: 9004,
@@ -182,6 +223,9 @@ export const MOCK_LEAGUES: MockLeague[] = [
       0.97, 0.91, 0.85, 0.85, 0.85, 0.85,
     ],
     rounds: [3, 9, 17, 26, 34],
+    // Kept clear of the bottom four, whose shared total is what this league is
+    // here to exercise and must not be broken up by a postponement.
+    missed: [{ snapshot: 3, team: 8, games: 1 }],
   },
   {
     id: 9005,
@@ -221,6 +265,9 @@ export const MOCK_LEAGUES: MockLeague[] = [
     ],
     rounds: [1, 10, 19, 29, 38],
     allSquareOpener: true,
+    // Three games light, the widest the mark has to count to, on the team at
+    // the foot of the narrowest table in the set.
+    missed: [{ snapshot: 2, team: 19, games: 3 }],
   },
 ]
 

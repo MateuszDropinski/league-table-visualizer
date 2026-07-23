@@ -126,33 +126,11 @@
       ]
     },
     {
-      "id": 900409,
-      "name": "Korona Sandomierka",
-      "shortName": "Korona S.",
-      "logo": "crests/crest-06.svg",
-      "rank": 6,
-      "points": 23,
-      "played": 17,
-      "won": 6,
-      "drawn": 5,
-      "lost": 6,
-      "goalsFor": 21,
-      "goalsAgainst": 20,
-      "goalDifference": 1,
-      "form": [
-        "W",
-        "W",
-        "L",
-        "L",
-        "W"
-      ]
-    },
-    {
       "id": 900406,
       "name": "Orzeł Bielawiec",
       "shortName": "Orzeł B.",
       "logo": "crests/crest-03.svg",
-      "rank": 7,
+      "rank": 6,
       "points": 23,
       "played": 17,
       "won": 6,
@@ -174,7 +152,7 @@
       "name": "Motor Przemyślany",
       "shortName": "Motor P.",
       "logo": "crests/crest-07.svg",
-      "rank": 8,
+      "rank": 7,
       "points": 22,
       "played": 17,
       "won": 5,
@@ -188,6 +166,28 @@
         "D",
         "L",
         "D",
+        "W"
+      ]
+    },
+    {
+      "id": 900409,
+      "name": "Korona Sandomierka",
+      "shortName": "Korona S.",
+      "logo": "crests/crest-06.svg",
+      "rank": 8,
+      "points": 21,
+      "played": 16,
+      "won": 5,
+      "drawn": 6,
+      "lost": 5,
+      "goalsFor": 20,
+      "goalsAgainst": 18,
+      "goalDifference": 2,
+      "form": [
+        "D",
+        "W",
+        "L",
+        "L",
         "W"
       ]
     },

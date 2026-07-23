@@ -42,8 +42,17 @@ function checkTeam(file: string, team: TeamStanding, expectedPlayed: number) {
   if (team.points === team.played * 3 - 1) {
     note(file, who, `${team.points} points is unreachable from ${team.played} games`)
   }
-  if (team.played !== expectedPlayed) {
-    note(file, who, `played ${team.played}, expected ${expectedPlayed} for this snapshot`)
+  /*
+    A team may be short of the round count, which is a postponement and is what
+    the games in hand mark is for. It may never be ahead of it, and being more
+    than three rounds behind is a real table's sign of something wrong rather
+    than a fixture pile up.
+  */
+  if (team.played > expectedPlayed) {
+    note(file, who, `played ${team.played}, more than the ${expectedPlayed} rounds played`)
+  }
+  if (team.played < expectedPlayed - 3) {
+    note(file, who, `played ${team.played} against ${expectedPlayed} rounds, too far behind`)
   }
   if (team.goalsFor - team.goalsAgainst !== team.goalDifference) {
     note(file, who, `GD is ${team.goalDifference}, GF-GA is ${team.goalsFor - team.goalsAgainst}`)

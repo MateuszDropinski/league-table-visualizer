@@ -8,16 +8,10 @@
 */
 
 import assert from 'node:assert/strict'
-import { readdirSync, readFileSync } from 'node:fs'
-import { dirname, join } from 'node:path'
 import test from 'node:test'
-import { fileURLToPath } from 'node:url'
 
 import { computeGrid, MIN_ROW_HEIGHT, type Placeable } from '../src/lib/layout-engine.ts'
-import type { StandingsFile } from '../src/types/standings.ts'
-
-const root = join(dirname(fileURLToPath(import.meta.url)), '..')
-const mockDir = join(root, 'public', 'data', 'mock')
+import { readSnapshot, snapshotFiles } from './snapshots.ts'
 
 /** Points totals in, one placeable per total, in the order given. */
 const table = (...points: number[]): Placeable[] => points.map((p) => ({ points: p }))
@@ -150,11 +144,11 @@ test('negative point totals are laid out like any other range', () => {
 })
 
 test('every snapshot either fills its container or scrolls, never both', () => {
-  const files = readdirSync(mockDir).filter((f) => f.endsWith('.json') && f !== 'index.json')
+  const files = snapshotFiles()
   assert.ok(files.length === 25, `expected 25 snapshots, found ${files.length}`)
 
   for (const file of files) {
-    const data = JSON.parse(readFileSync(join(mockDir, file), 'utf8')) as StandingsFile
+    const data = readSnapshot(file)
     const points = data.teams.map((team) => team.points)
     const expectedRows = Math.max(...points) - Math.min(...points) + 1
 

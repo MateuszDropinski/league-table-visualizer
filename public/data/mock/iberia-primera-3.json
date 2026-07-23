@@ -16,33 +16,11 @@
   },
   "teams": [
     {
-      "id": 900202,
-      "name": "Atlético Miravel",
-      "shortName": "Miravel",
-      "logo": "crests/crest-09.svg",
-      "rank": 1,
-      "points": 47,
-      "played": 19,
-      "won": 14,
-      "drawn": 5,
-      "lost": 0,
-      "goalsFor": 33,
-      "goalsAgainst": 15,
-      "goalDifference": 18,
-      "form": [
-        "D",
-        "W",
-        "W",
-        "W",
-        "W"
-      ]
-    },
-    {
       "id": 900201,
       "name": "Real Solano",
       "shortName": "Solano",
       "logo": "crests/crest-08.svg",
-      "rank": 2,
+      "rank": 1,
       "points": 46,
       "played": 19,
       "won": 14,
@@ -56,6 +34,28 @@
         "W",
         "W",
         "D",
+        "W"
+      ]
+    },
+    {
+      "id": 900202,
+      "name": "Atlético Miravel",
+      "shortName": "Miravel",
+      "logo": "crests/crest-09.svg",
+      "rank": 2,
+      "points": 45,
+      "played": 18,
+      "won": 14,
+      "drawn": 3,
+      "lost": 1,
+      "goalsFor": 31,
+      "goalsAgainst": 15,
+      "goalDifference": 16,
+      "form": [
+        "W",
+        "W",
+        "L",
+        "W",
         "W"
       ]
     },
@@ -368,33 +368,11 @@
       ]
     },
     {
-      "id": 900218,
-      "name": "Deportivo Sierrablanca",
-      "shortName": "Sierrablanca",
-      "logo": "crests/crest-01.svg",
-      "rank": 17,
-      "points": 20,
-      "played": 19,
-      "won": 5,
-      "drawn": 5,
-      "lost": 9,
-      "goalsFor": 19,
-      "goalsAgainst": 26,
-      "goalDifference": -7,
-      "form": [
-        "L",
-        "L",
-        "D",
-        "L",
-        "L"
-      ]
-    },
-    {
       "id": 900217,
       "name": "Racing Olivenza",
       "shortName": "Olivenza",
       "logo": "crests/crest-24.svg",
-      "rank": 18,
+      "rank": 17,
       "points": 19,
       "played": 19,
       "won": 4,
@@ -409,6 +387,28 @@
         "D",
         "W",
         "D"
+      ]
+    },
+    {
+      "id": 900218,
+      "name": "Deportivo Sierrablanca",
+      "shortName": "Sierrablanca",
+      "logo": "crests/crest-01.svg",
+      "rank": 18,
+      "points": 18,
+      "played": 17,
+      "won": 4,
+      "drawn": 6,
+      "lost": 7,
+      "goalsFor": 17,
+      "goalsAgainst": 23,
+      "goalDifference": -6,
+      "form": [
+        "L",
+        "L",
+        "D",
+        "L",
+        "L"
       ]
     },
     {

@@ -68,7 +68,8 @@ tests/              node:test unit tests, also run by node directly
 src/types/          standings.ts is the contract shared with the future pipeline
 src/data/           asset url resolution and the static JSON fetchers
 src/lib/            layout-engine.ts (the grid), row-metrics.ts (what fits in a
-                    row), the accent colours, the viewport and element hooks
+                    row), games-in-hand.ts, the accent colours, the viewport and
+                    element hooks
 src/components/     the table and the team chips
 src/dev/            mock switcher, dropped from production builds
 public/crests/      24 generated SVG crests
@@ -137,6 +138,25 @@ task 05 and 07 work.
   of squeezing: `nordic-serien-1`, where all 18 teams are level, is one row the
   height of the screen with a line per team. Content sizes are capped precisely
   so the leftover height goes there.
+- **Games in hand are measured against the busiest team, not a round number.**
+  A points axis asserts a distance, and a team with fixtures outstanding has not
+  earned its place on it, so the chip carries a mark. The reference has to be
+  the highest played count in the table: API-Football standings report played
+  per team and no dependable current round, and taking the maximum also gets the
+  postponed-round case right by marking nobody. The mark is "+2" where there is
+  room and a dot where there is not, and it is kept when the position is
+  dropped, because a distance that may be wrong matters more than a rank.
+- **The mock generator can postpone fixtures.** A `missed` entry per league
+  takes games off a team at one snapshot, and its points follow from the games
+  it actually played rather than being pro rated, which is what makes the mark
+  worth rendering: the team sits lower than its season will leave it. Six teams
+  across five snapshots carry marks of +1, +2 and +3, alone on a level and
+  sharing one. Snapshot 5 and the all square opener are deliberately left level,
+  a finished season having no games in hand and that opener being defined by
+  everybody having played the same single round.
+- **`validate-standings.ts` now allows a team to be behind the round count**, by
+  up to three games, and still refuses any team ahead of it. That relaxation is
+  part of the contract the real pipeline will be checked against.
 - **Chip widths are a ceiling, not a column layout.** Teams take the width their
   own name needs and sit next to each other from the left; `perLine` only stops
   any one of them growing past its share, which is what holds the wrapped line
@@ -156,6 +176,12 @@ task 05 and 07 work.
 
 - **The desktop multi-league grid needs rethinking**, since a grid cell is no
   longer a height the table will respect. See `plan/05-leagues-and-shell.md`.
+- **The games in hand mark explains itself only in the chip title.** The amber
+  "+2" and its dot are `aria-hidden`, with the phrase folded into the record
+  every chip already carries, which is a hover on desktop and a long press on
+  touch. That is thin for something that qualifies what the axis is saying, and
+  the accessibility pass in task 07 should decide whether it needs a legend, a
+  visible key, or the marks announced properly rather than through a title.
 - **`FULL_NAME_WIDTH` (185px) and `RANK_WIDTH` (72px) are eyeballed**, not
   measured. They suit the mock names at the mock type sizes. Real club names are
   longer and may want measuring properly.
@@ -185,3 +211,8 @@ The 25 snapshots stay the test set. The two extremes to keep checking are
 `nordic-serien-1` (every team level, a single row, now one line per team) and
 `albion-league-5` (a 75 point spread, which is 76 rows and scrolls on anything
 short of a very tall screen). `pnpm dev` plus the arrow keys walks all of them.
+
+For the games in hand mark, the snapshots that carry one are `albion-league-4`
+(the leader on +2), `iberia-primera-3` (+1 in the title race, +2 near the foot),
+`rheinland-liga-2` (+1 on a level shared by five teams, which is where the dot
+fallback shows up), `vistula-ekstraliga-3` and `nordic-serien-2` (+3).

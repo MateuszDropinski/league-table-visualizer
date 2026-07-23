@@ -43,7 +43,7 @@
           "roundsPlayed": 29,
           "totalRounds": 38,
           "levels": 18,
-          "spread": 56
+          "spread": 51
         },
         {
           "index": 5,
@@ -90,7 +90,7 @@
           "roundsPlayed": 19,
           "totalRounds": 38,
           "levels": 16,
-          "spread": 34
+          "spread": 33
         },
         {
           "index": 4,
@@ -249,7 +249,7 @@
           "roundsPlayed": 10,
           "totalRounds": 38,
           "levels": 8,
-          "spread": 8
+          "spread": 12
         },
         {
           "index": 3,

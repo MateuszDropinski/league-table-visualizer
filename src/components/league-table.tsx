@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 
+import { gamesInHand, mostPlayed } from '../lib/games-in-hand'
 import { computeGrid, type GridRow } from '../lib/layout-engine'
 import type { LeagueAccent } from '../lib/league-accent'
 import { chipLayout, rowMetrics, type RowMetrics } from '../lib/row-metrics'
@@ -52,6 +53,9 @@ export function LeagueTable({ standings, accent }: LeagueTableProps) {
     [standings.teams, viewportHeight],
   )
   const metrics = useMemo(() => rowMetrics(grid.rowHeight), [grid.rowHeight])
+  // The line every team's played count is measured against, which is a fact
+  // about the table rather than about any one row.
+  const played = useMemo(() => mostPlayed(standings.teams), [standings.teams])
 
   return (
     <div ref={ref} className="w-full">
@@ -69,6 +73,7 @@ export function LeagueTable({ standings, accent }: LeagueTableProps) {
                 metrics={metrics}
                 accent={accent}
                 width={size.width}
+                mostPlayed={played}
               />
             ))}
           </tbody>
@@ -84,9 +89,11 @@ interface PointRowProps {
   metrics: RowMetrics
   accent: LeagueAccent
   width: number
+  /** The whole table's played count, which is what marks a row's teams behind it. */
+  mostPlayed: number
 }
 
-function PointRow({ row, height, metrics, accent, width }: PointRowProps) {
+function PointRow({ row, height, metrics, accent, width, mostPlayed }: PointRowProps) {
   const occupied = row.teams.length > 0
   const contentWidth = Math.max(0, width - metrics.pointsColumnWidth - metrics.cellPadding * 2)
   const layout = chipLayout(metrics, row.teams.length, contentWidth, height)
@@ -145,6 +152,7 @@ function PointRow({ row, height, metrics, accent, width }: PointRowProps) {
                 metrics={metrics}
                 maxWidth={chipMaxWidth}
                 showRank={layout.showRank}
+                gamesInHand={gamesInHand(team, mostPlayed)}
               />
             ))}
           </div>
