@@ -1,13 +1,13 @@
 /*
-  Unit tests for the games in hand arithmetic, and for the claim the app makes
-  by rendering it: that a team behind the round count is behind on points too,
+  Unit tests for the matches behind arithmetic, and for the claim the app makes
+  by rendering it: that a team short of the round count is short on points too,
   so the axis is showing a distance that is not settled yet.
 */
 
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { gamesInHand, mostPlayed } from '../src/lib/games-in-hand.ts'
+import { matchesBehind, mostPlayed } from '../src/lib/matches-behind.ts'
 import { readSnapshot, snapshotFiles } from './snapshots.ts'
 
 test('a level table marks nobody', () => {
@@ -15,23 +15,23 @@ test('a level table marks nobody', () => {
   const most = mostPlayed(teams)
 
   assert.equal(most, 24)
-  for (const team of teams) assert.equal(gamesInHand(team, most), 0)
+  for (const team of teams) assert.equal(matchesBehind(team, most), 0)
 })
 
 test('the count is measured against the busiest team, not a round number', () => {
   // A whole round postponed leaves everybody level, and nothing is marked.
   const teams = [{ played: 22 }, { played: 22 }]
-  assert.equal(gamesInHand(teams[0], mostPlayed(teams)), 0)
+  assert.equal(matchesBehind(teams[0], mostPlayed(teams)), 0)
 
   // One team behind is marked by the difference.
   const uneven = [{ played: 24 }, { played: 22 }, { played: 23 }]
   const most = mostPlayed(uneven)
-  assert.equal(gamesInHand(uneven[1], most), 2)
-  assert.equal(gamesInHand(uneven[2], most), 1)
+  assert.equal(matchesBehind(uneven[1], most), 2)
+  assert.equal(matchesBehind(uneven[2], most), 1)
 })
 
 test('a team ahead of the reference is never marked negative', () => {
-  assert.equal(gamesInHand({ played: 30 }, 24), 0)
+  assert.equal(matchesBehind({ played: 30 }, 24), 0)
 })
 
 test('an empty table has no reference and throws nothing', () => {
@@ -44,7 +44,7 @@ test('every snapshot marks only teams that are genuinely short of games', () => 
     const most = mostPlayed(data.teams)
 
     for (const team of data.teams) {
-      const behind = gamesInHand(team, most)
+      const behind = matchesBehind(team, most)
       const where = `${file} :: ${team.name}`
 
       assert.equal(behind, most - team.played, `${where} count`)
@@ -67,7 +67,7 @@ test('the mock set exercises the mark on shared levels as well as alone', () => 
     const most = mostPlayed(data.teams)
 
     for (const team of data.teams) {
-      const behind = gamesInHand(team, most)
+      const behind = matchesBehind(team, most)
       if (behind === 0) continue
 
       marked += 1

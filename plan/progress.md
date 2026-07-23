@@ -68,9 +68,9 @@ tests/              node:test unit tests, also run by node directly
 src/types/          standings.ts is the contract shared with the future pipeline
 src/data/           asset url resolution and the static JSON fetchers
 src/lib/            layout-engine.ts (the grid), row-metrics.ts (what fits in a
-                    row), games-in-hand.ts, the accent colours, the viewport and
-                    element hooks
-src/components/     the table and the team chips
+                    row), matches-behind.ts, the accent colours, the viewport
+                    and element hooks
+src/components/     the table, the team chips and the tooltip card
 src/dev/            mock switcher, dropped from production builds
 public/crests/      24 generated SVG crests
 public/data/mock/   25 snapshots plus index.json
@@ -138,14 +138,27 @@ task 05 and 07 work.
   of squeezing: `nordic-serien-1`, where all 18 teams are level, is one row the
   height of the screen with a line per team. Content sizes are capped precisely
   so the leftover height goes there.
-- **Games in hand are measured against the busiest team, not a round number.**
-  A points axis asserts a distance, and a team with fixtures outstanding has not
-  earned its place on it, so the chip carries a mark. The reference has to be
-  the highest played count in the table: API-Football standings report played
-  per team and no dependable current round, and taking the maximum also gets the
-  postponed-round case right by marking nobody. The mark is "+2" where there is
+- **Matches behind are measured against the busiest team, not a round number.**
+  A points axis asserts a distance, and a team short of a fixture has not earned
+  its place on it, so the chip carries a mark. The reference has to be the
+  highest played count in the table: API-Football standings report played per
+  team and no dependable current round, and taking the maximum also gets the
+  postponed-round case right by marking nobody. The mark is "-2" where there is
   room and a dot where there is not, and it is kept when the position is
   dropped, because a distance that may be wrong matters more than a rank.
+- **It reads as a minus, not as games in hand.** Football says a team has two
+  games in hand, which is the advantage framing and the reason the module was
+  first called that. The axis is showing the opposite: a team sitting lower than
+  its season will leave it, because of matches it has not played. So the UI, the
+  copy and now the module say matches behind, and the sign agrees with what the
+  reader is looking at.
+- **Every chip opens a card rather than a browser tooltip.** A chip can be nine
+  characters of a name, and a native `title` is a hover only, unstyleable, half
+  second delayed answer to that. The card carries points, played, W/D/L, goals,
+  difference and form, opens on hover, focus or tap, and closes on leave, blur,
+  Escape or a press elsewhere. It renders through a portal because the row cell
+  clips its overflow, and it re-reads its anchor on scroll rather than
+  remembering it, since the page underneath it moves.
 - **The mock generator can postpone fixtures.** A `missed` entry per league
   takes games off a team at one snapshot, and its points follow from the games
   it actually played rather than being pro rated, which is what makes the mark
@@ -176,12 +189,15 @@ task 05 and 07 work.
 
 - **The desktop multi-league grid needs rethinking**, since a grid cell is no
   longer a height the table will respect. See `plan/05-leagues-and-shell.md`.
-- **The games in hand mark explains itself only in the chip title.** The amber
-  "+2" and its dot are `aria-hidden`, with the phrase folded into the record
-  every chip already carries, which is a hover on desktop and a long press on
-  touch. That is thin for something that qualifies what the axis is saying, and
-  the accessibility pass in task 07 should decide whether it needs a legend, a
-  visible key, or the marks announced properly rather than through a title.
+- **The matches behind mark has no legend.** The amber "-2" and its dot are
+  `aria-hidden`, and the card that explains them has to be opened per team.
+  A reader who never hovers sees an amber number with no key anywhere on screen.
+  The accessibility pass in task 07 should decide whether the table needs a
+  visible legend, and whether 20 chips as 20 tab stops is the right keyboard
+  order or wants grouping.
+- **The tooltip card is not covered by a test.** There is no jsdom here by
+  choice, so its positioning, the portal and the open and close gestures are
+  checked by hand only. Worth remembering before it grows more behaviour.
 - **`FULL_NAME_WIDTH` (185px) and `RANK_WIDTH` (72px) are eyeballed**, not
   measured. They suit the mock names at the mock type sizes. Real club names are
   longer and may want measuring properly.
@@ -212,7 +228,7 @@ The 25 snapshots stay the test set. The two extremes to keep checking are
 `albion-league-5` (a 75 point spread, which is 76 rows and scrolls on anything
 short of a very tall screen). `pnpm dev` plus the arrow keys walks all of them.
 
-For the games in hand mark, the snapshots that carry one are `albion-league-4`
+For the matches behind mark, the snapshots that carry one are `albion-league-4`
 (the leader on +2), `iberia-primera-3` (+1 in the title race, +2 near the foot),
 `rheinland-liga-2` (+1 on a level shared by five teams, which is where the dot
 fallback shows up), `vistula-ekstraliga-3` and `nordic-serien-2` (+3).

@@ -52,9 +52,9 @@ export interface MockLeague {
    */
   allSquareOpener?: boolean
   /**
-   * Postponements, so the games in hand mark has something to mark. Never on
-   * snapshot 5, since a finished season has no games left in hand, and never on
-   * an all square opener, which is defined by every team having played the same
+   * Postponements, so the matches behind mark has something to mark. Never on
+   * snapshot 5, since a finished season leaves nobody behind, and never on an
+   * all square opener, which is defined by every team having played the same
    * single round.
    */
   missed?: MissedFixtures[]

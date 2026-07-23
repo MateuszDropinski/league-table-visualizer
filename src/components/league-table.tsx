@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 
-import { gamesInHand, mostPlayed } from '../lib/games-in-hand'
 import { computeGrid, type GridRow } from '../lib/layout-engine'
 import type { LeagueAccent } from '../lib/league-accent'
+import { matchesBehind, mostPlayed } from '../lib/matches-behind'
 import { chipLayout, rowMetrics, type RowMetrics } from '../lib/row-metrics'
 import { useElementSize } from '../lib/use-element-size'
 import { useViewportHeight } from '../lib/use-viewport-height'
@@ -89,7 +89,7 @@ interface PointRowProps {
   metrics: RowMetrics
   accent: LeagueAccent
   width: number
-  /** The whole table's played count, which is what marks a row's teams behind it. */
+  /** The whole table's played count, which is what marks a row's teams as behind. */
   mostPlayed: number
 }
 
@@ -152,7 +152,7 @@ function PointRow({ row, height, metrics, accent, width, mostPlayed }: PointRowP
                 metrics={metrics}
                 maxWidth={chipMaxWidth}
                 showRank={layout.showRank}
-                gamesInHand={gamesInHand(team, mostPlayed)}
+                behind={matchesBehind(team, mostPlayed)}
               />
             ))}
           </div>

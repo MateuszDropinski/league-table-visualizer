@@ -59,11 +59,11 @@ the real pipeline output, so switching to real data changes nothing in the app.
   leader with a huge gap, a tight cluster mid-table, a two-team title race far
   ahead of the pack, a relegation scrap with several teams level, all teams on
   equal points at round one.
-- Some snapshots include postponements, so teams carry games in hand: a runaway
-  leader two games light, a title race where one of the two has a game to play,
-  and marked teams both alone on a level and sharing one. Their points come from
-  the games they actually played, so they sit lower on the axis than the season
-  will leave them, which is the reason the mark is worth showing at all.
+- Some snapshots include postponements, so teams are behind on matches played: a
+  runaway leader two matches light, a title race where one of the two has a game
+  to play, and marked teams both alone on a level and sharing one. Their points
+  come from the matches they actually played, so they sit lower on the axis than
+  the season will leave them, which is the reason the mark is worth showing.
 - Team logos are bundled example SVGs (simple generated crests in varied
   shapes and colors) referenced by the mock JSON, ensuring SVG logos render
   correctly at every row height from the floor up.
@@ -134,15 +134,25 @@ never dropped: below about 185px per team the pre-shortened name is used, and
 below about 72px the league position goes, but the name only ever truncates.
 Every chip carries its full record in a `title` so an ellipsis has a way back.
 
-Games in hand are marked on the chip, because a points axis states a distance
-and a team with fixtures outstanding has not earned its place on it yet. The
-reference is the most games any team in the table has played, never a round
-number: API-Football standings carry a played count and no dependable current
-round, so this is the only definition the real pipeline and the mocks can share,
-and it correctly marks nobody when a whole round is postponed. The mark is a
-count ("+2") that degrades to a dot when the row is too crowded for digits, and
-it outranks the league position: a distance that may be wrong is worth more of
-the row than the number saying where a team currently sits.
+Matches behind are marked on the chip, because a points axis states a distance
+and a team short of a fixture has not earned its place on it yet. The reference
+is the most matches any team in the table has played, never a round number:
+API-Football standings carry a played count and no dependable current round, so
+this is the only definition the real pipeline and the mocks can share, and it
+correctly marks nobody when a whole round is postponed. Football calls this
+games in hand, from the point of view of the team that gains by it; the table
+states it as a minus ("-2") against the team that has played fewer, because a
+minus is what the axis is showing. The mark degrades to a dot when the row is
+too crowded for digits, and it outranks the league position: a distance that may
+be wrong is worth more of the row than the number saying where a team sits.
+
+Every chip opens a card, on hover, on keyboard focus or on tap, carrying what a
+row of 12px type cannot: points, matches played, the W/D/L record, goals for and
+against, goal difference, recent form and the matches behind caveat. The chip is
+a real button so it is reachable and announced without being told how. The card
+renders in a portal, since the row clips its own overflow, and positions itself
+against the chip in viewport coordinates, above it by preference so it never
+covers the rows being compared against.
 
 Teams sharing a total are packed from the left at the width their own name
 needs. When the row is tall enough for more than one line they wrap onto several

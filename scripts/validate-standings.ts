@@ -44,7 +44,7 @@ function checkTeam(file: string, team: TeamStanding, expectedPlayed: number) {
   }
   /*
     A team may be short of the round count, which is a postponement and is what
-    the games in hand mark is for. It may never be ahead of it, and being more
+    the matches behind mark is for. It may never be ahead of it, and being more
     than three rounds behind is a real table's sign of something wrong rather
     than a fixture pile up.
   */

@@ -1,6 +1,9 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
+
 import { resolveAssetUrl } from '../data/asset-url'
 import type { ChipMode, RowMetrics } from '../lib/row-metrics'
 import type { TeamStanding } from '../types/standings'
+import { TeamTooltip } from './team-tooltip'
 
 interface TeamChipProps {
   team: TeamStanding
@@ -10,8 +13,8 @@ interface TeamChipProps {
   maxWidth: string
   /** False on a crowded row, where the position costs more than it is worth. */
   showRank: boolean
-  /** Fixtures this team is behind the rest of the league, 0 when level. */
-  gamesInHand: number
+  /** Fixtures this team is short of the rest of the league, 0 when level. */
+  behind: number
 }
 
 /*
@@ -26,83 +29,134 @@ interface TeamChipProps {
 
   The chip is as wide as its own name and no wider, so teams sharing a total sit
   next to each other from the left rather than spread across the row. Past the
-  cap it truncates, which is why every chip carries a title: an ellipsis needs a
-  way back to the full name, on desktop by hover and on touch by long press.
+  cap it truncates, and everything the chip cannot say is in the card that opens
+  on hover, focus or tap.
 
-  A team with games in hand carries a mark after its name, because its place on
-  the axis is provisional and the axis does not say so on its own. The mark
-  survives crowding: on a row too tight for the count it becomes a dot, which
-  costs almost nothing and still says "this one is not settled". It never
-  disappears, since a distance that may be wrong is worth more of the row than
-  the position that sits next to it.
+  A team behind on matches played carries a mark, because its place on the axis
+  is provisional and the axis does not say so on its own. It reads as a minus,
+  since being short of a fixture is what put the team lower than its season will
+  leave it. The mark survives crowding: on a row too tight for the count it
+  becomes a dot, which costs almost nothing and still says "this one is not
+  settled". It never disappears, since a distance that may be wrong is worth
+  more of the row than the position that sits next to it.
 */
-export function TeamChip({
-  team,
-  mode,
-  metrics,
-  maxWidth,
-  showRank,
-  gamesInHand,
-}: TeamChipProps) {
+export function TeamChip({ team, mode, metrics, maxWidth, showRank, behind }: TeamChipProps) {
+  const ref = useRef<HTMLButtonElement>(null)
+  const [anchor, setAnchor] = useState<DOMRect | null>(null)
+  const open = anchor !== null
+
+  const show = useCallback(() => {
+    if (ref.current) setAnchor(ref.current.getBoundingClientRect())
+  }, [])
+  const hide = useCallback(() => setAnchor(null), [])
+
+  /*
+    The page scrolls under an open card, so the anchor is re-read rather than
+    remembered. Capture phase, since the scroll may happen in any ancestor.
+    Escape closes it, and so does a press anywhere else, which is what dismisses
+    a card opened by tapping on a touch screen.
+  */
+  useEffect(() => {
+    if (!open) return
+
+    const reposition = () => show()
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') hide()
+    }
+    const onPointerDown = (event: PointerEvent) => {
+      if (!ref.current?.contains(event.target as Node)) hide()
+    }
+
+    window.addEventListener('scroll', reposition, { capture: true, passive: true })
+    window.addEventListener('resize', reposition)
+    window.addEventListener('keydown', onKeyDown)
+    document.addEventListener('pointerdown', onPointerDown)
+    return () => {
+      window.removeEventListener('scroll', reposition, { capture: true })
+      window.removeEventListener('resize', reposition)
+      window.removeEventListener('keydown', onKeyDown)
+      document.removeEventListener('pointerdown', onPointerDown)
+    }
+  }, [open, show, hide])
+
   const record = `${team.name}, ${team.rank}. on ${team.points} pts, ${team.played} played, ${
     team.goalDifference > 0 ? `+${team.goalDifference}` : team.goalDifference
-  } GD${
-    gamesInHand > 0
-      ? `, ${gamesInHand} game${gamesInHand === 1 ? '' : 's'} in hand`
-      : ''
-  }`
+  } GD${behind > 0 ? `, ${behind} ${behind === 1 ? 'match' : 'matches'} behind` : ''}`
 
   return (
-    <div
-      className="flex min-w-0 items-center"
-      style={{ maxWidth, gap: Math.max(3, metrics.chipGap * 0.55) }}
-      title={record}
-    >
-      <img
-        src={resolveAssetUrl(team.logo)}
-        alt=""
-        width={metrics.logoSize}
-        height={metrics.logoSize}
-        style={{ width: metrics.logoSize, height: metrics.logoSize }}
-        className="shrink-0"
-      />
-      {showRank && (
-        <span
-          className="shrink-0 tabular-nums text-slate-400"
-          style={{ fontSize: metrics.rankFontSize }}
-        >
-          {team.rank}.
-        </span>
-      )}
-      <span
-        className="truncate font-medium text-slate-200"
-        style={{ fontSize: metrics.nameFontSize }}
+    <>
+      <button
+        ref={ref}
+        type="button"
+        aria-label={record}
+        aria-expanded={open}
+        // A real button rather than a focusable div: it is the only element a
+        // screen reader announces with its label and reaches by keyboard
+        // without being told how, and focus alone opens the card.
+        className="flex min-w-0 cursor-default items-center rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+        style={{ maxWidth, gap: Math.max(3, metrics.chipGap * 0.55) }}
+        // Hover is a mouse gesture. A tap is a press, and toggling on press is
+        // what lets a card be dismissed by tapping the same chip again.
+        onPointerEnter={(event) => {
+          if (event.pointerType === 'mouse') show()
+        }}
+        onPointerLeave={(event) => {
+          if (event.pointerType === 'mouse') hide()
+        }}
+        onPointerUp={(event) => {
+          if (event.pointerType !== 'mouse') (open ? hide : show)()
+        }}
+        onFocus={show}
+        onBlur={hide}
       >
-        {mode === 'full' ? team.name : team.shortName}
-      </span>
-
-      {gamesInHand > 0 &&
-        (showRank ? (
+        <img
+          src={resolveAssetUrl(team.logo)}
+          alt=""
+          width={metrics.logoSize}
+          height={metrics.logoSize}
+          style={{ width: metrics.logoSize, height: metrics.logoSize }}
+          className="shrink-0"
+        />
+        {showRank && (
           <span
-            aria-hidden="true"
-            className="shrink-0 rounded-sm bg-amber-400/15 font-semibold tabular-nums text-amber-300"
-            style={{
-              fontSize: metrics.rankFontSize,
-              paddingInline: Math.max(2, metrics.rankFontSize * 0.25),
-            }}
+            className="shrink-0 tabular-nums text-slate-400"
+            style={{ fontSize: metrics.rankFontSize }}
           >
-            +{gamesInHand}
+            {team.rank}.
           </span>
-        ) : (
-          <span
-            aria-hidden="true"
-            className="shrink-0 rounded-full bg-amber-300"
-            style={{
-              width: Math.max(3, metrics.logoSize * 0.22),
-              height: Math.max(3, metrics.logoSize * 0.22),
-            }}
-          />
-        ))}
-    </div>
+        )}
+        <span
+          className="truncate font-medium text-slate-200"
+          style={{ fontSize: metrics.nameFontSize }}
+        >
+          {mode === 'full' ? team.name : team.shortName}
+        </span>
+
+        {behind > 0 &&
+          (showRank ? (
+            <span
+              aria-hidden="true"
+              className="shrink-0 rounded-sm bg-amber-400/15 font-semibold tabular-nums text-amber-300"
+              style={{
+                fontSize: metrics.rankFontSize,
+                paddingInline: Math.max(2, metrics.rankFontSize * 0.25),
+              }}
+            >
+              -{behind}
+            </span>
+          ) : (
+            <span
+              aria-hidden="true"
+              className="shrink-0 rounded-full bg-amber-300"
+              style={{
+                width: Math.max(3, metrics.logoSize * 0.22),
+                height: Math.max(3, metrics.logoSize * 0.22),
+              }}
+            />
+          ))}
+      </button>
+
+      {anchor && <TeamTooltip team={team} behind={behind} anchor={anchor} />}
+    </>
   )
 }
