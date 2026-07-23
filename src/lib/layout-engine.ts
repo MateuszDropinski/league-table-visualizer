@@ -27,11 +27,13 @@ export interface Placeable {
  * The shortest a row may be, which is what a crest and a readable name need.
  * Rows never go below it, so this is also what decides when a table scrolls.
  *
- * 20px rather than 24: a short name at 10px type still reads at that height,
- * and the four pixels are worth roughly a fifth more of a wide table on screen
- * at once, which is the thing the axis is actually for.
+ * It follows from the 12px type floor in `row-metrics.ts` rather than being
+ * picked: a 12px name paints a line box of about 16.2px, the row keeps a
+ * twelfth of its height as padding at each end, and 22px is the shortest row
+ * that still leaves the line room. Lowering it would mean shrinking the type,
+ * and type this size is the point at which a name is read rather than decoded.
  */
-export const MIN_ROW_HEIGHT = 20
+export const MIN_ROW_HEIGHT = 22
 
 export interface GridRow<T> {
   /** The point total this row stands for, occupied or not. */

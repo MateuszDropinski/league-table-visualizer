@@ -11,7 +11,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import { MIN_ROW_HEIGHT } from '../src/lib/layout-engine.ts'
-import { chipLayout, rowMetrics } from '../src/lib/row-metrics.ts'
+import { chipLayout, MIN_FONT_SIZE, rowMetrics } from '../src/lib/row-metrics.ts'
 
 /** The axis on a typical desktop, points column and padding already taken off. */
 const CONTENT_WIDTH = 620
@@ -20,8 +20,33 @@ test('a row at the floor still has room for a crest and a name', () => {
   const metrics = rowMetrics(MIN_ROW_HEIGHT)
 
   assert.ok(metrics.logoSize >= 12, `crest came to ${metrics.logoSize}px`)
-  assert.ok(metrics.nameFontSize >= 9, `name came to ${metrics.nameFontSize}px`)
   assert.ok(metrics.chipHeight <= MIN_ROW_HEIGHT, 'content is taller than the row it sits in')
+})
+
+test('type never goes below the font floor, at any row height', () => {
+  // Well below the row floor as well, since nothing should depend on the engine
+  // being the only caller.
+  for (let rowHeight = 1; rowHeight <= 1200; rowHeight += 1) {
+    const { nameFontSize, pointsFontSize, rankFontSize } = rowMetrics(rowHeight)
+    const where = `at ${rowHeight}px`
+
+    assert.ok(nameFontSize >= MIN_FONT_SIZE, `name came to ${nameFontSize}px ${where}`)
+    assert.ok(pointsFontSize >= MIN_FONT_SIZE, `points came to ${pointsFontSize}px ${where}`)
+    assert.ok(rankFontSize >= MIN_FONT_SIZE, `position came to ${rankFontSize}px ${where}`)
+  }
+})
+
+test('the row floor is the shortest row a line of floor type fits into', () => {
+  const metrics = rowMetrics(MIN_ROW_HEIGHT)
+  assert.equal(metrics.nameFontSize, MIN_FONT_SIZE, 'the floor row is not setting floor type')
+
+  // One pixel shorter and the line box no longer fits between the padding,
+  // which is the whole reason MIN_ROW_HEIGHT is the number it is.
+  const shorter = rowMetrics(MIN_ROW_HEIGHT - 1)
+  assert.ok(
+    shorter.chipHeight > MIN_ROW_HEIGHT - 1 - shorter.cellPadding * 2,
+    'the floor could be lower than it is',
+  )
 })
 
 test('a short row never wraps, however many teams share it', () => {

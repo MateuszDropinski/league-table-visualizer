@@ -11,7 +11,7 @@ distance between two teams is something you can count rather than judge: three
 empty rows is three points, in every league, on every screen.
 
 Row height is the viewport divided by the number of point values, floored at
-`MIN_ROW_HEIGHT` (20px), which is what a crest and a readable name need. A wide
+`MIN_ROW_HEIGHT` (22px), which is what a crest and a readable name need. A wide
 spread on a short screen therefore makes the grid taller than the viewport and
 the page scrolls. That is deliberate: a row too short to hold a team name is not
 worth fitting on screen, so the height a row needs wins over showing the whole
@@ -117,7 +117,14 @@ feedback loop with its own size.
 
 There are no content tiers. Everything inside a row (crest size, points type,
 name type, chip gaps, padding) is a continuous function of row height, capped
-so a very tall early season row does not grow a giant crest. A team name is
+so a very tall early season row does not grow a giant crest.
+
+Type has a floor of its own: nothing is ever set below 12px, name, points or
+league position. That floor is where `MIN_ROW_HEIGHT` comes from, since 22px is
+the shortest row a 12px line fits into with its padding. The two move together
+and neither can be lowered on its own.
+
+A team name is
 never dropped: below about 185px per team the pre-shortened name is used, and
 below about 72px the league position goes, but the name only ever truncates.
 Every chip carries its full record in a `title` so an ellipsis has a way back.

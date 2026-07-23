@@ -38,7 +38,7 @@ maths left to get wrong, so `MIN_GAP_TRUTH`, the gap floors, the per-point cap
 and the tier ladder all deleted themselves. `layout-engine.ts` went from 393
 lines to 108.
 
-**Rows have a floor of 20px and the grid does not shrink below it.** A wide
+**Rows have a floor of 22px and the grid does not shrink below it.** A wide
 spread on a short screen makes the grid taller than the viewport and the page
 scrolls. This is the change of mind: the original rule was that the table always
 fits, and the new rule is that a row is always readable. A row too short to hold
@@ -124,9 +124,14 @@ task 05 and 07 work.
 - **The layout engine is generic over `{ points: number }`**, not tied to
   `TeamStanding`. Tests build a grid from a list of point totals, and the module
   has no imports at all, which is what keeps it runnable under node.
-- **The row floor is 20px, down from the 24 it was first written at.** A short
-  name at 10px type still reads at that height, and the four pixels are worth
-  about a fifth more of a wide table on screen at once.
+- **Type has a floor of 12px and the row floor is derived from it.** Nothing is
+  set smaller than 12px, name, points or position, because below that a name is
+  decoded rather than read. A 12px line paints about 16.2px, and with the
+  padding a row keeps at each end, 22px is the shortest row it fits into. So
+  `MIN_ROW_HEIGHT` is not a number anyone picked: lowering it means shrinking
+  the type, which is the thing the floor exists to protect. The row floor was
+  24px, then 20px on the argument that a 10px name still reads, and that
+  argument is what the 12px rule overturns.
 - **A tall row spends its height on lines, not on bigger crests.** Once a row
   can paint more than one line of names, teams sharing that total wrap instead
   of squeezing: `nordic-serien-1`, where all 18 teams are level, is one row the
@@ -158,8 +163,9 @@ task 05 and 07 work.
   passes on it. Pin to `^5` if any tooling turns out to disagree with it.
 - **React 18** is pinned per CLAUDE.md while 19 is the current default from
   pnpm. Worth revisiting whether CLAUDE.md should move to 19 instead.
-- **A very wide spread is a long scroll.** A 75 point spread at the 20px floor
-  is 1520px of page, about two screens on a laptop. That is the intended
+- **A very wide spread is a long scroll.** A 75 point spread at the 22px floor
+  is 76 rows and 1672px of page, more than two screens on a laptop. That is the
+  intended
   trade now, but task 07 should look at whether the leader stays findable after
   scrolling down to the relegation zone.
 - **No favicon**, so every load logs a 404 for `/favicon.ico`. Task 07.

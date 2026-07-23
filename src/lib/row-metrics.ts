@@ -11,6 +11,10 @@
   A name is never dropped. The floor exists precisely so there is always room
   for one, and when the row is too narrow the name is truncated rather than
   replaced by its crest.
+
+  Type has a floor of its own, `MIN_FONT_SIZE`, which the ratios reach at the
+  shortest rows. From there down the type stops shrinking and the row stops
+  with it, which is why the two floors are defined against each other.
 */
 
 export interface RowMetrics {
@@ -19,7 +23,10 @@ export interface RowMetrics {
   pointsColumnWidth: number
   pointsFontSize: number
   nameFontSize: number
-  /** The league position in front of a name, a shade smaller than the name. */
+  /**
+   * The league position in front of a name, a shade smaller than the name
+   * until both of them are sitting on `MIN_FONT_SIZE`, where they meet.
+   */
   rankFontSize: number
   /** Horizontal space between teams sharing a total. */
   chipGap: number
@@ -34,6 +41,16 @@ export interface RowMetrics {
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max)
 
+/**
+ * The smallest type this app sets, anywhere, at any row height.
+ *
+ * Below this a name stops being read and starts being decoded, which is worth
+ * less than the row it saves. It is also what sets `MIN_ROW_HEIGHT`: the floor
+ * is the shortest row a line of this type fits into, so the two move together
+ * and neither can be lowered on its own.
+ */
+export const MIN_FONT_SIZE = 12
+
 /*
   The ratios come from the four tiers this replaced, which were sized by eye
   against the mock crests and names: a 24px row carried a 16px crest, 13px
@@ -41,9 +58,9 @@ const clamp = (value: number, min: number, max: number) =>
   it is still the one the proportions were drawn against.
 */
 export function rowMetrics(rowHeight: number): RowMetrics {
-  const pointsFontSize = clamp(rowHeight * 0.5, 6, 18)
+  const pointsFontSize = clamp(rowHeight * 0.5, MIN_FONT_SIZE, 18)
   const logoSize = clamp(rowHeight * 0.7, 4, 28)
-  const nameFontSize = clamp(rowHeight * 0.46, 6, 15)
+  const nameFontSize = clamp(rowHeight * 0.46, MIN_FONT_SIZE, 15)
 
   return {
     logoSize,
@@ -51,7 +68,7 @@ export function rowMetrics(rowHeight: number): RowMetrics {
     pointsColumnWidth: Math.round(pointsFontSize * 2.4 + 18),
     pointsFontSize,
     nameFontSize,
-    rankFontSize: Math.max(6, nameFontSize * 0.85),
+    rankFontSize: Math.max(MIN_FONT_SIZE, nameFontSize * 0.85),
     chipGap: clamp(rowHeight * 0.36, 3, 14),
     chipRowGap: clamp(rowHeight * 0.06, 2, 10),
     // 1.35 is the line box a name of this size actually paints into, so a line
