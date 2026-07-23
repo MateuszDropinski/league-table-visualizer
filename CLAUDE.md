@@ -6,10 +6,21 @@ their points difference, so gaps and clusters are visible at first sight.
 
 ## Core product principle
 
-The table ALWAYS fits the viewport height. No vertical scrolling, ever.
-The visual truth of distances is the product. When space runs out, the app
-degrades row content (smaller rows, smaller logos, less text), never the
-proportionality of gaps and never by introducing scroll.
+The axis is one row per point value and every row is the same height, so the
+distance between two teams is something you can count rather than judge: three
+empty rows is three points, in every league, on every screen.
+
+Row height is the viewport divided by the number of point values, floored at
+`MIN_ROW_HEIGHT` (20px), which is what a crest and a readable name need. A wide
+spread on a short screen therefore makes the grid taller than the viewport and
+the page scrolls. That is deliberate: a row too short to hold a team name is not
+worth fitting on screen, so the height a row needs wins over showing the whole
+table at once.
+
+This replaces the original fit-always rule, which degraded rows through a tier
+ladder until a 20 team final table was a column of unreadable crests. What never
+degrades is the axis itself: rows are never uneven, and no point value is ever
+skipped, compressed or rounded away.
 
 ## Tech stack
 
@@ -50,7 +61,7 @@ the real pipeline output, so switching to real data changes nothing in the app.
   equal points at round one.
 - Team logos are bundled example SVGs (simple generated crests in varied
   shapes and colors) referenced by the mock JSON, ensuring SVG logos render
-  correctly at every row tier down to Micro.
+  correctly at every row height from the floor up.
 - A dev-only switcher (league + stage) makes it possible to flip through all
   25 snapshots quickly while developing the layout engine and UI.
 
@@ -73,54 +84,51 @@ API docs: https://www.api-football.com/documentation-v3
 
 ## Layout engine (the heart of the app)
 
+The axis is a grid, not a stack of rows separated by spacers. Every point value
+between the leader's total and the last team's total gets a row of exactly the
+same height, whether or not a team holds it.
+
 Definitions:
-- Occupied level: a point total held by at least one team. Teams on the same
-  total share one row and wrap horizontally inside it.
-- Gap: a run of unoccupied point values between two adjacent occupied levels,
-  measured in points.
-- The axis is cropped to the occupied range: from the leader's points down to
-  the last team's points. Values below the last team are never rendered.
+- Row: one point value. The teams on that total sit in it, in standings order.
+  A row no team holds is what used to be called a gap.
+- Spread: leader's points minus last team's points. The row count is the spread
+  plus one, since both ends are inclusive.
+- The axis is cropped to the occupied range. Values below the last team are
+  never rendered.
 
 Invariants:
-- Row height is uniform across all team rows at any given moment.
-- Gap heights are proportional to gap size in points: a 12 point gap is
-  visually 4 times taller than a 3 point gap, at every screen size.
-- Number of team rows never exceeds number of teams, so a no-scroll fit is
-  always achievable (18 rows at the micro floor plus minimal gaps fits any
-  reasonable viewport).
+- Row height is uniform across every row, occupied or empty.
+- Distance is exact by construction. A 12 point gap is twelve rows and a 3 point
+  gap is three, so there is no proportional arithmetic to get wrong and no
+  minimum height that can flatten a small gap into a lie.
+- Row height never goes below `MIN_ROW_HEIGHT`.
 
-Algorithm per render (and on resize, via ResizeObserver):
-1. Group teams into occupied levels, compute gaps.
-2. Pick the largest row tier (see ladder below) such that
-   `levels * rowHeight + sum(minGapHeights) <= viewportHeight`.
-   Within the Comfortable tier, row height scales continuously up to its max.
-3. Residual space `R = viewport - levels * rowHeight` is distributed across
-   gaps proportionally to their point size, subject to:
-   - a per-gap minimum so even a 1 point gap reads as air (tier-dependent, 2 to 8px),
-   - a per-point maximum (about 14px per point) so tall screens in early season
-     do not inflate tiny gaps into voids; if gaps hit their caps and space
-     remains, the table top-aligns and stays compact rather than stretching.
-4. Gaps taller than about 24px render a muted centered label with the gap size
-   ("12 pts"), and a subtle visual texture (faint dotted line) so the space
-   reads as intentional distance, not broken layout. Smaller gaps stay as
-   unlabeled whitespace.
+Per render, and on resize:
+1. Group teams by points, take the top and bottom totals, emit one row per value
+   from the top down.
+2. `rowHeight = max(MIN_ROW_HEIGHT, availableHeight / rowCount)`.
+3. `height = rowHeight * rowCount`. When that exceeds the height it was given,
+   the grid reports `scrolls` and is taller than the screen on purpose.
 
-Minimum height fallback:
-If even the Micro tier cannot fit (viewport height below the hard minimum of
-`teamCount * microRowHeight + gapCount * 2px` plus header, roughly 300px for an
-18 team league), do NOT render a broken or scrolling table. Render a fallback
-panel instead: a short friendly message that the screen is too short to display
-point distances properly, with the league name still visible. The threshold is
-computed from the data, not hardcoded, so it adapts to league size.
+The height handed to the engine is the window's, not a container's, because the
+element around the table is now as tall as the table itself and cannot be asked
+how much room there is. Taking it from the viewport keeps the grid out of a
+feedback loop with its own size.
 
-Row content degradation ladder (pick highest that fits):
-- Comfortable: row 32 to 56px, logo + full name + points (optionally GD).
-- Compact: about 24px, smaller logo, truncated name, points.
-- Dense: about 16px, logo + points only, name via tooltip or tap.
-- Micro: about 11px floor, tiny logo, tiny points text, gap minimum drops to 2px.
+There are no content tiers. Everything inside a row (crest size, points type,
+name type, chip gaps, padding) is a continuous function of row height, capped
+so a very tall early season row does not grow a giant crest. A team name is
+never dropped: below about 185px per team the pre-shortened name is used, and
+below about 72px the league position goes, but the name only ever truncates.
+Every chip carries its full record in a `title` so an ellipsis has a way back.
 
-Teams sharing a level wrap as horizontal chips within the row; when crowded,
-chips degrade to logo-only with tooltip regardless of tier.
+Teams sharing a total are packed from the left at the width their own name
+needs. When the row is tall enough for more than one line they wrap onto several
+lines rather than squeezing onto one, so an all-level opening round reads as a
+list with a line per team rather than twenty crests jammed edge to edge.
+
+There is no "too small" fallback panel. The row floor plus a scrolling page is
+the answer to a short screen.
 
 ## App structure conventions
 
@@ -129,7 +137,8 @@ chips degrade to logo-only with tooltip regardless of tier.
 - Favourites: default to top 5 leagues plus Ekstraklasa, persisted in localStorage.
 - Desktop: all favourited leagues in a wrapping CSS grid. Mobile: one league at
   a time with a dropdown picker split into starred and unstarred sections,
-  inline star toggling.
+  inline star toggling. The desktop grid predates the scrolling axis and the two
+  need reconciling before task 05 builds it; see `plan/05-leagues-and-shell.md`.
 - State: useState and props locally, React Context for favourites and visible
   leagues. No external state libraries.
 - Optional zone bands (title, European spots, relegation) as subtle background
@@ -139,6 +148,8 @@ chips degrade to logo-only with tooltip regardless of tier.
 
 - File naming always lowercase kebab-case: `layout-engine.ts`, `team-row.tsx`, `app.tsx`.
 - No em dashes anywhere: not in code comments, not in UI copy, not in docs.
-- No vertical scrolling of the table under any circumstances.
+- The table never scrolls inside its own container. When the grid outgrows the
+  viewport it is the document that scrolls, with one scrollbar down the right
+  hand edge of the window, where a scrollbar belongs.
 - Task files describe what to build and why; they do not prescribe code or
   exact file names, only directory-level architecture.

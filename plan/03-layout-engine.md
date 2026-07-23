@@ -1,5 +1,11 @@
 # Task 03: Layout engine (fit-always points axis)
 
+> Superseded. This was built and then replaced by the row per point value grid.
+> Tiers, gap heights, the per-point cap and the "too small" result no longer
+> exist. Kept as the record of what was tried and why it gave way. The current
+> design is in CLAUDE.md, and the reasoning is under "The rebuild" in
+> `plan/progress.md`.
+
 ## Goal
 A pure, well-tested function that turns standings plus a viewport height into
 an exact vertical layout: row tier, row height, and the pixel height of every

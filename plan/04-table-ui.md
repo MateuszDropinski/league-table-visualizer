@@ -1,5 +1,10 @@
 # Task 04: Table UI
 
+> Superseded in part, along with task 03. The tiered chips, the gap labels, the
+> league header and the "too small" panel were built and then deleted. What
+> survives is the table itself, the chips and the accent colour. Zone bands were
+> never built and pass to task 05, which owns the config they need.
+
 ## Goal
 Render one league as the points-axis table, driven entirely by the layout
 engine output, with the "see the differences at first sight" experience.
