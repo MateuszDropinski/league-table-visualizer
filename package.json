@@ -8,7 +8,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "mock:generate": "node scripts/generate-mock-data.ts",
+    "mock:validate": "node scripts/validate-standings.ts"
   },
   "license": "MIT",
   "packageManager": "pnpm@10.27.0",

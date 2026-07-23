@@ -1,0 +1,379 @@
+{
+  "league": {
+    "id": 9005,
+    "slug": "nordic-serien",
+    "name": "Nordic Serien",
+    "country": "Norden",
+    "season": 2025
+  },
+  "fetchedAt": "2025-08-24T18:45:00.000Z",
+  "snapshot": {
+    "index": 1,
+    "label": "1/5",
+    "roundsPlayed": 1,
+    "totalRounds": 38,
+    "character": "Every team level after an all draw opening round, tight all season"
+  },
+  "teams": [
+    {
+      "id": 900501,
+      "name": "Nordfjell FK",
+      "shortName": "Nordfjell",
+      "logo": "crests/crest-05.svg",
+      "rank": 1,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900502,
+      "name": "Bjørnvik IF",
+      "shortName": "Bjørnvik",
+      "logo": "crests/crest-06.svg",
+      "rank": 2,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900503,
+      "name": "Storhamn BK",
+      "shortName": "Storhamn",
+      "logo": "crests/crest-07.svg",
+      "rank": 3,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900504,
+      "name": "Fjellstad FK",
+      "shortName": "Fjellstad",
+      "logo": "crests/crest-08.svg",
+      "rank": 4,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900505,
+      "name": "Lyngdal IF",
+      "shortName": "Lyngdal",
+      "logo": "crests/crest-09.svg",
+      "rank": 5,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900506,
+      "name": "Havnvik BK",
+      "shortName": "Havnvik",
+      "logo": "crests/crest-10.svg",
+      "rank": 6,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900507,
+      "name": "Solberg IF",
+      "shortName": "Solberg",
+      "logo": "crests/crest-11.svg",
+      "rank": 7,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900508,
+      "name": "Granholm FK",
+      "shortName": "Granholm",
+      "logo": "crests/crest-12.svg",
+      "rank": 8,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900509,
+      "name": "Tindeby BK",
+      "shortName": "Tindeby",
+      "logo": "crests/crest-13.svg",
+      "rank": 9,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900510,
+      "name": "Skogheim IF",
+      "shortName": "Skogheim",
+      "logo": "crests/crest-14.svg",
+      "rank": 10,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900511,
+      "name": "Vestfoss FK",
+      "shortName": "Vestfoss",
+      "logo": "crests/crest-15.svg",
+      "rank": 11,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900512,
+      "name": "Ålvik BK",
+      "shortName": "Ålvik",
+      "logo": "crests/crest-16.svg",
+      "rank": 12,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900513,
+      "name": "Myrland IF",
+      "shortName": "Myrland",
+      "logo": "crests/crest-17.svg",
+      "rank": 13,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900514,
+      "name": "Kvitnes FK",
+      "shortName": "Kvitnes",
+      "logo": "crests/crest-18.svg",
+      "rank": 14,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900515,
+      "name": "Bergholt BK",
+      "shortName": "Bergholt",
+      "logo": "crests/crest-19.svg",
+      "rank": 15,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900516,
+      "name": "Sundvang IF",
+      "shortName": "Sundvang",
+      "logo": "crests/crest-20.svg",
+      "rank": 16,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900517,
+      "name": "Elvedal FK",
+      "shortName": "Elvedal",
+      "logo": "crests/crest-21.svg",
+      "rank": 17,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900518,
+      "name": "Nordlys BK",
+      "shortName": "Nordlys",
+      "logo": "crests/crest-22.svg",
+      "rank": 18,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900519,
+      "name": "Steinvik IF",
+      "shortName": "Steinvik",
+      "logo": "crests/crest-23.svg",
+      "rank": 19,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    },
+    {
+      "id": 900520,
+      "name": "Trollhaug FK",
+      "shortName": "Trollhaug",
+      "logo": "crests/crest-24.svg",
+      "rank": 20,
+      "points": 1,
+      "played": 1,
+      "won": 0,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 1,
+      "goalsAgainst": 1,
+      "goalDifference": 0,
+      "form": [
+        "D"
+      ]
+    }
+  ]
+}
