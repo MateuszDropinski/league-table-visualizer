@@ -42,7 +42,9 @@ pnpm mock:validate  # checks every standings file against real table rules
 ```
 
 In the dev switcher, left and right arrows change season stage, up and down
-change league.
+change league. It starts collapsed to a pill in the bottom right, because the
+open panel floats over the axis and was hiding the last six rows of a 20 team
+table, which is the part worth looking at.
 
 ## Decisions worth remembering
 
