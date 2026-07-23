@@ -1,13 +1,64 @@
 @import 'tailwindcss';
 
 /*
-  The table always fits the viewport, so the document itself never scrolls.
-  Locking it here keeps mobile browsers from adding rubber-band scroll on top
-  of a layout that is already sized to the visible area.
+  The table is the page, so the page is what scrolls.
+
+  A wide spread on a short screen makes the axis taller than the viewport, and
+  the one scrollbar that appears is the document's own, down the right hand edge
+  of the window rather than around the table. The gutter is reserved either way,
+  so switching to a table that fits does not shift the axis sideways.
+*/
+html {
+  scrollbar-gutter: stable;
+}
+
+/*
+  Viewport units rather than percentages, since a percentage height only
+  resolves against a parent that has one, and none of these have a height any
+  more: they are as tall as the axis turns out to be.
 */
 html,
 body,
 #root {
-  height: 100%;
-  overflow: hidden;
+  min-height: 100dvh;
+}
+
+body {
+  background-color: #020617;
+}
+
+/* Firefox and anything else that took the standard properties. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 #0b1120;
+}
+
+/*
+  WebKit and Blink, which want the whole thing spelled out. The thumb is inset
+  by a transparent border rather than made narrow, which is what gives it room
+  to sit inside its track instead of filling it.
+*/
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #0b1120;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #334155;
+  background-clip: padding-box;
+  border: 3px solid transparent;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #475569;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: transparent;
 }

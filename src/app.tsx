@@ -57,7 +57,7 @@ export function App() {
 
   if (error) {
     return (
-      <div className="flex h-full items-center justify-center bg-slate-950 px-6 text-center">
+      <div className="flex min-h-dvh items-center justify-center bg-slate-950 px-6 text-center">
         <div className="max-w-sm">
           <p className="text-sm font-semibold text-rose-400">Could not load standings</p>
           <p className="mt-2 font-mono text-xs leading-relaxed text-slate-500">{error}</p>
@@ -68,7 +68,7 @@ export function App() {
 
   if (!standings || !index || !selection) {
     return (
-      <div className="flex h-full items-center justify-center bg-slate-950">
+      <div className="flex min-h-dvh items-center justify-center bg-slate-950">
         <p className="text-sm text-slate-500">Loading standings...</p>
       </div>
     )
@@ -77,9 +77,12 @@ export function App() {
   // Nothing above or below the table: the whole viewport height is the axis,
   // which is the only way a row per point has room to be worth looking at.
   // League switching becomes buttons floating over it, not a header.
+  //
+  // Heights are minimums, not fixed: a table wider than the screen can take
+  // makes this grow past the viewport and the page scrolls with it.
   return (
-    <div className="flex h-full justify-center bg-slate-950 text-slate-100">
-      <div className="h-full w-full max-w-3xl px-4">
+    <div className="flex min-h-dvh justify-center bg-slate-950 text-slate-100">
+      <div className="w-full max-w-3xl px-4">
         <LeagueTable standings={standings} accent={accent} />
       </div>
 

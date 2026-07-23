@@ -12,7 +12,7 @@
   be unit tested in node and driven from a ResizeObserver by the table UI.
 
   Rows have a floor and the grid does not shrink below it. A wide spread on a
-  short screen therefore overflows, and the table scrolls. That is a change of
+  short screen therefore overflows, and the page scrolls. That is a change of
   mind about the product, not an accident: a row too short to hold a team name
   is not worth fitting on screen, so the height a row needs wins over showing
   the whole table at once.
@@ -26,8 +26,12 @@ export interface Placeable {
 /**
  * The shortest a row may be, which is what a crest and a readable name need.
  * Rows never go below it, so this is also what decides when a table scrolls.
+ *
+ * 20px rather than 24: a short name at 10px type still reads at that height,
+ * and the four pixels are worth roughly a fifth more of a wide table on screen
+ * at once, which is the thing the axis is actually for.
  */
-export const MIN_ROW_HEIGHT = 24
+export const MIN_ROW_HEIGHT = 20
 
 export interface GridRow<T> {
   /** The point total this row stands for, occupied or not. */
@@ -55,12 +59,12 @@ export interface Grid<T> {
 /**
  * Builds the grid for one league at one container height.
  *
- * `availableHeight` is the whole space the table may occupy, since nothing sits
- * above or below it.
+ * `availableHeight` is the viewport, since nothing sits above or below the
+ * table and the table is what the page is.
  *
  * Rows share out the height when there is enough of it and sit on
  * `MIN_ROW_HEIGHT` when there is not, in which case `scrolls` is true and the
- * grid is taller than the container on purpose.
+ * grid is taller than the viewport on purpose.
  */
 export function computeGrid<T extends Placeable>(
   teams: readonly T[],

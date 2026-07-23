@@ -76,10 +76,10 @@ test('teams sharing a total share a row, in input order', () => {
 })
 
 test('the grid fills exactly the height it is given, until the floor stops it', () => {
-  // 97 down to 22 is 76 rows, so the floor bites below 76 * 24 = 1824px.
+  // 97 down to 22 is 76 rows, so the floor bites below 76 * MIN_ROW_HEIGHT.
   const teams = table(...LATE_SEASON)
 
-  for (const height of [1824, 2000, 2400]) {
+  for (const height of [76 * MIN_ROW_HEIGHT, 2000, 2400]) {
     const grid = computeGrid(teams, height)
     assert.ok(Math.abs(grid.height - height) < 1e-9, `${height}px grid came to ${grid.height}px`)
     assert.equal(grid.scrolls, false)
@@ -100,7 +100,7 @@ test('rows never go below the floor, and the table scrolls instead', () => {
   const exact = 76 * MIN_ROW_HEIGHT
 
   // One pixel under the point where 76 rows fit at the floor, and the grid
-  // stops shrinking: it keeps 24px rows and overflows by a pixel.
+  // stops shrinking: it keeps floor height rows and overflows by a pixel.
   const tight = computeGrid(teams, exact - 1)
   assert.equal(tight.rowHeight, MIN_ROW_HEIGHT)
   assert.equal(tight.height, exact)
@@ -111,7 +111,7 @@ test('rows never go below the floor, and the table scrolls instead', () => {
   assert.equal(laptop.rowHeight, MIN_ROW_HEIGHT)
   assert.equal(laptop.height, exact)
   assert.equal(laptop.scrolls, true)
-  assert.equal(laptop.height - 900, 924, 'nine hundred pixels of the table are off screen')
+  assert.equal(laptop.height - 900, exact - 900, 'a good part of the table is off screen')
 
   // Exactly at the floor it fits, and one pixel more starts sharing out again.
   assert.equal(computeGrid(teams, exact).scrolls, false)
