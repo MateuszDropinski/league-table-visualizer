@@ -1,24 +1,23 @@
 import { useMemo } from 'react'
 
-import { computeLayout, type LayoutGap, type LayoutRow } from '../lib/layout-engine'
+import { computeGrid, type GridRow } from '../lib/layout-engine'
 import type { LeagueAccent } from '../lib/league-accent'
-import { chipMode, rowMetrics, type RowMetrics } from '../lib/tier-metrics'
+import { chipMode, rowMetrics, type RowMetrics } from '../lib/row-metrics'
 import { useElementSize } from '../lib/use-element-size'
 import type { StandingsFile, TeamStanding } from '../types/standings'
 import { TeamChip } from './team-chip'
-import { TooSmallPanel } from './too-small-panel'
 
 /*
-  The points axis itself.
+  The points axis, as an actual table.
 
-  Every number on screen comes from the layout engine, which is handed the exact
-  measured height of this container. Rows and gaps are absolutely positioned at
-  the offsets it returns, so a resize moves them rather than reflowing a stack,
-  and the same offsets can be transitioned.
+  One row per point value, ruled off from its neighbours, so the distance
+  between two teams is something you can count rather than something you have
+  to judge. Empty rows are the gaps, and they keep their points number: an
+  unoccupied 96 is as much a fact about the table as an occupied 97.
+
+  Row height comes from the layout engine, which is handed the measured height
+  of the container, so the grid fills it exactly at every size.
 */
-
-/** Left padding between the axis rail and the first crest. */
-const CONTENT_INSET = 12
 
 interface LeagueTableProps {
   standings: StandingsFile
@@ -26,146 +25,93 @@ interface LeagueTableProps {
 }
 
 export function LeagueTable({ standings, accent }: LeagueTableProps) {
-  const [ref, size] = useElementSize<HTMLOListElement>()
-  const { teams } = standings
+  const [ref, size] = useElementSize<HTMLDivElement>()
 
-  const layout = useMemo(() => computeLayout(teams, size.height), [teams, size.height])
-  const metrics = useMemo(
-    () => (layout.fits ? rowMetrics(layout.tier, layout.rowHeight) : null),
-    [layout],
+  const grid = useMemo(
+    () => computeGrid(standings.teams, size.height),
+    [standings.teams, size.height],
   )
+  const metrics = useMemo(() => rowMetrics(grid.rowHeight), [grid.rowHeight])
 
   return (
-    <div className="min-h-0 flex-1 px-3 pb-3">
-      <ol ref={ref} className="relative h-full overflow-hidden">
-        {size.height > 0 && layout.fits && metrics && (
-          <>
-            {/*
-              The rail spans the occupied range only. Stopping it at the last
-              team is what makes a top aligned early season table read as a
-              short axis rather than a table that failed to fill the screen.
-            */}
-            <span
-              aria-hidden
-              className="absolute w-px bg-slate-800"
-              style={{ left: metrics.axisWidth, top: 0, height: layout.height }}
-            />
-
-            {layout.items.map((item) =>
-              item.kind === 'row' ? (
-                <TeamLevel
-                  key={`row-${item.points}`}
-                  row={item}
-                  metrics={metrics}
-                  accent={accent}
-                  width={size.width}
-                />
-              ) : (
-                <PointGap key={`gap-${item.fromPoints}`} gap={item} metrics={metrics} />
-              ),
-            )}
-          </>
-        )}
-
-        {size.height > 0 && !layout.fits && <TooSmallPanel league={standings.league.name} />}
-      </ol>
+    <div ref={ref} className="h-full w-full overflow-hidden">
+      {size.height > 0 && grid.rows.length > 0 && (
+        <table className="w-full table-fixed border-collapse" style={{ height: grid.height }}>
+          <tbody>
+            {grid.rows.map((row) => (
+              <PointRow
+                key={row.points}
+                row={row}
+                height={grid.rowHeight}
+                metrics={metrics}
+                accent={accent}
+                width={size.width}
+              />
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   )
 }
 
-interface TeamLevelProps {
-  row: LayoutRow<TeamStanding>
+interface PointRowProps {
+  row: GridRow<TeamStanding>
+  height: number
   metrics: RowMetrics
   accent: LeagueAccent
   width: number
 }
 
-function TeamLevel({ row, metrics, accent, width }: TeamLevelProps) {
-  const contentWidth = Math.max(0, width - metrics.axisWidth - CONTENT_INSET)
+function PointRow({ row, height, metrics, accent, width }: PointRowProps) {
+  const occupied = row.teams.length > 0
+  const contentWidth = Math.max(0, width - metrics.pointsColumnWidth - metrics.cellPadding * 2)
   const mode = chipMode(metrics, row.teams.length, contentWidth)
-  // What one crest may occupy once the level is shared several ways. In logo
-  // mode this is the only thing keeping 20 level teams inside the row.
-  const maxLogoSize =
-    (contentWidth - metrics.chipGap * (row.teams.length - 1)) / row.teams.length -
-    (mode === 'logo' ? 2 : 0)
+
+  // What one crest may take once the total is shared several ways. In logo mode
+  // this is the only thing keeping twenty level teams inside one row.
+  const maxLogoSize = occupied
+    ? (contentWidth - metrics.chipGap * (row.teams.length - 1)) / row.teams.length -
+      (mode === 'logo' ? 2 : 0)
+    : metrics.logoSize
 
   return (
-    <li
-      className="absolute inset-x-0 transition-[top,height] duration-300 ease-out"
-      style={{ top: row.top, height: row.height }}
-    >
-      <div className="flex h-full items-center">
-        <span
-          className="shrink-0 pr-2.5 text-right font-semibold tabular-nums text-slate-100"
-          style={{ width: metrics.axisWidth, fontSize: metrics.pointsFontSize }}
-        >
-          {row.points}
-        </span>
-
-        {/* The tick sits on the rail, so a level is readable as a point on the axis. */}
-        <span
-          aria-hidden
-          className="absolute rounded-full"
-          style={{
-            left: metrics.axisWidth - 1.5,
-            top: '50%',
-            width: 4,
-            height: 4,
-            marginTop: -2,
-            background: accent.from,
-          }}
-        />
-
-        <div
-          className="flex min-w-0 flex-1 items-center overflow-hidden"
-          style={{ gap: metrics.chipGap, paddingLeft: CONTENT_INSET }}
-        >
-          {row.teams.map((team) => (
-            <TeamChip
-              key={team.id}
-              team={team}
-              mode={mode}
-              metrics={metrics}
-              maxLogoSize={maxLogoSize}
-            />
-          ))}
-        </div>
-      </div>
-    </li>
-  )
-}
-
-function PointGap({ gap, metrics }: { gap: LayoutGap; metrics: RowMetrics }) {
-  return (
-    <li
-      aria-hidden
-      className="absolute inset-x-0 transition-[top,height] duration-300 ease-out"
-      style={{ top: gap.top, height: gap.height }}
-    >
-      {/*
-        A dotted continuation of the rail. Empty space alone reads as a layout
-        that broke, the texture says the distance is the point.
-      */}
-      <span
-        className="absolute inset-y-0 w-px"
+    <tr style={{ height }} className="border-b border-slate-800/80 last:border-b-0">
+      <th
+        scope="row"
+        className={`border-r text-right align-middle font-semibold tabular-nums ${
+          occupied ? 'text-slate-100' : 'text-slate-700'
+        }`}
         style={{
-          left: metrics.axisWidth,
-          backgroundImage:
-            'repeating-linear-gradient(to bottom, rgb(100 116 139 / 0.55) 0 2px, transparent 2px 6px)',
+          width: metrics.pointsColumnWidth,
+          fontSize: metrics.pointsFontSize,
+          paddingRight: metrics.cellPadding + 4,
+          // The accent marks the totals someone actually holds, so the occupied
+          // rows read as the table and the empty ones as the distance between.
+          borderRightColor: occupied ? accent.from : 'rgb(30 41 59 / 0.8)',
         }}
-      />
-      {gap.showLabel && (
-        <span
-          className="absolute -translate-y-1/2 whitespace-nowrap font-mono tabular-nums text-slate-500"
-          style={{
-            left: metrics.axisWidth + CONTENT_INSET,
-            top: '50%',
-            fontSize: metrics.gapLabelFontSize,
-          }}
-        >
-          {gap.size} pts
-        </span>
-      )}
-    </li>
+      >
+        {row.points}
+      </th>
+
+      <td
+        className="overflow-hidden align-middle"
+        style={{ paddingLeft: metrics.cellPadding + 6, paddingRight: metrics.cellPadding }}
+      >
+        {occupied && (
+          <div className="flex items-center" style={{ gap: metrics.chipGap }}>
+            {row.teams.map((team) => (
+              <TeamChip
+                key={team.id}
+                team={team}
+                mode={mode}
+                metrics={metrics}
+                maxLogoSize={maxLogoSize}
+              />
+            ))}
+          </div>
+        )}
+      </td>
+    </tr>
   )
 }

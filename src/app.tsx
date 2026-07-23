@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-import { LeagueHeader } from './components/league-header'
 import { LeagueTable } from './components/league-table'
 import { loadMockIndex, loadMockSnapshot } from './data/standings-source'
 import { MockSwitcher, type MockSelection } from './dev/mock-switcher'
@@ -75,10 +74,14 @@ export function App() {
     )
   }
 
+  // Nothing above or below the table: the whole viewport height is the axis,
+  // which is the only way a row per point has room to be worth looking at.
+  // League switching becomes buttons floating over it, not a header.
   return (
-    <div className="flex h-full flex-col bg-slate-950 text-slate-100">
-      <LeagueHeader standings={standings} accent={accent} />
-      <LeagueTable standings={standings} accent={accent} />
+    <div className="flex h-full justify-center bg-slate-950 text-slate-100">
+      <div className="h-full w-full max-w-3xl px-4">
+        <LeagueTable standings={standings} accent={accent} />
+      </div>
 
       {import.meta.env.DEV && (
         <MockSwitcher index={index} selection={selection} onSelect={setSelection} />

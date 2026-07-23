@@ -1,5 +1,5 @@
 import { resolveAssetUrl } from '../data/asset-url'
-import type { ChipMode, RowMetrics } from '../lib/tier-metrics'
+import type { ChipMode, RowMetrics } from '../lib/row-metrics'
 import type { TeamStanding } from '../types/standings'
 
 interface TeamChipProps {
@@ -18,7 +18,7 @@ interface TeamChipProps {
   the way back to the full name, and on touch a long press does the same.
 */
 export function TeamChip({ team, mode, metrics, maxLogoSize }: TeamChipProps) {
-  const logoSize = Math.max(8, Math.min(metrics.logoSize, maxLogoSize))
+  const logoSize = Math.max(4, Math.min(metrics.logoSize, maxLogoSize))
   const record = `${team.name}, ${team.points} pts, ${team.played} played, ${
     team.goalDifference > 0 ? `+${team.goalDifference}` : team.goalDifference
   } GD`
