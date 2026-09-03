@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 
 import { resolveAssetUrl } from '../data/asset-url'
 import type { ChipMode, RowMetrics } from '../lib/row-metrics'
@@ -42,13 +42,27 @@ interface TeamChipProps {
 */
 export function TeamChip({ team, mode, metrics, maxWidth, showRank, behind }: TeamChipProps) {
   const ref = useRef<HTMLButtonElement>(null)
+  const tooltipId = useId()
+  const pointerActive = useRef(false)
+  const openOnPress = useRef(false)
+  const hideTimer = useRef<ReturnType<typeof setTimeout>>()
   const [anchor, setAnchor] = useState<DOMRect | null>(null)
   const open = anchor !== null
 
   const show = useCallback(() => {
+    clearTimeout(hideTimer.current)
     if (ref.current) setAnchor(ref.current.getBoundingClientRect())
   }, [])
-  const hide = useCallback(() => setAnchor(null), [])
+  const hide = useCallback(() => {
+    clearTimeout(hideTimer.current)
+    setAnchor(null)
+  }, [])
+  const hideSoon = useCallback(() => {
+    clearTimeout(hideTimer.current)
+    hideTimer.current = setTimeout(hide, 150)
+  }, [hide])
+
+  useEffect(() => () => clearTimeout(hideTimer.current), [])
 
   /*
     The page scrolls under an open card, so the anchor is re-read rather than
@@ -64,7 +78,8 @@ export function TeamChip({ team, mode, metrics, maxWidth, showRank, behind }: Te
       if (event.key === 'Escape') hide()
     }
     const onPointerDown = (event: PointerEvent) => {
-      if (!ref.current?.contains(event.target as Node)) hide()
+      const target = event.target as Node
+      if (!ref.current?.contains(target) && !document.getElementById(tooltipId)?.contains(target)) hide()
     }
 
     window.addEventListener('scroll', reposition, { capture: true, passive: true })
@@ -77,7 +92,7 @@ export function TeamChip({ team, mode, metrics, maxWidth, showRank, behind }: Te
       window.removeEventListener('keydown', onKeyDown)
       document.removeEventListener('pointerdown', onPointerDown)
     }
-  }, [open, show, hide])
+  }, [open, show, hide, tooltipId])
 
   const record = `${team.name}, ${team.rank}. on ${team.points} pts, ${team.played} played, ${
     team.goalDifference > 0 ? `+${team.goalDifference}` : team.goalDifference
@@ -90,10 +105,12 @@ export function TeamChip({ team, mode, metrics, maxWidth, showRank, behind }: Te
         type="button"
         aria-label={record}
         aria-expanded={open}
+        aria-describedby={open ? tooltipId : undefined}
+        aria-controls={open ? tooltipId : undefined}
         // A real button rather than a focusable div: it is the only element a
         // screen reader announces with its label and reaches by keyboard
         // without being told how, and focus alone opens the card.
-        className="flex min-w-0 cursor-default items-center rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
+        className="flex min-w-0 cursor-pointer items-center rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
         style={{ maxWidth, gap: Math.max(3, metrics.chipGap * 0.55) }}
         // Hover is a mouse gesture. A tap is a press, and toggling on press is
         // what lets a card be dismissed by tapping the same chip again.
@@ -101,13 +118,23 @@ export function TeamChip({ team, mode, metrics, maxWidth, showRank, behind }: Te
           if (event.pointerType === 'mouse') show()
         }}
         onPointerLeave={(event) => {
-          if (event.pointerType === 'mouse') hide()
+          if (event.pointerType === 'mouse' && document.activeElement !== ref.current) hideSoon()
         }}
-        onPointerUp={(event) => {
-          if (event.pointerType !== 'mouse') (open ? hide : show)()
+        onPointerDown={() => {
+          pointerActive.current = true
+          openOnPress.current = open
         }}
-        onFocus={show}
-        onBlur={hide}
+        onPointerCancel={() => { pointerActive.current = false }}
+        onClick={(event) => {
+          pointerActive.current = false
+          const wasOpen = event.detail === 0 ? open : openOnPress.current
+          ;(wasOpen ? hide : show)()
+        }}
+        onFocus={() => { if (!pointerActive.current) show() }}
+        onBlur={(event) => {
+          pointerActive.current = false
+          if (!document.getElementById(tooltipId)?.contains(event.relatedTarget as Node | null)) hide()
+        }}
       >
         <img
           src={resolveAssetUrl(team.logo)}
@@ -156,7 +183,19 @@ export function TeamChip({ team, mode, metrics, maxWidth, showRank, behind }: Te
           ))}
       </button>
 
-      {anchor && <TeamTooltip team={team} behind={behind} anchor={anchor} />}
+      {anchor && (
+        <TeamTooltip
+          id={tooltipId}
+          team={team}
+          behind={behind}
+          anchor={anchor}
+          onPointerEnter={show}
+          onPointerLeave={() => {
+            if (document.activeElement !== ref.current && !document.getElementById(tooltipId)?.contains(document.activeElement)) hideSoon()
+          }}
+          onBlur={(target) => { if (target !== ref.current) hide() }}
+        />
+      )}
     </>
   )
 }

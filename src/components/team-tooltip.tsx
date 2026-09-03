@@ -2,6 +2,7 @@ import { useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { resolveAssetUrl } from '../data/asset-url'
+import { tooltipPlacement } from '../lib/tooltip-placement'
 import type { FormResult, TeamStanding } from '../types/standings'
 
 /*
@@ -15,26 +16,24 @@ import type { FormResult, TeamStanding } from '../types/standings'
   It renders in a portal because the row it belongs to clips its own overflow,
   and it is positioned against the chip in viewport coordinates rather than laid
   out in the document, so a card near the top of the table is not cut off by the
-  edge of the screen. It never takes pointer events: it is something to read,
-  not something to interact with, and a card that swallowed the pointer would
-  flicker as soon as the cursor crossed it.
+  edge of the screen. The pointer may move into the card to read or scroll it.
 */
 
 /** Kept in step with the width the card is given, since it positions itself. */
 const CARD_WIDTH = 268
-/** Breathing room from the chip, and from the edges of the screen. */
-const OFFSET = 10
-const MARGIN = 8
-
 interface TeamTooltipProps {
+  id: string
   team: TeamStanding
   /** Fixtures short of the rest of the league, 0 when level. */
   behind: number
   /** Where the chip is, in viewport coordinates. */
   anchor: DOMRect
+  onPointerEnter: () => void
+  onPointerLeave: () => void
+  onBlur: (target: EventTarget | null) => void
 }
 
-export function TeamTooltip({ team, behind, anchor }: TeamTooltipProps) {
+export function TeamTooltip({ id, team, behind, anchor, onPointerEnter, onPointerLeave, onBlur }: TeamTooltipProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [placement, setPlacement] = useState<{ left: number; top: number } | null>(null)
 
@@ -48,20 +47,11 @@ export function TeamTooltip({ team, behind, anchor }: TeamTooltipProps) {
     const card = ref.current
     if (!card) return
 
-    const { height } = card.getBoundingClientRect()
-    const above = anchor.top - OFFSET - height
-    const below = anchor.bottom + OFFSET
-
-    setPlacement({
-      left: Math.min(
-        Math.max(MARGIN, anchor.left + anchor.width / 2 - CARD_WIDTH / 2),
-        window.innerWidth - CARD_WIDTH - MARGIN,
-      ),
-      // Above by preference, since the pointer is at the chip and a card under
-      // it covers the rows the reader was just comparing against.
-      top: above >= MARGIN ? above : below,
-    })
-  }, [anchor, team.id])
+    setPlacement(tooltipPlacement(anchor, card.getBoundingClientRect(), {
+      width: document.documentElement.clientWidth,
+      height: window.innerHeight,
+    }))
+  }, [anchor, team, behind])
 
   const goals = `${team.goalsFor}:${team.goalsAgainst}`
   const gd = team.goalDifference > 0 ? `+${team.goalDifference}` : String(team.goalDifference)
@@ -69,10 +59,18 @@ export function TeamTooltip({ team, behind, anchor }: TeamTooltipProps) {
   return createPortal(
     <div
       ref={ref}
+      id={id}
       role="tooltip"
-      className="pointer-events-none fixed z-50 rounded-lg border border-slate-700 bg-slate-900/97 p-3 text-slate-200 shadow-xl shadow-black/50"
+      tabIndex={0}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
+      onFocus={onPointerEnter}
+      onBlur={(event) => onBlur(event.relatedTarget)}
+      className="fixed z-50 overflow-y-auto rounded-lg border border-slate-700 bg-slate-900/97 p-3 text-slate-200 shadow-xl shadow-black/50 focus-visible:outline-2 focus-visible:outline-emerald-400"
       style={{
         width: CARD_WIDTH,
+        maxWidth: 'calc(100% - 16px)',
+        maxHeight: 'calc(100dvh - 16px)',
         left: placement?.left ?? 0,
         top: placement?.top ?? 0,
         // Hidden rather than unmounted for the one frame before it is measured,
@@ -116,8 +114,8 @@ export function TeamTooltip({ team, behind, anchor }: TeamTooltipProps) {
 
       {behind > 0 && (
         <p className="mt-2.5 border-t border-slate-700 pt-2 text-xs text-amber-300">
-          {behind} {behind === 1 ? 'match' : 'matches'} behind the rest of the league, so this
-          position is not settled yet.
+          {behind} fewer {behind === 1 ? 'match' : 'matches'} played than the busiest team.
+          These fixtures can change the points gap.
         </p>
       )}
     </div>,

@@ -1,18 +1,21 @@
 # Task 07: Polish and launch
 
 ## Goal
-Ship-quality pass before the season starts.
+Ship-quality pass before connecting live standings.
+
+The mock demo now has a Pages workflow and README. The remaining checks below
+apply to the eventual live-data release.
 
 ## What to build
 - Verify all 25 mock snapshots (5 leagues x 5 season stages) visually on
   common viewports: mobile portrait, small laptop (around 1366x768), large
-  desktop. The layout must fit with zero scroll in all of them.
-- Accessibility pass: team names available to screen readers even in Dense
-  and Micro tiers, sufficient contrast for gap labels, focus states.
+  desktop. Verify uniform row heights and readable names; wide spreads intentionally scroll with the document.
+- Accessibility pass: team cards linked to their buttons, keyboard activation, readable contrast,
+  and visible focus states.
 - Favicon, title, meta description, social preview image.
 - README explaining the concept with a screenshot, the data pipeline, and a
   note that the project uses API-Football.
-- GitHub Pages deploy, deferred here from task 01: a GitHub Actions workflow
+- GitHub Pages deploy is implemented for the demo: a GitHub Actions workflow
   that builds on push to main and publishes the `dist` output using the
   official Pages actions (not a gh-pages branch push), with the repository
   Pages source set to GitHub Actions. CI installs and builds via pnpm.

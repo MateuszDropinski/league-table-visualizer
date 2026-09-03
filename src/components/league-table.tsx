@@ -64,6 +64,10 @@ export function LeagueTable({ standings, accent }: LeagueTableProps) {
           className="w-full table-fixed border-collapse"
           style={{ height: grid.height, backgroundImage: AXIS_GRADIENT }}
         >
+          <caption className="sr-only">
+            {standings.league.name}, {standings.league.season}/{String(standings.league.season + 1).slice(-2)}.
+            Fictional standings. Each row is a points total, highest first.
+          </caption>
           <tbody>
             {grid.rows.map((row) => (
               <PointRow

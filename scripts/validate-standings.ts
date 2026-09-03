@@ -1,12 +1,12 @@
 /*
-  Checks every standings file on disk against the rules a real league table has
-  to obey. Run with `pnpm mock:validate`.
+  Checks synthetic layout fixtures and individual team records.
+  Run with `pnpm mock:validate`.
 
   This exists because the mock generator derives records from a points per game
   profile, and rounding can quietly produce a table that no season could ever
-  produce (8 points from 3 games, for one). It is written against the published
-  JSON rather than the generator's internals, so it will keep working unchanged
-  as the contract check for the real API-Football pipeline.
+  produce (8 points from 3 games, for one). These checks intentionally follow
+  the mock generator's conventions. They do not validate league-wide totals.
+  Real provider standings need separate checks for deductions and tiebreakers.
 */
 
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
@@ -123,4 +123,4 @@ if (problems.length > 0) {
   process.exit(1)
 }
 
-console.log(`OK: ${files.length} standings files pass every check`)
+console.log(`OK: ${files.length} synthetic standings files pass fixture checks (not league-wide accounting)`)

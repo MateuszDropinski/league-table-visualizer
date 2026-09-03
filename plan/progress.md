@@ -3,6 +3,26 @@
 Running log of what is built, what was decided along the way, and what comes
 next. Updated at the end of each task.
 
+## Public demo deployment
+
+The public mock demo now builds and deploys through `.github/workflows/pages.yml`.
+Pushes to main deploy after unit tests, fixture validation, and the production
+build pass. Pull requests run the same checks without deploying.
+
+- Demo controls are in `src/components/demo-controls.tsx` and ship in production.
+  Arrow-key shortcuts remain development-only. League, season, stage, and the
+  fictional-data label are visible in the collapsed control.
+- Loading failures keep the last successful table and controls available, with
+  a retry action and an explicit previous-table notice.
+- Team cards support button activation, an accessible description relationship,
+  hover transfer, and viewport-constrained placement with regression tests.
+- The README covers local setup, Pages deployment, and synthetic-data limits.
+  The mock validator must not be reused unchanged for real provider standings.
+- Real data, favourites, and the multi-league shell remain future work.
+
+The sections below record earlier development decisions. References to a
+missing deploy workflow or a development-only switcher describe the old state.
+
 ## Status
 
 | Task | State | Notes |

@@ -9,30 +9,14 @@ export interface MockSelection {
   snapshotIndex: number
 }
 
-interface MockSwitcherProps {
+interface DemoControlsProps {
   index: MockIndex
   selection: MockSelection
   onSelect: (selection: MockSelection) => void
 }
 
-/*
-  Dev-only control for flipping through the 25 mock snapshots.
-
-  Rendered behind `import.meta.env.DEV`, which Vite replaces with a literal
-  false in a production build, so the whole component drops out at bundle time.
-
-  Arrow keys are wired up because checking a layout change against every
-  snapshot means moving through them dozens of times, and reaching for two
-  dropdowns each time makes that tedious enough to skip.
-
-  It collapses to a single line, starts collapsed, and sits on the right,
-  because it floats over the axis: expanded on the left it hid the last few
-  rows of a 20 team table and everything but the leader on a short screen,
-  which is exactly what the switcher exists to let you look at. The right hand
-  side is where a table has the most room, since points and crests are pinned
-  to the rail.
-*/
-export function MockSwitcher({ index, selection, onSelect }: MockSwitcherProps) {
+/** Collapsible controls shared by local development and the public mock demo. */
+export function DemoControls({ index, selection, onSelect }: DemoControlsProps) {
   const [open, setOpen] = useState(false)
 
   const league =
@@ -41,6 +25,8 @@ export function MockSwitcher({ index, selection, onSelect }: MockSwitcherProps) 
     league.snapshots.find((s) => s.index === selection.snapshotIndex) ?? league.snapshots[0]
 
   useEffect(() => {
+    if (!import.meta.env.DEV) return
+
     function onKeyDown(event: KeyboardEvent) {
       // Leave the dropdowns alone when they have focus, otherwise arrow keys
       // would move the selection twice per press.
@@ -91,10 +77,10 @@ export function MockSwitcher({ index, selection, onSelect }: MockSwitcherProps) 
     'text-slate-100 outline-none focus:border-emerald-400'
 
   const stats = (
-    <div className="flex gap-3 font-mono text-[10px] text-slate-500">
+    <div className="flex gap-3 font-mono text-xs text-slate-500">
       <span className="flex items-center gap-1" title="Occupied point levels, so team rows">
         <Layers className="h-3 w-3" />
-        {snapshot.levels} rows
+        {snapshot.levels} occupied levels
       </span>
       <span className="flex items-center gap-1" title="Points from leader to last place">
         <MoveVertical className="h-3 w-3" />
@@ -108,21 +94,22 @@ export function MockSwitcher({ index, selection, onSelect }: MockSwitcherProps) 
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-3 right-3 z-50 flex items-center gap-2.5 rounded-full border border-slate-700 bg-slate-900/90 py-1.5 pl-3 pr-3.5 text-slate-300 shadow-lg backdrop-blur hover:border-slate-600"
+        aria-label={`Choose demo league and season stage: ${league.name}`}
+        aria-expanded={false}
+        className="fixed bottom-3 right-3 z-30 flex max-w-[calc(100vw-1.5rem)] flex-wrap items-center justify-end gap-2 rounded-lg border border-slate-700 bg-slate-900/90 py-1.5 pl-3 pr-3.5 text-slate-300 shadow-lg backdrop-blur hover:border-slate-600"
       >
         <SlidersHorizontal className="h-3 w-3 text-slate-500" />
-        <span className="text-[11px] font-medium">{league.name}</span>
-        <span className="font-mono text-[10px] text-slate-500">
-          {snapshot.index}/{league.snapshots.length}
+        <span className="text-xs font-medium">Demo: {league.name}</span>
+        <span className="font-mono text-xs text-slate-500">
+          {league.season}/{String(league.season + 1).slice(-2)} · stage {snapshot.index}/{league.snapshots.length}
         </span>
-        {stats}
       </button>
     )
   }
 
   return (
-    <aside className="fixed bottom-3 right-3 z-50 w-64 rounded-lg border border-slate-700 bg-slate-900/95 p-3 text-slate-200 shadow-xl backdrop-blur">
-      <div className="mb-2 flex items-center justify-between text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+    <aside aria-label="Demo controls" className="fixed bottom-3 right-3 z-30 max-h-[calc(100dvh-1.5rem)] w-72 max-w-[calc(100vw-1.5rem)] overflow-y-auto rounded-lg border border-slate-700 bg-slate-900/95 p-3 text-slate-200 shadow-xl backdrop-blur">
+      <div className="mb-2 flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-slate-500">
         <span>Mock data</span>
         <button
           type="button"
@@ -130,13 +117,13 @@ export function MockSwitcher({ index, selection, onSelect }: MockSwitcherProps) 
           className="-m-1 flex items-center gap-1 p-1 font-mono normal-case tracking-normal hover:text-slate-300"
           title="Collapse, so the panel stops covering the axis"
         >
-          dev only
+          Close
           <ChevronDown className="h-3 w-3" />
         </button>
       </div>
 
       <label className="mb-2 block">
-        <span className="mb-1 block text-[10px] uppercase tracking-wider text-slate-500">
+        <span className="mb-1 block text-xs uppercase tracking-wider text-slate-500">
           League
         </span>
         <select
@@ -155,7 +142,7 @@ export function MockSwitcher({ index, selection, onSelect }: MockSwitcherProps) 
       </label>
 
       <label className="block">
-        <span className="mb-1 block text-[10px] uppercase tracking-wider text-slate-500">
+        <span className="mb-1 block text-xs uppercase tracking-wider text-slate-500">
           Season stage
         </span>
         <select
@@ -173,13 +160,22 @@ export function MockSwitcher({ index, selection, onSelect }: MockSwitcherProps) 
         </select>
       </label>
 
-      <p className="mt-2 text-[11px] leading-snug text-slate-400">{league.character}</p>
+      <p className="mt-3 text-xs leading-relaxed text-slate-400">
+        Fictional teams and sample standings for the {league.season}/{String(league.season + 1).slice(-2)} season.
+        These are layout examples, not live football results.
+      </p>
+      <p className="mt-2 text-xs leading-relaxed text-slate-400">
+        Each row is one point value. Select a team for its record.
+        An amber minus or dot means fewer matches played than the busiest team.
+      </p>
 
       <div className="mt-2 border-t border-slate-800 pt-2">{stats}</div>
 
-      <p className="mt-2 text-[10px] leading-snug text-slate-600">
-        Arrow keys: left and right change stage, up and down change league.
-      </p>
+      {import.meta.env.DEV && (
+        <p className="mt-2 text-xs leading-snug text-slate-400">
+          Arrow keys: left and right change stage, up and down change league.
+        </p>
+      )}
     </aside>
   )
 }

@@ -8,7 +8,7 @@ their points difference, so gaps and clusters are visible at first sight.
 
 The axis is one row per point value and every row is the same height, so the
 distance between two teams is something you can count rather than judge: three
-empty rows is three points, in every league, on every screen.
+row intervals is three points, in every league, on every screen.
 
 Row height is the viewport divided by the number of point values, floored at
 `MIN_ROW_HEIGHT` (22px), which is what a crest and a readable name need. A wide
@@ -40,11 +40,10 @@ pnpm preview       # preview production build
 The project uses pnpm exclusively: `pnpm install`, `pnpm add`, and a committed
 `pnpm-lock.yaml`. CI workflows must set up pnpm and use it for install and build.
 
-Deployment is the final task (see `plan/07-polish-and-launch.md`), not yet wired
-up. The target is automatic deploy via GitHub Actions on push to main (build and
-publish to GitHub Pages). Until then the app is validated locally against mock
-data, and `base` in `vite.config.ts` is already set to the Pages subpath so
-nothing needs rewiring when the workflow lands.
+The mock demo deploys through `.github/workflows/pages.yml` on push to main.
+Pull requests run tests, fixture validation, and the production build without
+deploying. Node 24 is selected through `.node-version`, and pnpm uses the
+version in `package.json`. The real API pipeline remains future work.
 
 ## Mock-first development
 
@@ -67,8 +66,10 @@ the real pipeline output, so switching to real data changes nothing in the app.
 - Team logos are bundled example SVGs (simple generated crests in varied
   shapes and colors) referenced by the mock JSON, ensuring SVG logos render
   correctly at every row height from the floor up.
-- A dev-only switcher (league + stage) makes it possible to flip through all
-  25 snapshots quickly while developing the layout engine and UI.
+- A demo control panel (league + stage) exposes all 25 snapshots in development
+  and production. Only the arrow-key shortcuts are development-only.
+- Fixtures are generated per team and need not balance across the league.
+  The mock validator checks fixture conventions, not real-season feasibility.
 
 ## Data architecture
 
@@ -95,7 +96,7 @@ same height, whether or not a team holds it.
 
 Definitions:
 - Row: one point value. The teams on that total sit in it, in standings order.
-  A row no team holds is what used to be called a gap.
+  A row no team holds is an empty point level.
 - Spread: leader's points minus last team's points. The row count is the spread
   plus one, since both ends are inclusive.
 - The axis is cropped to the occupied range. Values below the last team are
@@ -132,7 +133,7 @@ and neither can be lowered on its own.
 A team name is
 never dropped: below about 185px per team the pre-shortened name is used, and
 below about 72px the league position goes, but the name only ever truncates.
-Every chip carries its full record in a `title` so an ellipsis has a way back.
+Every chip opens a details card so an ellipsis has a way back.
 
 Matches behind are marked on the chip, because a points axis states a distance
 and a team short of a fixture has not earned its place on it yet. The reference
