@@ -65,12 +65,12 @@ test('a tall row can wrap full names without changing the axis height', () => {
 })
 
 test('a line that would exceed the height budget triggers a denser state', () => {
-  const metrics = rowMetrics(46, true)
-  assert.equal(rowLineBudget(metrics, 46, false), 2)
+  const metrics = rowMetrics(54, true)
+  assert.equal(rowLineBudget(metrics, 54, false), 2)
   const layout = chipLayout(metrics, chips(9), 300, 2)
   assert.equal(layout.mode, 'crest')
   assert.equal(layout.lines.length, 2)
-  assert.equal(rowLineBudget(metrics, 44, false), 1)
+  assert.equal(rowLineBudget(metrics, 52, false), 1)
 })
 
 test('wrapping is forbidden when the base points grid already scrolls', () => {

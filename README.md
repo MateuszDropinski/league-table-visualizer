@@ -13,7 +13,7 @@ The committed 2026/27 standings were checked on **3 September 2026** and contain
 114 clubs. These are manually maintained snapshots, not live scores.
 
 Choose a league in the left sidebar. On narrow screens, the menu button opens
-a popover from a floating button at the bottom right. No mobile sidebar takes
+a popover from a translucent floating button at the bottom right. No mobile sidebar takes
 space from the table.
 League links have shareable hashes, for example `#ekstraklasa`, and browser
 Back/Forward restores the selection. There is no extra padding below the table. League abbreviations are omitted.
@@ -39,8 +39,9 @@ crowded row that cannot fit even crests and positions keeps one horizontally
 scrollable line so every club stays reachable. Wide season spreads may still
 require the normal document scrollbar because of the 22px row floor.
 
-Mobile metrics prioritise the overview: 11px names/ranks, 18px crests, 20px chip
-height, 6px horizontal gaps, 2px line gaps and up to 1px cell padding. Full names
+Mobile metrics balance readability and the overview: 13px names/ranks, 14px
+points and 24px crests/chips, with 6px horizontal gaps, 2px line gaps and up to
+1px cell padding. Crests shrink to 21px only at the shortest row height. Full names
 remain in accessible labels and the hover/tap card. Three-letter labels retain
 Unicode letters (including Polish accents), skipping punctuation and spaces.
 League switching is silent; failures retain a visible error and Retry button.

@@ -8,7 +8,7 @@ in package.json are shared by local development and CI.
 
 Display one league at a time: Premier League, La Liga, Bundesliga, Serie A,
 Ligue 1 or Ekstraklasa. Desktop navigation sits beside the table. Mobile uses a
-floating bottom-right button opening a popover, with no mobile sidebar. Neither reserves any table height. Keep the whole viewport
+translucent floating bottom-right button opening a popover, with no mobile sidebar. Neither reserves any table height. Keep the whole viewport
 available to the points axis and do not add bottom padding for floating controls.
 
 The user explicitly chose manually verified static standings. Do not introduce
@@ -34,7 +34,8 @@ club counts must be updated in src/data/leagues.ts if the competition changes.
   the grid. The document scrolls only when the 22px floor requires it.
 - Never skip, compress or round away a point value.
 - Desktop content varies with row height, with type at least 12px. On phones,
-  use dense fixed metrics: 11px names/ranks, 18px crests, 20px chip height.
+  use 13px names/ranks, 14px points and 24px crests/chips, capped by the
+  existing row height (21px crests at the 22px floor).
 - Each total independently chooses full name, first three letters, or no name;
   crest and league position always remain visible. Keep source order and full
   accessible names. Measure real labels, including games-in-hand markers.

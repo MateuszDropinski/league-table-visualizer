@@ -38,16 +38,20 @@ export const MIN_FONT_SIZE = 12
   it is still the one the proportions were drawn against.
 */
 export function rowMetrics(rowHeight: number, compact = false): RowMetrics {
-  if (compact) return {
-    logoSize: 18,
-    pointsColumnWidth: 34,
-    pointsFontSize: 12,
-    nameFontSize: 11,
-    rankFontSize: 11,
-    chipGap: 6,
-    chipRowGap: 2,
-    chipHeight: 20,
-    cellPadding: Math.max(0, Math.min(1, (rowHeight - 21) / 2)),
+  if (compact) {
+    // Larger mobile crests use the existing row budget, even at the 22px floor.
+    const chipHeight = Math.min(24, rowHeight - 1)
+    return {
+      logoSize: chipHeight,
+      pointsColumnWidth: 36,
+      pointsFontSize: 14,
+      nameFontSize: 13,
+      rankFontSize: 13,
+      chipGap: 6,
+      chipRowGap: 2,
+      chipHeight,
+      cellPadding: Math.max(0, Math.min(1, (rowHeight - chipHeight - 1) / 2)),
+    }
   }
   const pointsFontSize = clamp(rowHeight * 0.5, MIN_FONT_SIZE, 18)
   const logoSize = clamp(rowHeight * 0.7, 4, 28)

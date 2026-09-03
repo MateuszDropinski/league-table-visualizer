@@ -45,7 +45,7 @@ export function LeagueNavigation({ selected, standings }: Props) {
   }
 
   return <>
-    <button ref={button} type="button" aria-label="Choose league" aria-expanded={open} aria-controls="league-navigation" onClick={() => setOpen(!open)} className="league-picker fixed z-40 flex min-h-11 max-w-[calc(100%-1.5rem)] items-center gap-2 rounded-lg border bg-slate-950/95 px-3 py-2.5 text-sm font-medium text-slate-100 shadow-lg shadow-black/40 backdrop-blur-md focus-visible:outline-2 focus-visible:outline-white lg:hidden" style={{ borderColor: `${accent.from}99`, backgroundImage: `linear-gradient(115deg, ${accent.from}25, transparent)` }}>
+    <button ref={button} type="button" aria-label="Choose league" aria-expanded={open} aria-controls="league-navigation" onClick={() => setOpen(!open)} className="league-picker fixed z-40 flex min-h-11 max-w-[calc(100%-1.5rem)] items-center gap-2 rounded-lg border bg-slate-950/45 px-3 py-2.5 text-sm font-medium text-slate-100 shadow-lg shadow-black/15 hover:bg-slate-950/75 focus-visible:bg-slate-950/75 focus-visible:outline-2 focus-visible:outline-white lg:hidden" style={{ borderColor: `${accent.from}99`, backgroundImage: `linear-gradient(115deg, ${accent.from}25, transparent)` }}>
       <Menu size={17} aria-hidden="true" />
       <span className="truncate">{current.name}</span>
       <ChevronDown size={15} aria-hidden="true" className={open ? '' : 'rotate-180'} />
