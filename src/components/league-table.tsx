@@ -68,6 +68,10 @@ export function LeagueTable({ standings, accent }: LeagueTableProps) {
             {standings.league.name}, {standings.league.season}/{String(standings.league.season + 1).slice(-2)}.
             Fictional standings. Each row is a points total, highest first.
           </caption>
+          <colgroup>
+            <col style={{ width: metrics.pointsColumnWidth }} />
+            <col />
+          </colgroup>
           <tbody>
             {grid.rows.map((row) => (
               <PointRow
