@@ -25,17 +25,25 @@ busiest team. The source's order and shared positions are preserved.
 
 ## Responsive layout and colour
 
-On phones, rows prefer crest, rank and full club name. If this would take three
-lines, the row switches to crest, rank and the first three letters. If that
-still takes three lines, it switches to crest and rank. Full names remain in
-accessible labels and in the hover/tap card. The three-letter label keeps
-Unicode letters (including Polish accents) and skips punctuation and spaces.
+Each points row independently chooses one of three states: crest + position +
+full name, crest + position + first three letters, or crest + position. Prefer
+one line in the richest state that fits. Full names are measured in the actual
+UI font, including positions and games-in-hand markers. Desktop tables expand
+from their usual width into available side space before shortening labels.
+
+Row height is fixed by the viewport and points spread, with a 22px minimum.
+If no single-line state fits, teams can wrap only into spare height already
+inside that row, and only while the entire table fits the screen. Wrapping
+never makes the grid taller or introduces vertical scrolling. An exceptionally
+crowded row that cannot fit even crests and positions keeps one horizontally
+scrollable line so every club stays reachable. Wide season spreads may still
+require the normal document scrollbar because of the 22px row floor.
 
 Mobile metrics prioritise the overview: 11px names/ranks, 18px crests, 20px chip
-height, 6px horizontal gaps, 2px line gaps and 1px cell padding. Desktop sizing
-stays unchanged. Each total chooses its own representation, and the tallest
-result sets every points row's minimum height. This keeps the points scale
-uniform while minimising scrolling. Wider season spreads may still scroll.
+height, 6px horizontal gaps, 2px line gaps and up to 1px cell padding. Full names
+remain in accessible labels and the hover/tap card. Three-letter labels retain
+Unicode letters (including Polish accents), skipping punctuation and spaces.
+League switching is silent; failures retain a visible error and Retry button.
 
 The navigation uses the six league logos instead of coloured dots. Logo URLs
 are maintained in src/data/leagues.ts: official league sites for Premier

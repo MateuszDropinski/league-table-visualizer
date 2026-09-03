@@ -30,26 +30,28 @@ club counts must be updated in src/data/leagues.ts if the competition changes.
 
 - Every integer point value between highest and lowest occupied totals gets a
   row, including empty levels. All rows have exactly equal height.
-- Row height is the maximum of 22px, viewport height / row count, and the
-  minimum needed by the busiest wrapped total. The document scrolls when needed.
-  Never create a nested table scroller.
-- Never skip, compress or round away a point value. Do not force short rows to
-  fit when this makes names unreadable.
+- Row height is max(22px, viewport height / row count). Wrapping never grows
+  the grid. The document scrolls only when the 22px floor requires it.
+- Never skip, compress or round away a point value.
 - Desktop content varies with row height, with type at least 12px. On phones,
   use dense fixed metrics: 11px names/ranks, 18px crests, 20px chip height.
-- Shared-point clubs preserve source order. Desktop labels retain their 176px
-  minimum. Mobile uses full names until a third line would be required, then
-  crest/rank/three letters; if three lines are still needed, use crest/rank.
-  Preserve full accessible names and details. Never drop the mobile rank.
-- Evaluate every total's required height: compacting a more crowded total may
-  make it shorter than a less crowded one. Use the largest minimum for all rows.
+- Each total independently chooses full name, first three letters, or no name;
+  crest and league position always remain visible. Keep source order and full
+  accessible names. Measure real labels, including games-in-hand markers.
+- Expand the desktop table into available side space before compacting. Prefer
+  any fitting single-line state over wrapping. Wrap only if no state fits one
+  line, the whole grid fits the viewport, and the row's existing height allows
+  it. An impossible density may use one horizontally scrollable crest/rank
+  line, without increasing row height or clipping clubs.
+- Never show transient loading notifications when switching leagues. Preserve
+  visible error recovery and retry.
 - Team cards share one active owner per table, render in a portal, stay inside
   the viewport and close on Escape. A delayed dismissal must not close another
   club's card. Describe the interaction as hover or tap.
 - Use actual league logos beside league names, with no abbreviations. Use subtle league colour accents and
   bright semibold positions; keep the point-axis direction visually clear.
 - Games in hand are measured against the league's busiest club. Their amber
-  marker takes priority over displaying rank when horizontal room is limited.
+  marker becomes a dot in compact states; it never replaces the league position.
 
 ## Commands and deployment
 

@@ -1,14 +1,15 @@
-import { useMemo } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import { computeGrid, type GridRow } from '../lib/layout-engine'
 import type { LeagueAccent } from '../lib/league-accent'
 import { matchesBehind, mostPlayed } from '../lib/matches-behind'
-import { chipLayout, minimumRowHeight, rowMetrics, TOUCH_TABLE_WIDTH, type RowMetrics } from '../lib/row-metrics'
+import { CHIP_MODES, chipInnerGap, chipLayout, lineWidth, rowLineBudget, rowMetrics, tableWidth, TOUCH_TABLE_WIDTH, type ChipWidths, type RowMetrics } from '../lib/row-metrics'
 import { useElementSize } from '../lib/use-element-size'
 import { useViewportHeight } from '../lib/use-viewport-height'
 import type { StandingsFile, TeamStanding } from '../types/standings'
 import { TeamChip } from './team-chip'
 import { TeamCardScope } from './team-card-scope'
+import { TeamChipContent } from './team-chip-content'
 
 /*
   The points axis, as an actual table.
@@ -49,27 +50,55 @@ export function LeagueTable({ standings, accent }: LeagueTableProps) {
   const [ref, size] = useElementSize<HTMLDivElement>()
   const viewportHeight = useViewportHeight()
 
-  const grid = useMemo(
-    () => {
-      const base = computeGrid(standings.teams, viewportHeight)
-      // Compaction can make a crowded total shorter than a less crowded one.
-      const floor = Math.max(22, ...base.rows.map((row) => minimumRowHeight(row.teams.length, size.width)))
-      return computeGrid(standings.teams, viewportHeight, floor)
-    },
-    [standings.teams, viewportHeight, size.width],
-  )
-  const metrics = useMemo(() => rowMetrics(grid.rowHeight, size.width < TOUCH_TABLE_WIDTH), [grid.rowHeight, size.width])
-  // The line every team's played count is measured against, which is a fact
-  // about the table rather than about any one row.
+  const grid = useMemo(() => computeGrid(standings.teams, viewportHeight), [standings.teams, viewportHeight])
+  const compact = size.width < TOUCH_TABLE_WIDTH
+  const metrics = useMemo(() => rowMetrics(grid.rowHeight, compact), [grid.rowHeight, compact])
   const played = useMemo(() => mostPlayed(standings.teams), [standings.teams])
+  const measurementRef = useRef<HTMLDivElement>(null)
+  const [widths, setWidths] = useState<Record<string, ChipWidths>>({})
+
+  // Measure the same markup/fonts that the actual buttons use. Long names,
+  // two-digit ranks, diacritics and games-in-hand markers all count exactly.
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (!measurementRef.current) return
+      const next: Record<string, ChipWidths> = {}
+      standings.teams.forEach((team, index) => {
+        const elements = measurementRef.current!.querySelectorAll<HTMLElement>(`[data-measure-team="${index}"]`)
+        next[team.id] = Object.fromEntries(CHIP_MODES.map((mode, modeIndex) => [
+          mode, Math.ceil(elements[modeIndex].getBoundingClientRect().width),
+        ])) as ChipWidths
+      })
+      setWidths(next)
+    }
+    measure()
+    document.fonts.addEventListener('loadingdone', measure)
+    return () => document.fonts.removeEventListener('loadingdone', measure)
+  }, [standings.teams, metrics, compact, played])
+
+  const ready = size.width > 0 && standings.teams.every(team => widths[team.id])
+  const horizontalInset = metrics.pointsColumnWidth + metrics.cellPadding * 2 + 2
+  const requiredWidth = ready ? Math.max(...grid.rows.map(row =>
+    lineWidth(row.teams.map(team => widths[team.id].full), metrics.chipGap),
+  )) + horizontalInset + 1 : 864
+  const width = tableWidth(size.width, requiredWidth)
+  const maxLines = rowLineBudget(metrics, grid.rowHeight, grid.scrolls)
 
   return (
     <TeamCardScope>
     <div ref={ref} className="w-full">
-      {grid.rows.length > 0 && (
+      <div ref={measurementRef} aria-hidden="true" className="invisible fixed h-0 w-0 overflow-hidden pointer-events-none">
+        {standings.teams.flatMap((team, index) => CHIP_MODES.map(mode => (
+          <span key={`${team.id}-${mode}`} data-measure-team={index} className="flex w-max items-center"
+            style={{ gap: chipInnerGap(metrics, compact), lineHeight: 1.35 }}>
+            <TeamChipContent team={team} mode={mode} metrics={metrics} compact={compact} behind={matchesBehind(team, played)} />
+          </span>
+        )))}
+      </div>
+      {ready && grid.rows.length > 0 && (
         <table
-          className="w-full table-fixed border-collapse"
-          style={{ height: grid.height, backgroundImage: AXIS_GRADIENT }}
+          className="mx-auto table-fixed border-collapse"
+          style={{ width, height: grid.height, backgroundImage: AXIS_GRADIENT }}
         >
           <caption className="sr-only">
             {standings.league.name}, {standings.league.season}/{String(standings.league.season + 1).slice(-2)}.
@@ -87,7 +116,10 @@ export function LeagueTable({ standings, accent }: LeagueTableProps) {
                 height={grid.rowHeight}
                 metrics={metrics}
                 accent={accent}
-                width={size.width}
+                width={width}
+                widths={widths}
+                compact={compact}
+                maxLines={maxLines}
                 mostPlayed={played}
               />
             ))}
@@ -105,29 +137,17 @@ interface PointRowProps {
   metrics: RowMetrics
   accent: LeagueAccent
   width: number
+  widths: Record<string, ChipWidths>
+  compact: boolean
+  maxLines: number
   /** The whole table's played count, which is what marks a row's teams as behind. */
   mostPlayed: number
 }
 
-function PointRow({ row, height, metrics, accent, width, mostPlayed }: PointRowProps) {
+function PointRow({ row, height, metrics, accent, width, widths, compact, maxLines, mostPlayed }: PointRowProps) {
   const occupied = row.teams.length > 0
   const contentWidth = Math.max(0, width - metrics.pointsColumnWidth - metrics.cellPadding * 2 - 2)
-  const layout = chipLayout(metrics, row.teams.length, contentWidth, width < TOUCH_TABLE_WIDTH)
-
-  /*
-    A ceiling, not a width. Teams sit next to each other from the left at the
-    width their own name needs, and this only stops any one of them growing
-    past its share of a line, which is what keeps the wrapped line count to
-    what the row can paint. Two teams on a total therefore read as two teams
-    side by side rather than one at each end of the row.
-
-    The half pixel back stops a line that comes to exactly the full width from
-    wrapping its last team on a fractional container.
-  */
-  const chipMaxWidth =
-    layout.perLine === 1
-      ? '100%'
-      : `calc((100% - ${metrics.chipGap * (layout.perLine - 1) + 0.5}px) / ${layout.perLine})`
+  const layout = chipLayout(metrics, row.teams.map(team => widths[team.id]), contentWidth, maxLines)
 
   return (
     <tr style={{ height }} className="border-b border-slate-700 last:border-b-0">
@@ -154,23 +174,29 @@ function PointRow({ row, height, metrics, accent, width, mostPlayed }: PointRowP
       >
         {occupied && (
           <div
-            // The grid has already reserved equal-height rows for these lines.
-            className={`flex items-center ${layout.lines > 1 ? 'flex-wrap' : 'flex-nowrap'}`}
-            style={{ columnGap: metrics.chipGap, rowGap: metrics.chipRowGap }}
+            data-layout={layout.mode}
+            data-lines={layout.lines.length}
+            className="overflow-x-auto"
+            style={{ scrollbarWidth: 'none', paddingBlock: metrics.cellPadding }}
           >
-            {row.teams.map((team) => (
-              <TeamChip
-                key={team.id}
-                team={team}
-                mode={layout.mode}
-                metrics={metrics}
-                maxWidth={chipMaxWidth}
-                minWidth={layout.minWidth}
-                compact={width < TOUCH_TABLE_WIDTH}
-                showRank={layout.showRank}
-                behind={matchesBehind(team, mostPlayed)}
-              />
-            ))}
+            <div className="flex flex-col" style={{ gap: metrics.chipRowGap }}>
+              {layout.lines.map((line, lineIndex) => (
+                <div key={lineIndex} className="flex flex-nowrap items-center" style={{ gap: metrics.chipGap }}>
+                  {line.map(index => {
+                    const team = row.teams[index]
+                    return <TeamChip
+                      key={team.id}
+                      team={team}
+                      mode={layout.mode}
+                      metrics={metrics}
+                      width={widths[team.id][layout.mode]}
+                      compact={compact}
+                      behind={matchesBehind(team, mostPlayed)}
+                    />
+                  })}
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </td>

@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { computeGrid, MIN_ROW_HEIGHT } from '../src/lib/layout-engine.ts'
-import { chipLayout, minimumRowHeight, MIN_FONT_SIZE, rowMetrics, TOUCH_TABLE_WIDTH } from '../src/lib/row-metrics.ts'
+import { chipLayout, lineWidth, MIN_FONT_SIZE, rowLineBudget, rowMetrics, tableWidth, TOUCH_TABLE_WIDTH, type ChipWidths } from '../src/lib/row-metrics.ts'
 import { readSnapshot, snapshotFiles } from './snapshots.ts'
 
-test('type stays readable and positions are as large as names', () => {
-  for (let height = 1; height <= 1200; height++) {
+const chips = (count: number): ChipWidths[] => Array.from({ length: count }, () => ({ full: 144, abbreviated: 72, crest: 44 }))
+
+test('desktop type stays readable and positions are as large as names', () => {
+  for (let height = 22; height <= 1200; height++) {
     const metrics = rowMetrics(height)
     assert.ok(metrics.nameFontSize >= MIN_FONT_SIZE)
     assert.ok(metrics.pointsFontSize >= MIN_FONT_SIZE)
@@ -13,103 +15,128 @@ test('type stays readable and positions are as large as names', () => {
   }
 })
 
-test('mobile switches to three letters exactly when names would need a third line', () => {
+test('each row chooses the richest single-line state independently', () => {
+  const metrics = rowMetrics(80, true)
+  assert.equal(chipLayout(metrics, chips(2), 300, 3).mode, 'full')
+  assert.equal(chipLayout(metrics, chips(3), 300, 3).mode, 'abbreviated')
+  assert.equal(chipLayout(metrics, chips(4), 300, 3).mode, 'crest')
+  for (const count of [2, 3, 4]) assert.equal(chipLayout(metrics, chips(count), 300, 3).lines.length, 1)
+})
+
+test('actual name widths decide fit instead of equal minimum-width slots', () => {
+  const metrics = rowMetrics(50)
+  const widths = [{ full: 220, abbreviated: 80, crest: 48 }, { full: 90, abbreviated: 80, crest: 48 }]
+  assert.equal(chipLayout(metrics, widths, 326, 1).mode, 'full')
+  assert.equal(chipLayout(metrics, widths, 324, 1).mode, 'abbreviated')
+})
+
+test('desktop uses free width before shortening or wrapping names', () => {
+  const metrics = rowMetrics(80)
+  const widths = chips(7)
+  const inset = metrics.pointsColumnWidth + metrics.cellPadding * 2 + 2
+  const required = lineWidth(widths.map(chip => chip.full), metrics.chipGap) + inset + 1
+  const expanded = tableWidth(1200, required)
+  assert.ok(expanded > 864)
+  assert.ok(expanded <= 1200)
+  assert.equal(chipLayout(metrics, widths, expanded - inset, 2).mode, 'full')
+  assert.equal(chipLayout(metrics, widths, expanded - inset, 2).lines.length, 1)
+  assert.equal(tableWidth(1100, 600), 864)
+  assert.equal(tableWidth(1000, 1400), 1000)
+  assert.equal(tableWidth(320, 600), 320)
+})
+
+test('wrapping uses existing space only after no single-line state fits', () => {
+  const metrics = rowMetrics(80, true)
+  const layout = chipLayout(metrics, chips(7), 300, rowLineBudget(metrics, 80, false))
+  assert.equal(layout.mode, 'abbreviated')
+  assert.equal(layout.lines.length, 3)
+  assert.deepEqual(layout.lines.flat(), [0, 1, 2, 3, 4, 5, 6])
+  assert.equal(layout.overflow, false)
+})
+
+test('a tall row can wrap full names without changing the axis height', () => {
+  const grid = computeGrid(Array.from({ length: 20 }, () => ({ points: 0 })), 600)
+  const metrics = rowMetrics(grid.rowHeight, true)
+  const layout = chipLayout(metrics, chips(20), 300, rowLineBudget(metrics, grid.rowHeight, grid.scrolls))
+  assert.equal(layout.mode, 'full')
+  assert.equal(layout.lines.length, 10)
+  assert.equal(grid.height, 600)
+  assert.equal(grid.scrolls, false)
+})
+
+test('a line that would exceed the height budget triggers a denser state', () => {
+  const metrics = rowMetrics(46, true)
+  assert.equal(rowLineBudget(metrics, 46, false), 2)
+  const layout = chipLayout(metrics, chips(9), 300, 2)
+  assert.equal(layout.mode, 'crest')
+  assert.equal(layout.lines.length, 2)
+  assert.equal(rowLineBudget(metrics, 44, false), 1)
+})
+
+test('wrapping is forbidden when the base points grid already scrolls', () => {
+  const grid = computeGrid([{ points: 50 }, { points: 0 }], 600)
+  const metrics = rowMetrics(grid.rowHeight, true)
+  assert.equal(grid.scrolls, true)
+  assert.equal(rowLineBudget(metrics, grid.rowHeight, grid.scrolls), 1)
+  assert.equal(chipLayout(metrics, chips(5), 300, 1).mode, 'crest')
+  assert.equal(rowLineBudget(rowMetrics(200, true), 200, true), 1)
+})
+
+test('impossible density keeps all crest/rank chips reachable without extra height', () => {
+  const layout = chipLayout(rowMetrics(22, true), chips(20), 180, 1)
+  assert.equal(layout.mode, 'crest')
+  assert.equal(layout.lines.length, 1)
+  assert.equal(layout.lines.flat().length, 20)
+  assert.equal(layout.overflow, true)
+})
+
+test('fractional width boundaries cannot accidentally add a flex line', () => {
   const metrics = rowMetrics(22, true)
-  assert.equal(chipLayout(metrics, 4, 300, true).mode, 'full')
-  const compact = chipLayout(metrics, 5, 300, true)
-  assert.equal(compact.mode, 'abbreviated')
-  assert.equal(compact.lines, 2)
-  assert.equal(compact.showRank, true)
+  assert.equal(chipLayout(metrics, chips(2), 294.9, 1).mode, 'abbreviated')
+  assert.equal(chipLayout(metrics, chips(2), 295, 1).mode, 'full')
 })
 
-test('mobile switches to crest and rank when abbreviations would need three lines', () => {
-  const metrics = rowMetrics(22, true)
-  assert.equal(chipLayout(metrics, 6, 260, true).mode, 'abbreviated')
-  const compact = chipLayout(metrics, 7, 260, true)
-  assert.equal(compact.mode, 'crest')
-  assert.equal(compact.lines, 2)
-  assert.equal(compact.showRank, true)
-})
-
-test('a less crowded row can need more height after another row compacts', () => {
-  const two = minimumRowHeight(2, 300)
-  const three = minimumRowHeight(3, 300)
-  assert.ok(two > three)
-  const teams = [{points: 10}, {points: 10}, {points: 0}, {points: 0}, {points: 0}]
-  const rows = computeGrid(teams, 0).rows
-  const floor = Math.max(...rows.map(row => minimumRowHeight(row.teams.length, 300)))
-  assert.equal(floor, two)
-})
-
-test('compact metrics reduce type and spacing without hiding positions', () => {
-  const mobile = rowMetrics(80, true)
-  const desktop = rowMetrics(80)
-  assert.equal(mobile.nameFontSize, 11)
-  assert.equal(mobile.rankFontSize, mobile.nameFontSize)
-  assert.ok(mobile.cellPadding < desktop.cellPadding)
-  assert.ok(mobile.chipGap < desktop.chipGap)
-  assert.ok(mobile.chipHeight < 44)
-})
-
-test('desktop teams share a line when readable labels fit', () => {
-  const layout = chipLayout(rowMetrics(50), 3, 620)
-  assert.equal(layout.perLine, 3)
-  assert.equal(layout.lines, 1)
-  assert.equal(layout.showRank, true)
-})
-
-test('growing crowded rows preserves equal points spacing and all empty levels', () => {
-  const teams = [{ points: 10 }, { points: 10 }, { points: 10 }, { points: 0 }]
-  const floor = minimumRowHeight(3, 350)
-  const grid = computeGrid(teams, 200, floor)
-  assert.ok(grid.scrolls)
-  assert.equal(grid.rows.length, 11)
-  assert.equal(grid.height, grid.rowHeight * 11)
-  assert.equal(grid.rows[1].teams.length, 0)
-  assert.ok(grid.rowHeight >= floor)
-})
-
-test('all clubs fit at phone, tablet, desktop and crest-only widths', () => {
-  for (const file of snapshotFiles()) {
-    const teams = readSnapshot(file).teams
-    const rows = computeGrid(teams, 0).rows
-    for (const width of [200, 240, 300, 344, 374, 414, 620, 640, 864, 1200]) {
-      for (const height of [320, 600, 844, 1200]) {
-        const grid = computeGrid(teams, height, Math.max(...rows.map(row => minimumRowHeight(row.teams.length, width))))
-        const compact = width < TOUCH_TABLE_WIDTH
-        const metrics = rowMetrics(grid.rowHeight, compact)
-        const contentWidth = width - metrics.pointsColumnWidth - metrics.cellPadding * 2 - 2
-        for (const row of grid.rows) {
-          if (!row.teams.length) continue
-          const layout = chipLayout(metrics, row.teams.length, contentWidth, compact)
-          const chipHeight = metrics.chipHeight
-          const painted = layout.lines * chipHeight + (layout.lines - 1) * metrics.chipRowGap
-          assert.ok(painted + metrics.cellPadding * 2 <= grid.rowHeight, `${file}: ${width}x${height}, ${row.points} points clips`)
-          assert.ok(layout.perLine * layout.minWidth + (layout.perLine - 1) * metrics.chipGap <= contentWidth + 0.01)
-          assert.ok(grid.rowHeight >= MIN_ROW_HEIGHT)
-        }
-      }
+test('padding and line boxes fit even the shortest rows on desktop and mobile', () => {
+  for (const compact of [false, true]) {
+    for (let height = MIN_ROW_HEIGHT; height <= 200; height += 0.25) {
+      const metrics = rowMetrics(height, compact)
+      const budget = rowLineBudget(metrics, height, false)
+      const painted = budget * metrics.chipHeight + (budget - 1) * metrics.chipRowGap
+      assert.ok(painted + metrics.cellPadding * 2 + 1 <= height + 1e-9)
+      assert.equal(metrics.rankFontSize, metrics.nameFontSize)
     }
   }
 })
 
-test('an all-level league remains readable and wide tables keep their row floor', () => {
-  const teams = Array.from({ length: 20 }, () => ({ points: 0 }))
-  const grid = computeGrid(teams, 600, minimumRowHeight(20, 350))
-  assert.equal(grid.rows.length, 1)
-  assert.equal(grid.height, 600)
-  assert.equal(minimumRowHeight(1, 900), MIN_ROW_HEIGHT)
-})
-
-test('all six current tables fit a typical phone viewport with compact tiers', () => {
+test('all six snapshots retain equal points spacing and fit their row budgets at every size', () => {
   for (const file of snapshotFiles()) {
     const teams = readSnapshot(file).teams
-    const rows = computeGrid(teams, 0).rows
-    for (const width of [304, 344, 374]) {
-      const floor = Math.max(...rows.map(row => minimumRowHeight(row.teams.length, width)))
-      const grid = computeGrid(teams, 700, floor)
-      assert.equal(grid.scrolls, false, `${file} at ${width}px`)
-      assert.equal(grid.height, 700)
+    for (const width of [200, 240, 300, 344, 374, 414, 620, 640, 864, 1200]) {
+      for (const height of [320, 600, 844, 1200]) {
+        const grid = computeGrid(teams, height)
+        const metrics = rowMetrics(grid.rowHeight, width < TOUCH_TABLE_WIDTH)
+        const contentWidth = width - metrics.pointsColumnWidth - metrics.cellPadding * 2 - 2
+        const budget = rowLineBudget(metrics, grid.rowHeight, grid.scrolls)
+        assert.equal(grid.rows.length, grid.spread + 1)
+        assert.equal(grid.height, grid.rowHeight * grid.rows.length)
+        assert.ok(grid.rowHeight >= MIN_ROW_HEIGHT)
+        for (const row of grid.rows) {
+          // Deliberately generous name widths exercise the planner, independently
+          // of the browser's actual font measurements used by the UI.
+          const widths = row.teams.map(team => ({
+            full: 70 + team.name.length * metrics.nameFontSize,
+            abbreviated: 70 + metrics.nameFontSize * 3,
+            crest: 55,
+          }))
+          const layout = chipLayout(metrics, widths, contentWidth, budget)
+          assert.ok(layout.lines.length <= budget, `${file}: ${width}x${height}, ${row.points} points`)
+          assert.deepEqual(layout.lines.flat(), row.teams.map((_, index) => index))
+          for (const line of layout.lines) {
+            if (!layout.overflow) assert.ok(lineWidth(line.map(index => widths[index][layout.mode]), metrics.chipGap) <= contentWidth)
+          }
+          if (grid.scrolls) assert.ok(layout.lines.length <= 1)
+        }
+      }
     }
   }
 })

@@ -51,21 +51,19 @@ export function App() {
       <LeagueNavigation selected={selected} standings={standings} />
       <div className="flex min-h-dvh justify-center lg:pl-52">
         {standings && (
-          <div className="w-full max-w-4xl px-1 sm:px-4" aria-busy={loading}>
+          <div className="w-full min-w-0 px-1 sm:px-4" aria-busy={loading}>
             <LeagueTable key={standings.league.slug} standings={standings} accent={leagueAccent(standings.league.slug)} />
           </div>
         )}
       </div>
-      {(loading || error) && (
+      {error && (
         <div className="fixed left-1/2 top-4 z-40 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-lg border border-slate-700 bg-slate-900 p-4 shadow-lg">
-          <p role={error ? 'alert' : 'status'} className="text-sm text-slate-200">
-            {error ? 'Could not load standings.' : 'Loading standings…'}
+          <p role="alert" className="text-sm text-slate-200">
+            Could not load standings.
             {standings && ` Still showing ${standings.league.name}.`}
           </p>
-          {error && <>
-            <p className="mt-2 break-words text-xs text-slate-400">{error}</p>
-            <button type="button" onClick={() => setAttempt((value) => value + 1)} className="mt-3 rounded border border-slate-500 px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-emerald-400">Retry</button>
-          </>}
+          <p className="mt-2 break-words text-xs text-slate-400">{error}</p>
+          <button type="button" onClick={() => setAttempt((value) => value + 1)} className="mt-3 rounded border border-slate-500 px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-emerald-400">Retry</button>
         </div>
       )}
     </main>
