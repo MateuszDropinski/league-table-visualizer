@@ -59,8 +59,8 @@ export function LeagueNavigation({ selected, standings }: Props) {
         {leagues.map((league) => {
           const brand = leagueAccent(league.slug)
           const active = selected === league.slug
-          return <a key={league.slug} href={`#${league.slug}`} aria-current={active ? 'page' : undefined} onClick={close} className={`flex min-h-11 items-center gap-3 rounded-md border-l-2 px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-white ${active ? 'font-semibold text-slate-100' : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'}`} style={{ borderLeftColor: active ? brand.to : 'transparent', background: active ? `linear-gradient(110deg, ${brand.from}45, ${brand.to}12)` : undefined }}>
-            <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: brand.to }} />
+          return <a key={league.slug} href={`#${league.slug}`} aria-current={active ? 'page' : undefined} onClick={close} className={`flex min-h-11 items-center gap-2 rounded-md border-l-2 px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-white ${active ? 'font-semibold text-slate-100' : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'}`} style={{ borderLeftColor: active ? brand.to : 'transparent', background: active ? `linear-gradient(110deg, ${brand.from}45, ${brand.to}12)` : undefined }}>
+            <img src={league.logo} alt="" width={28} height={28} className={`h-7 w-7 shrink-0 object-contain ${league.logoOnLight ? 'rounded-sm bg-slate-100 p-0.5' : ''}`} />
             {league.name}
           </a>
         })}

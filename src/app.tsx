@@ -51,7 +51,7 @@ export function App() {
       <LeagueNavigation selected={selected} standings={standings} />
       <div className="flex min-h-dvh justify-center lg:pl-52">
         {standings && (
-          <div className="w-full max-w-4xl px-2 sm:px-4" aria-busy={loading}>
+          <div className="w-full max-w-4xl px-1 sm:px-4" aria-busy={loading}>
             <LeagueTable key={standings.league.slug} standings={standings} accent={leagueAccent(standings.league.slug)} />
           </div>
         )}

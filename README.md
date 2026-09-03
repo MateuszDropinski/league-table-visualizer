@@ -25,11 +25,23 @@ busiest team. The source's order and shared positions are preserved.
 
 ## Responsive layout and colour
 
-Clubs have a minimum readable width of 176px for their crest, position and name.
-Crowded totals wrap, and the busiest total determines the minimum height of
-**every** points row. The document may grow and scroll; the points scale remains
-uniform. Touch layouts have 44px targets. If even a single label cannot fit,
-clubs use crests alone with accessible names and full detail cards.
+On phones, rows prefer crest, rank and full club name. If this would take three
+lines, the row switches to crest, rank and the first three letters. If that
+still takes three lines, it switches to crest and rank. Full names remain in
+accessible labels and in the hover/tap card. The three-letter label keeps
+Unicode letters (including Polish accents) and skips punctuation and spaces.
+
+Mobile metrics prioritise the overview: 11px names/ranks, 18px crests, 20px chip
+height, 6px horizontal gaps, 2px line gaps and 1px cell padding. Desktop sizing
+stays unchanged. Each total chooses its own representation, and the tallest
+result sets every points row's minimum height. This keeps the points scale
+uniform while minimising scrolling. Wider season spreads may still scroll.
+
+The navigation uses the six league logos instead of coloured dots. Logo URLs
+are maintained in src/data/leagues.ts: official league sites for Premier
+League, Bundesliga, Ligue 1 and Ekstraklasa; [LaLiga's vertical logo on
+Wikimedia Commons](https://commons.wikimedia.org/wiki/File:LaLiga_2023_Vertical_Logo.svg);
+and [AC Milan's published Serie A logo](https://www.acmilan.com/en/academy/milan-academy/all-the-milan-academies).
 
 Positions use brighter, semibold text at the same size as club names.
 Brand-inspired colours tint navigation and the page background. The green/red

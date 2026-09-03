@@ -35,14 +35,18 @@ club counts must be updated in src/data/leagues.ts if the competition changes.
   Never create a nested table scroller.
 - Never skip, compress or round away a point value. Do not force short rows to
   fit when this makes names unreadable.
-- Content sizes vary continuously with row height, with type at least 12px.
-- Shared-point clubs keep source order and wrap at a minimum label width of
-  176px. Grow all point rows equally to accommodate the most crowded total.
-  Use logos alone only when one label cannot fit. Keep accessible full names.
+- Desktop content varies with row height, with type at least 12px. On phones,
+  use dense fixed metrics: 11px names/ranks, 18px crests, 20px chip height.
+- Shared-point clubs preserve source order. Desktop labels retain their 176px
+  minimum. Mobile uses full names until a third line would be required, then
+  crest/rank/three letters; if three lines are still needed, use crest/rank.
+  Preserve full accessible names and details. Never drop the mobile rank.
+- Evaluate every total's required height: compacting a more crowded total may
+  make it shorter than a less crowded one. Use the largest minimum for all rows.
 - Team cards share one active owner per table, render in a portal, stay inside
   the viewport and close on Escape. A delayed dismissal must not close another
   club's card. Describe the interaction as hover or tap.
-- No league abbreviations in navigation. Use subtle league colour accents and
+- Use actual league logos beside league names, with no abbreviations. Use subtle league colour accents and
   bright semibold positions; keep the point-axis direction visually clear.
 - Games in hand are measured against the league's busiest club. Their amber
   marker takes priority over displaying rank when horizontal room is limited.

@@ -22,7 +22,7 @@ const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max)
 
 /**
- * The smallest type this app sets, anywhere, at any row height.
+ * The desktop type floor. Compact mobile rows use the explicit metrics below.
  *
  * Below this a name stops being read and starts being decoded, which is worth
  * less than the row it saves. It is also what sets `MIN_ROW_HEIGHT`: the floor
@@ -37,7 +37,18 @@ export const MIN_FONT_SIZE = 12
   points and a 12px name. That row is no longer the shortest one there is, but
   it is still the one the proportions were drawn against.
 */
-export function rowMetrics(rowHeight: number): RowMetrics {
+export function rowMetrics(rowHeight: number, compact = false): RowMetrics {
+  if (compact) return {
+    logoSize: 18,
+    pointsColumnWidth: 34,
+    pointsFontSize: 12,
+    nameFontSize: 11,
+    rankFontSize: 11,
+    chipGap: 6,
+    chipRowGap: 2,
+    chipHeight: 20,
+    cellPadding: 1,
+  }
   const pointsFontSize = clamp(rowHeight * 0.5, MIN_FONT_SIZE, 18)
   const logoSize = clamp(rowHeight * 0.7, 4, 28)
   const nameFontSize = clamp(rowHeight * 0.46, MIN_FONT_SIZE, 15)
@@ -63,7 +74,7 @@ export const MIN_TEAM_WIDTH = 176
 export const MIN_CREST_WIDTH = 44
 export const FULL_NAME_WIDTH = 220
 export const TOUCH_TABLE_WIDTH = 640
-export type ChipMode = 'full' | 'short' | 'crest'
+export type ChipMode = 'full' | 'short' | 'abbreviated' | 'crest'
 
 export interface ChipLayout {
   mode: ChipMode
@@ -74,7 +85,24 @@ export interface ChipLayout {
 }
 
 /** Width decides wrapping. The grid grows to fit, instead of crushing names. */
-export function chipLayout(metrics: RowMetrics, teamCount: number, contentWidth: number): ChipLayout {
+export function chipLayout(metrics: RowMetrics, teamCount: number, contentWidth: number, compact = false): ChipLayout {
+  if (compact) {
+    // Prefer names. A third line triggers the next denser representation.
+    const tiers = [
+      { mode: 'full', width: 144 },
+      { mode: 'abbreviated', width: 72 },
+      { mode: 'crest', width: 44 },
+    ] as const
+    for (const tier of tiers) {
+      const minWidth = Math.min(Math.max(0, contentWidth), tier.width)
+      const capacity = Math.max(1, Math.floor((contentWidth + metrics.chipGap - 0.5) / (tier.width + metrics.chipGap)))
+      const perLine = Math.max(1, Math.min(teamCount, capacity))
+      const lines = Math.ceil(teamCount / perLine)
+      if (tier.mode === 'crest' || (contentWidth >= tier.width && lines < 3)) {
+        return { mode: tier.mode, minWidth, perLine, lines, showRank: true }
+      }
+    }
+  }
   const mode = contentWidth < MIN_TEAM_WIDTH ? 'crest' : 'short'
   const minWidth = Math.min(contentWidth, mode === 'crest' ? MIN_CREST_WIDTH : MIN_TEAM_WIDTH)
   const capacity = Math.max(1, Math.floor((contentWidth + metrics.chipGap) / (minWidth + metrics.chipGap)))
@@ -91,15 +119,15 @@ export function chipLayout(metrics: RowMetrics, teamCount: number, contentWidth:
 
 /**
  * Use capped content sizes to guarantee wrapping fits without a resize loop.
- * Every point row adopts the busiest row's minimum, preserving the exact axis.
+ * Call for each total; the largest minimum preserves the exact points axis.
  */
-export function minimumRowHeight(maxTeamsOnRow: number, tableWidth: number): number {
-  if (tableWidth <= 0 || maxTeamsOnRow === 0) return 22
-  const metrics = rowMetrics(1000)
+export function minimumRowHeight(teamsOnRow: number, tableWidth: number): number {
+  if (tableWidth <= 0 || teamsOnRow === 0) return 22
+  const compact = tableWidth < TOUCH_TABLE_WIDTH
+  const metrics = rowMetrics(1000, compact)
   const contentWidth = Math.max(0, tableWidth - metrics.pointsColumnWidth - metrics.cellPadding * 2 - 2)
-  const { lines } = chipLayout(metrics, maxTeamsOnRow, contentWidth)
-  const touch = tableWidth < TOUCH_TABLE_WIDTH
-  if (lines <= 1 && !touch) return 22
-  const chipHeight = touch ? 44 : metrics.chipHeight
-  return Math.ceil(lines * chipHeight + Math.max(0, lines - 1) * metrics.chipRowGap + metrics.cellPadding * 2 + 2)
+  const { lines } = chipLayout(metrics, teamsOnRow, contentWidth, compact)
+  if (lines <= 1 && !compact) return 22
+  const chipHeight = metrics.chipHeight
+  return Math.ceil(lines * chipHeight + Math.max(0, lines - 1) * metrics.chipRowGap + metrics.cellPadding * 2 + (compact ? 1 : 2))
 }

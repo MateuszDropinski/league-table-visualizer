@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useRef, useState } from 'react'
 
+import { firstThreeLetters } from '../lib/team-label'
 import { resolveAssetUrl } from '../data/asset-url'
 import type { ChipMode, RowMetrics } from '../lib/row-metrics'
 import type { TeamStanding } from '../types/standings'
@@ -13,7 +14,7 @@ interface TeamChipProps {
   /** The most of the line one team may take, not the width it is given. */
   maxWidth: string
   minWidth: number
-  touchTarget: boolean
+  compact: boolean
   /** False on a crowded row, where the position costs more than it is worth. */
   showRank: boolean
   /** Fixtures this team is short of the rest of the league, 0 when level. */
@@ -43,7 +44,7 @@ interface TeamChipProps {
   settled". It never disappears, since a distance that may be wrong is worth
   more of the row than the position that sits next to it.
 */
-export function TeamChip({ team, mode, metrics, maxWidth, minWidth, touchTarget, showRank, behind }: TeamChipProps) {
+export function TeamChip({ team, mode, metrics, maxWidth, minWidth, compact, showRank, behind }: TeamChipProps) {
   const { activeId, activate, release } = useTeamCard()
   const ref = useRef<HTMLButtonElement>(null)
   const tooltipId = useId()
@@ -117,7 +118,7 @@ export function TeamChip({ team, mode, metrics, maxWidth, minWidth, touchTarget,
         // screen reader announces with its label and reaches by keyboard
         // without being told how, and focus alone opens the card.
         className="flex min-w-0 cursor-pointer items-center rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-        style={{ maxWidth, minWidth, minHeight: touchTarget ? 44 : undefined, gap: Math.max(3, metrics.chipGap * 0.55), lineHeight: 1.35 }}
+        style={{ maxWidth, minWidth, minHeight: compact ? metrics.chipHeight : undefined, gap: compact ? 2 : Math.max(3, metrics.chipGap * 0.55), lineHeight: 1.35 }}
         // Hover is a mouse gesture. A tap is a press, and toggling on press is
         // what lets a card be dismissed by tapping the same chip again.
         onPointerEnter={(event) => {
@@ -159,14 +160,14 @@ export function TeamChip({ team, mode, metrics, maxWidth, minWidth, touchTarget,
           </span>
         )}
         <span
-          className={mode === 'crest' ? 'sr-only' : 'truncate font-medium text-slate-200'}
+          className={mode === 'crest' ? 'sr-only' : `truncate font-medium text-slate-200 ${mode === 'abbreviated' ? 'font-mono' : ''}`}
           style={{ fontSize: metrics.nameFontSize }}
         >
-          {mode === 'full' ? team.name : team.shortName}
+          {mode === 'abbreviated' ? firstThreeLetters(team.name) : mode === 'full' ? team.name : team.shortName}
         </span>
 
         {behind > 0 &&
-          (showRank ? (
+          (showRank && !compact ? (
             <span
               aria-hidden="true"
               className="shrink-0 rounded-sm bg-amber-400/15 font-semibold tabular-nums text-amber-300"

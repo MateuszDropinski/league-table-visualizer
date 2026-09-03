@@ -1,5 +1,13 @@
 # Progress
 
+## Dense mobile overview and league logos
+
+League logos replace the navigation dots. On mobile, a third line triggers
+three-letter labels, and a third abbreviated line triggers crest/rank only.
+Ranks remain visible. Smaller type, crests, gaps and padding remove the previous
+44px chip floor. Each points total is measured independently after compaction
+so every points row can keep the same height.
+
 ## Readability and mobile refinement
 
 Rank numbers are brighter and match the name size. League colours accent the

@@ -52,12 +52,13 @@ export function LeagueTable({ standings, accent }: LeagueTableProps) {
   const grid = useMemo(
     () => {
       const base = computeGrid(standings.teams, viewportHeight)
-      const crowded = Math.max(0, ...base.rows.map((row) => row.teams.length))
-      return computeGrid(standings.teams, viewportHeight, minimumRowHeight(crowded, size.width))
+      // Compaction can make a crowded total shorter than a less crowded one.
+      const floor = Math.max(22, ...base.rows.map((row) => minimumRowHeight(row.teams.length, size.width)))
+      return computeGrid(standings.teams, viewportHeight, floor)
     },
     [standings.teams, viewportHeight, size.width],
   )
-  const metrics = useMemo(() => rowMetrics(grid.rowHeight), [grid.rowHeight])
+  const metrics = useMemo(() => rowMetrics(grid.rowHeight, size.width < TOUCH_TABLE_WIDTH), [grid.rowHeight, size.width])
   // The line every team's played count is measured against, which is a fact
   // about the table rather than about any one row.
   const played = useMemo(() => mostPlayed(standings.teams), [standings.teams])
@@ -111,7 +112,7 @@ interface PointRowProps {
 function PointRow({ row, height, metrics, accent, width, mostPlayed }: PointRowProps) {
   const occupied = row.teams.length > 0
   const contentWidth = Math.max(0, width - metrics.pointsColumnWidth - metrics.cellPadding * 2 - 2)
-  const layout = chipLayout(metrics, row.teams.length, contentWidth)
+  const layout = chipLayout(metrics, row.teams.length, contentWidth, width < TOUCH_TABLE_WIDTH)
 
   /*
     A ceiling, not a width. Teams sit next to each other from the left at the
@@ -165,7 +166,7 @@ function PointRow({ row, height, metrics, accent, width, mostPlayed }: PointRowP
                 metrics={metrics}
                 maxWidth={chipMaxWidth}
                 minWidth={layout.minWidth}
-                touchTarget={width < TOUCH_TABLE_WIDTH}
+                compact={width < TOUCH_TABLE_WIDTH}
                 showRank={layout.showRank}
                 behind={matchesBehind(team, mostPlayed)}
               />
