@@ -53,7 +53,7 @@ export const MIN_FONT_SIZE = 12
 
 /*
   The ratios come from the four tiers this replaced, which were sized by eye
-  against the mock crests and names: a 24px row carried a 16px crest, 13px
+  against representative crests and names: a 24px row carried a 16px crest, 13px
   points and a 12px name. That row is no longer the shortest one there is, but
   it is still the one the proportions were drawn against.
 */
@@ -98,7 +98,7 @@ export interface ChipLayout {
 
 /**
  * The width one team needs before its full name is worth showing rather than
- * its short one. Measured against the longest mock names at the largest type,
+ * its short one. Measured against long club names at the largest type,
  * with the position in front of them accounted for.
  */
 const FULL_NAME_WIDTH = 185

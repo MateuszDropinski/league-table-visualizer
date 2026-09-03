@@ -1,12 +1,3 @@
-/*
-  Unit tests for the layout engine, run by node's own test runner with
-  `pnpm test`. No browser and no React, which is the whole point of keeping the
-  engine pure.
-
-  The real mock snapshots are pulled in at the end as a sweep, because the 25
-  tables were generated to cover exactly the shapes the engine has to survive.
-*/
-
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
@@ -16,7 +7,7 @@ import { readSnapshot, snapshotFiles } from './snapshots.ts'
 /** Points totals in, one placeable per total, in the order given. */
 const table = (...points: number[]): Placeable[] => points.map((p) => ({ points: p }))
 
-/** Shapes taken from the mock leagues, so the cases match what the app renders. */
+/** Synthetic edge cases independent of the current season. */
 const LATE_SEASON = [97, 78, 75, 73, 68, 65, 62, 57, 54, 52, 50, 49, 47, 45, 43, 40, 37, 33, 28, 22]
 const EARLY_SEASON = [7, 6, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 2, 2]
 
@@ -145,7 +136,7 @@ test('negative point totals are laid out like any other range', () => {
 
 test('every snapshot either fills its container or scrolls, never both', () => {
   const files = snapshotFiles()
-  assert.ok(files.length === 25, `expected 25 snapshots, found ${files.length}`)
+  assert.ok(files.length === 6, `expected six leagues, found ${files.length}`)
 
   for (const file of files) {
     const data = readSnapshot(file)

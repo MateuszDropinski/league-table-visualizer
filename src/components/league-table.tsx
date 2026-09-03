@@ -66,7 +66,7 @@ export function LeagueTable({ standings, accent }: LeagueTableProps) {
         >
           <caption className="sr-only">
             {standings.league.name}, {standings.league.season}/{String(standings.league.season + 1).slice(-2)}.
-            Fictional standings. Each row is a points total, highest first.
+            Standings checked {standings.checkedAt}. Each row is a points total, highest first.
           </caption>
           <colgroup>
             <col style={{ width: metrics.pointsColumnWidth }} />
@@ -103,7 +103,7 @@ interface PointRowProps {
 
 function PointRow({ row, height, metrics, accent, width, mostPlayed }: PointRowProps) {
   const occupied = row.teams.length > 0
-  const contentWidth = Math.max(0, width - metrics.pointsColumnWidth - metrics.cellPadding * 2)
+  const contentWidth = Math.max(0, width - metrics.pointsColumnWidth - metrics.cellPadding * 2 - 2)
   const layout = chipLayout(metrics, row.teams.length, contentWidth, height)
 
   /*

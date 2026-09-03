@@ -142,7 +142,7 @@ export function TeamChip({ team, mode, metrics, maxWidth, showRank, behind }: Te
           width={metrics.logoSize}
           height={metrics.logoSize}
           style={{ width: metrics.logoSize, height: metrics.logoSize }}
-          className="shrink-0"
+          className="shrink-0 object-contain"
         />
         {showRank && (
           <span

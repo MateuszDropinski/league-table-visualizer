@@ -1,25 +1,9 @@
-/*
-  The two colour gradient each league is drawn with.
-
-  Task 05 gives leagues a proper config file and this map folds into it. It sits
-  on its own for now because the table already needs an identity colour and the
-  mock leagues are the only ones that exist. Real slugs are here too, so the
-  switch to live data does not arrive with every league looking the same.
-*/
-
 export interface LeagueAccent {
   from: string
   to: string
 }
 
 const ACCENTS: Record<string, LeagueAccent> = {
-  // Mock leagues, picked to be told apart at a glance while flipping snapshots.
-  'albion-league': { from: '#8b5cf6', to: '#ec4899' },
-  'iberia-primera': { from: '#f97316', to: '#e11d48' },
-  'rheinland-liga': { from: '#ef4444', to: '#f59e0b' },
-  'vistula-ekstraliga': { from: '#10b981', to: '#a3e635' },
-  'nordic-serien': { from: '#22d3ee', to: '#3b82f6' },
-
   // Real leagues, from their own visual identities.
   'premier-league': { from: '#963cff', to: '#00ff87' },
   'la-liga': { from: '#ff4b44', to: '#ffb400' },

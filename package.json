@@ -10,8 +10,7 @@
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "test": "node --test \"tests/**/*.test.ts\"",
-    "mock:generate": "node scripts/generate-mock-data.ts",
-    "mock:validate": "node scripts/validate-standings.ts"
+    "data:validate": "node scripts/validate-standings.ts"
   },
   "license": "MIT",
   "packageManager": "pnpm@10.27.0",

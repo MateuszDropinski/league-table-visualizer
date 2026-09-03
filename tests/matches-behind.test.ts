@@ -50,35 +50,19 @@ test('every snapshot marks only teams that are genuinely short of games', () => 
       assert.equal(behind, most - team.played, `${where} count`)
       assert.ok(behind >= 0, `${where} came out negative`)
       assert.ok(
-        team.played <= (data.snapshot?.roundsPlayed ?? most),
+        team.played <= ((data.teams.length - 1) * 2),
         `${where} played more games than the league has rounds`,
       )
     }
   }
 })
 
-test('the mock set exercises the mark on shared levels as well as alone', () => {
-  let marked = 0
-  let markedSharingALevel = 0
-  let widest = 0
-
-  for (const file of snapshotFiles()) {
-    const data = readSnapshot(file)
-    const most = mostPlayed(data.teams)
-
-    for (const team of data.teams) {
-      const behind = matchesBehind(team, most)
-      if (behind === 0) continue
-
-      marked += 1
-      widest = Math.max(widest, behind)
-      if (data.teams.some((other) => other.id !== team.id && other.points === team.points)) {
-        markedSharingALevel += 1
-      }
-    }
-  }
-
-  assert.ok(marked >= 5, `only ${marked} marked teams in the whole mock set`)
-  assert.ok(markedSharingALevel >= 1, 'no marked team shares a row with another')
-  assert.ok(widest >= 3, `the widest mark is +${widest}, too narrow to test the count`)
+test('games in hand remain visible on both shared and separate points totals', () => {
+  const teams = [
+    { id: 1, points: 30, played: 12 },
+    { id: 2, points: 30, played: 10 },
+    { id: 3, points: 18, played: 9 },
+  ]
+  const most = mostPlayed(teams)
+  assert.deepEqual(teams.map((team) => matchesBehind(team, most)), [0, 2, 3])
 })

@@ -12,11 +12,9 @@
   the team that has played fewer, because a minus is what the axis is actually
   showing: a position lower than the season is going to leave them.
 
-  The reference is the most matches any team in the table has played, not a
-  round number. API-Football standings carry a played count per team and no
-  reliable current round, and the mock snapshots are the same shape, so this is
-  the only definition both sources can support. It also behaves correctly when a
-  whole round is postponed: nobody is behind anybody, and nothing is marked.
+  The reference is the most matches any team in the table has played. Using
+  actual played counts also handles a whole postponed round correctly: nobody
+  is behind anybody, and nothing is marked.
 */
 
 /** Anything carrying a played count. Standings rows are the usual input. */

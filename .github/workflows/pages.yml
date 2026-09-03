@@ -34,8 +34,8 @@ jobs:
       - name: Run unit tests
         run: pnpm test
 
-      - name: Validate mock fixtures
-        run: pnpm mock:validate
+      - name: Validate published standings
+        run: pnpm data:validate
 
       - name: Build production app
         run: pnpm build

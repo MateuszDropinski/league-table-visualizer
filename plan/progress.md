@@ -1,5 +1,16 @@
 # Progress
 
+## Current: real standings and compact navigation
+
+The six 2026/27 league files were verified on 3 September 2026. Production mock
+data, generated crests and demo controls have been removed. Navigation uses a
+desktop sidebar and a narrow mobile menu rail; no extra bottom padding remains.
+Standings are updated manually on request without any football API. Runtime
+and CI validation cover records, source order and league-wide accounting.
+The README and CLAUDE.md describe the current behavior and data policy.
+
+Everything below is historical and does not prescribe future mock/API work.
+
 Running log of what is built, what was decided along the way, and what comes
 next. Updated at the end of each task.
 

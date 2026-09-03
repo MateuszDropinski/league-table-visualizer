@@ -79,7 +79,7 @@ export function TeamTooltip({ id, team, behind, anchor, onPointerEnter, onPointe
       }}
     >
       <div className="flex items-center gap-2">
-        <img src={resolveAssetUrl(team.logo)} alt="" width={28} height={28} className="shrink-0" />
+        <img src={resolveAssetUrl(team.logo)} alt="" width={28} height={28} className="h-7 w-7 shrink-0 object-contain" />
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold text-slate-100">{team.name}</p>
           <p className="text-xs text-slate-400">
@@ -100,6 +100,10 @@ export function TeamTooltip({ id, team, behind, anchor, onPointerEnter, onPointe
         <span>{team.drawn}D</span>
         <span className="text-rose-400">{team.lost}L</span>
       </div>
+
+      {team.pointsAdjustment !== undefined && team.pointsAdjustment !== 0 && (
+        <p className="mt-2 text-xs text-amber-300">Points adjustment: {team.pointsAdjustment > 0 ? '+' : ''}{team.pointsAdjustment}. {team.adjustmentNote}</p>
+      )}
 
       {team.form.length > 0 && (
         <div className="mt-2.5 flex items-center gap-1.5">
