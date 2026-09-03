@@ -25,8 +25,8 @@ busiest team. The source's order and shared positions are preserved.
 
 ## Responsive layout and colour
 
-Each points row independently chooses one of three states: crest + position +
-full name, crest + position + first three letters, or crest + position. Prefer
+Each points row independently chooses one of three states: position + full
+name + crest, position + first three letters + crest, or position + crest. Prefer
 one line in the richest state that fits. Full names are measured in the actual
 UI font, including positions and games-in-hand markers. Desktop tables expand
 from their usual width into available side space before shortening labels.

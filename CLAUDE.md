@@ -37,7 +37,8 @@ club counts must be updated in src/data/leagues.ts if the competition changes.
   use 13px names/ranks, 14px points and 24px crests/chips, capped by the
   existing row height (21px crests at the 22px floor).
 - Each total independently chooses full name, first three letters, or no name;
-  crest and league position always remain visible. Keep source order and full
+  show position first, then the name when present, then the crest. Crest and
+  league position always remain visible. Keep source order and full
   accessible names. Measure real labels, including games-in-hand markers.
 - Expand the desktop table into available side space before compacting. Prefer
   any fitting single-line state over wrapping. Wrap only if no state fits one

@@ -14,12 +14,6 @@ interface TeamChipContentProps {
 /** Shared by visible chips and their inert width measurements. */
 export function TeamChipContent({ team, mode, metrics, compact, behind }: TeamChipContentProps) {
   return <>
-    <img
-      src={resolveAssetUrl(team.logo)} alt=""
-      width={metrics.logoSize} height={metrics.logoSize}
-      style={{ width: metrics.logoSize, height: metrics.logoSize }}
-      className="shrink-0 object-contain"
-    />
     <span className="shrink-0 font-semibold tabular-nums text-slate-100" style={{ fontSize: metrics.rankFontSize }}>
       {team.rank}.
     </span>
@@ -29,6 +23,12 @@ export function TeamChipContent({ team, mode, metrics, compact, behind }: TeamCh
     >
       {mode === 'abbreviated' ? firstThreeLetters(team.name) : team.name}
     </span>}
+    <img
+      src={resolveAssetUrl(team.logo)} alt=""
+      width={metrics.logoSize} height={metrics.logoSize}
+      style={{ width: metrics.logoSize, height: metrics.logoSize }}
+      className="shrink-0 object-contain"
+    />
     {behind > 0 && (compact || mode === 'crest' ? (
       <span aria-hidden="true" className="shrink-0 rounded-full bg-amber-300" style={{
         width: Math.max(3, metrics.logoSize * 0.22), height: Math.max(3, metrics.logoSize * 0.22),

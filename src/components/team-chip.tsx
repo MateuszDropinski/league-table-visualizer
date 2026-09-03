@@ -18,14 +18,7 @@ interface TeamChipProps {
 }
 
 /*
-  One team on its point total: crest, position, name.
-
-  The crest leads, because it is what a team is recognised by across a table of
-  twenty of them, and the position follows it as a note on the name rather than
-  a column of its own. It takes exactly the width of its own digits: a box wide
-  enough for two of them would line the names up, but it does so by parking a
-  digit of empty space between the crest and a single figure position, and that
-  gap reads as a mistake every time a leader is on screen.
+  One team on its point total: position, name, crest.
 
   Each row chooses full names, three letters or crests with positions.
   Every state retains an accessible full name.
