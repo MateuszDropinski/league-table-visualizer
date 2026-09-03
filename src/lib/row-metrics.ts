@@ -86,8 +86,8 @@ export interface ChipLayout {
   overflow: boolean
 }
 
-export function chipInnerGap(_metrics: RowMetrics, compact: boolean): number {
-  return compact ? 2 : 4
+export function chipInnerGap(_metrics: RowMetrics, _compact: boolean): number {
+  return 2
 }
 
 export function lineWidth(widths: readonly number[], gap: number): number {
