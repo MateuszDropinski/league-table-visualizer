@@ -43,11 +43,13 @@ export function App() {
     return () => controller.abort()
   }, [selected, attempt])
 
+  const accent = leagueAccent(standings?.league.slug ?? selected)
+
   return (
-    <main className="min-h-dvh bg-slate-950 text-slate-100">
+    <main className="min-h-dvh bg-slate-950 text-slate-100" style={{ backgroundImage: `radial-gradient(ellipse at top right, ${accent.from}1f, transparent 65%)`, backgroundAttachment: 'fixed' }}>
       <h1 className="sr-only">Points-First League Table</h1>
       <LeagueNavigation selected={selected} standings={standings} />
-      <div className="flex min-h-dvh justify-center pl-12 lg:pl-52">
+      <div className="flex min-h-dvh justify-center lg:pl-52">
         {standings && (
           <div className="w-full max-w-4xl px-2 sm:px-4" aria-busy={loading}>
             <LeagueTable key={standings.league.slug} standings={standings} accent={leagueAccent(standings.league.slug)} />

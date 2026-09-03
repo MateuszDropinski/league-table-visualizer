@@ -71,6 +71,7 @@ export interface Grid<T> {
 export function computeGrid<T extends Placeable>(
   teams: readonly T[],
   availableHeight: number,
+  minimumRowHeight = MIN_ROW_HEIGHT,
 ): Grid<T> {
   if (teams.length === 0) {
     return { rows: [], rowHeight: 0, spread: 0, height: 0, scrolls: false }
@@ -92,7 +93,7 @@ export function computeGrid<T extends Placeable>(
   // Inclusive of both ends, so a league whose leader and last team share a
   // total is one row rather than none.
   const rowCount = top - bottom + 1
-  const rowHeight = Math.max(MIN_ROW_HEIGHT, availableHeight / rowCount)
+  const rowHeight = Math.max(MIN_ROW_HEIGHT, minimumRowHeight, availableHeight / rowCount)
   const height = rowHeight * rowCount
 
   const rows: GridRow<T>[] = []

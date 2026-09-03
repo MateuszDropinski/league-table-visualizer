@@ -1,5 +1,15 @@
 # Progress
 
+## Readability and mobile refinement
+
+Rank numbers are brighter and match the name size. League colours accent the
+sidebar and background; abbreviations are removed. A floating bottom-right
+button opens the mobile league popover. Teams wrap at a minimum readable width,
+and the busiest total grows every row equally, allowing document scrolling.
+Exceptionally narrow layouts use crests with accessible names. Team cards now
+share a single active owner so hovering between clubs cannot overlap cards.
+
+
 ## Current: real standings and compact navigation
 
 The six 2026/27 league files were verified on 3 September 2026. Production mock

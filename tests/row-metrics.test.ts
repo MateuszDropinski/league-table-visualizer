@@ -1,144 +1,82 @@
-/*
-  Unit tests for what a row puts inside itself, which like the engine is pure
-  arithmetic and needs no browser to check.
-
-  The interesting behaviour here is wrapping: a shared total spreads over
-  several lines when the row is tall, and the promise is that the lines it asks
-  for are lines the row can actually paint.
-*/
-
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import { computeGrid, MIN_ROW_HEIGHT } from '../src/lib/layout-engine.ts'
+import { chipLayout, minimumRowHeight, MIN_TEAM_WIDTH, MIN_FONT_SIZE, rowMetrics, TOUCH_TABLE_WIDTH } from '../src/lib/row-metrics.ts'
+import { readSnapshot, snapshotFiles } from './snapshots.ts'
 
-import { MIN_ROW_HEIGHT } from '../src/lib/layout-engine.ts'
-import { chipLayout, MIN_FONT_SIZE, rowMetrics } from '../src/lib/row-metrics.ts'
-
-/** The axis on a typical desktop, points column and padding already taken off. */
-const CONTENT_WIDTH = 620
-
-test('a row at the floor still has room for a crest and a name', () => {
-  const metrics = rowMetrics(MIN_ROW_HEIGHT)
-
-  assert.ok(metrics.logoSize >= 12, `crest came to ${metrics.logoSize}px`)
-  assert.ok(metrics.chipHeight <= MIN_ROW_HEIGHT, 'content is taller than the row it sits in')
-})
-
-test('type never goes below the font floor, at any row height', () => {
-  // Well below the row floor as well, since nothing should depend on the engine
-  // being the only caller.
-  for (let rowHeight = 1; rowHeight <= 1200; rowHeight += 1) {
-    const { nameFontSize, pointsFontSize, rankFontSize } = rowMetrics(rowHeight)
-    const where = `at ${rowHeight}px`
-
-    assert.ok(nameFontSize >= MIN_FONT_SIZE, `name came to ${nameFontSize}px ${where}`)
-    assert.ok(pointsFontSize >= MIN_FONT_SIZE, `points came to ${pointsFontSize}px ${where}`)
-    assert.ok(rankFontSize >= MIN_FONT_SIZE, `position came to ${rankFontSize}px ${where}`)
+test('type stays readable and positions are as large as names', () => {
+  for (let height = 1; height <= 1200; height++) {
+    const metrics = rowMetrics(height)
+    assert.ok(metrics.nameFontSize >= MIN_FONT_SIZE)
+    assert.ok(metrics.pointsFontSize >= MIN_FONT_SIZE)
+    assert.equal(metrics.rankFontSize, metrics.nameFontSize)
   }
 })
 
-test('the row floor is the shortest row a line of floor type fits into', () => {
-  const metrics = rowMetrics(MIN_ROW_HEIGHT)
-  assert.equal(metrics.nameFontSize, MIN_FONT_SIZE, 'the floor row is not setting floor type')
-
-  // One pixel shorter and the line box no longer fits between the padding,
-  // which is the whole reason MIN_ROW_HEIGHT is the number it is.
-  const shorter = rowMetrics(MIN_ROW_HEIGHT - 1)
-  assert.ok(
-    shorter.chipHeight > MIN_ROW_HEIGHT - 1 - shorter.cellPadding * 2,
-    'the floor could be lower than it is',
-  )
-})
-
-test('a short row never wraps, however many teams share it', () => {
-  const metrics = rowMetrics(MIN_ROW_HEIGHT)
-
-  for (const teams of [2, 4, 8, 20]) {
-    const layout = chipLayout(metrics, teams, CONTENT_WIDTH, MIN_ROW_HEIGHT)
-    assert.equal(layout.lines, 1, `${teams} teams wrapped in a floor height row`)
-    assert.equal(layout.perLine, teams)
-  }
-})
-
-test('one team on a total keeps the whole line to itself', () => {
-  const metrics = rowMetrics(40)
-  const layout = chipLayout(metrics, 1, CONTENT_WIDTH, 40)
-
-  assert.deepEqual(layout, { mode: 'full', perLine: 1, lines: 1, showRank: true })
-})
-
-test('the position goes only when the teams are too crowded to spare it', () => {
-  const metrics = rowMetrics(24)
-
-  // Three teams level on a phone still have room for a position each.
-  assert.equal(chipLayout(metrics, 3, 290, 24).showRank, true)
-
-  // Eight of them do not, and the name is what identifies a team.
-  assert.equal(chipLayout(metrics, 8, 290, 24).showRank, false)
-
-  // Nor do eight on a desktop: a seventieth of that row is a crest and three
-  // letters, and the position would be taking one of the letters.
-  assert.equal(chipLayout(metrics, 8, CONTENT_WIDTH, 24).showRank, false)
-
-  // Five on a desktop have room to spare.
-  assert.equal(chipLayout(metrics, 5, CONTENT_WIDTH, 24).showRank, true)
-
-  // And eight on a row tall enough to wrap them keep it, since wrapping is
-  // what buys the width back.
-  assert.equal(chipLayout(rowMetrics(120), 8, CONTENT_WIDTH, 120).showRank, true)
-})
-
-test('two teams on a wide row stay on one line with their full names', () => {
-  const metrics = rowMetrics(40)
-  const layout = chipLayout(metrics, 2, CONTENT_WIDTH, 40)
-
-  assert.equal(layout.lines, 1)
-  assert.equal(layout.mode, 'full')
-})
-
-test('a tall row spends its height on lines rather than truncating names', () => {
-  // Six teams level, on a row tall enough to hold three lines of them.
-  const rowHeight = 140
-  const metrics = rowMetrics(rowHeight)
-
-  const layout = chipLayout(metrics, 6, CONTENT_WIDTH, rowHeight)
-
-  assert.ok(layout.lines > 1, 'a tall row still crammed six teams onto one line')
-  assert.equal(layout.mode, 'full', 'wrapped and still did not fit a full name')
-  assert.equal(layout.perLine * layout.lines >= 6, true)
-})
-
-test('a league where everybody is level gives every team its own line', () => {
-  // The single row case: 20 teams on one total, the row being the whole screen.
-  const rowHeight = 900
-  const metrics = rowMetrics(rowHeight)
-
-  const layout = chipLayout(metrics, 20, CONTENT_WIDTH, rowHeight)
-
+test('crowded phone rows wrap before names lose their minimum width', () => {
+  const layout = chipLayout(rowMetrics(22), 4, 290)
   assert.equal(layout.perLine, 1)
-  assert.equal(layout.lines, 20)
+  assert.equal(layout.lines, 4)
+  assert.equal(layout.minWidth, MIN_TEAM_WIDTH)
+  assert.equal(layout.showRank, true)
   assert.equal(layout.mode, 'full')
 })
 
-test('wrapping never asks for more lines than the row can paint', () => {
-  for (let rowHeight = MIN_ROW_HEIGHT; rowHeight <= 1200; rowHeight += 1) {
-    const metrics = rowMetrics(rowHeight)
+test('logos alone are used only when a single readable name cannot fit', () => {
+  assert.equal(chipLayout(rowMetrics(80), 6, MIN_TEAM_WIDTH).mode, 'short')
+  const narrow = chipLayout(rowMetrics(80), 6, MIN_TEAM_WIDTH - 1)
+  assert.equal(narrow.mode, 'crest')
+  assert.equal(narrow.showRank, false)
+  assert.ok(narrow.minWidth >= 44)
+  // Crowding on its own must never force crest-only mode.
+  assert.notEqual(chipLayout(rowMetrics(22), 20, 290).mode, 'crest')
+})
 
-    for (const teams of [2, 3, 5, 6, 8, 10, 20]) {
-      for (const width of [180, 320, 620, 900]) {
-        const layout = chipLayout(metrics, teams, width, rowHeight)
-        const where = `${teams} teams, ${width}px wide, ${rowHeight}px tall`
+test('desktop teams share a line when readable labels fit', () => {
+  const layout = chipLayout(rowMetrics(50), 3, 620)
+  assert.equal(layout.perLine, 3)
+  assert.equal(layout.lines, 1)
+  assert.equal(layout.showRank, true)
+})
 
-        assert.ok(layout.perLine >= 1, `${where} put nothing on a line`)
-        assert.ok(layout.perLine <= teams, `${where} claimed room for teams that do not exist`)
-        assert.equal(layout.lines, Math.ceil(teams / layout.perLine), `${where} line count`)
+test('growing crowded rows preserves equal points spacing and all empty levels', () => {
+  const teams = [{ points: 10 }, { points: 10 }, { points: 10 }, { points: 0 }]
+  const floor = minimumRowHeight(3, 350)
+  const grid = computeGrid(teams, 600, floor)
+  assert.ok(grid.scrolls)
+  assert.equal(grid.rows.length, 11)
+  assert.equal(grid.height, grid.rowHeight * 11)
+  assert.equal(grid.rows[1].teams.length, 0)
+  assert.ok(grid.rowHeight >= floor)
+})
 
-        const painted =
-          layout.lines * metrics.chipHeight + (layout.lines - 1) * metrics.chipRowGap
-        assert.ok(
-          painted <= rowHeight - metrics.cellPadding * 2 + 1e-9,
-          `${where} wants ${painted.toFixed(1)}px of content`,
-        )
+test('all clubs and touch targets fit at phone, tablet, desktop and crest-only widths', () => {
+  for (const file of snapshotFiles()) {
+    const teams = readSnapshot(file).teams
+    const crowded = Math.max(...computeGrid(teams, 0).rows.map((row) => row.teams.length))
+    for (const width of [200, 240, 300, 344, 374, 414, 620, 640, 864, 1200]) {
+      for (const height of [320, 600, 844, 1200]) {
+        const grid = computeGrid(teams, height, minimumRowHeight(crowded, width))
+        const metrics = rowMetrics(grid.rowHeight)
+        const contentWidth = width - metrics.pointsColumnWidth - metrics.cellPadding * 2 - 2
+        for (const row of grid.rows) {
+          if (!row.teams.length) continue
+          const layout = chipLayout(metrics, row.teams.length, contentWidth)
+          const chipHeight = width < TOUCH_TABLE_WIDTH ? Math.max(44, metrics.chipHeight) : metrics.chipHeight
+          const painted = layout.lines * chipHeight + (layout.lines - 1) * metrics.chipRowGap
+          assert.ok(painted + metrics.cellPadding * 2 <= grid.rowHeight, `${file}: ${width}x${height}, ${row.points} points clips`)
+          assert.ok(layout.perLine * layout.minWidth + (layout.perLine - 1) * metrics.chipGap <= contentWidth + 0.01)
+          assert.ok(grid.rowHeight >= MIN_ROW_HEIGHT)
+        }
       }
     }
   }
+})
+
+test('an all-level league remains readable and wide tables keep their row floor', () => {
+  const teams = Array.from({ length: 20 }, () => ({ points: 0 }))
+  const grid = computeGrid(teams, 600, minimumRowHeight(20, 350))
+  assert.equal(grid.rows.length, 1)
+  assert.ok(grid.height > 600)
+  assert.equal(minimumRowHeight(1, 900), MIN_ROW_HEIGHT)
 })

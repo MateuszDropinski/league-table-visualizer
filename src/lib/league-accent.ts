@@ -3,14 +3,14 @@ export interface LeagueAccent {
   to: string
 }
 
+// Brand-inspired accents adapted for the dark UI. References: README.md.
 const ACCENTS: Record<string, LeagueAccent> = {
-  // Real leagues, from their own visual identities.
-  'premier-league': { from: '#963cff', to: '#00ff87' },
-  'la-liga': { from: '#ff4b44', to: '#ffb400' },
-  bundesliga: { from: '#d20515', to: '#f4f4f4' },
-  'serie-a': { from: '#0d5eaf', to: '#00c4ff' },
-  'ligue-1': { from: '#1e40af', to: '#dcff4f' },
-  ekstraklasa: { from: '#dc143c', to: '#ffd700' },
+  'premier-league': { from: '#8c48ff', to: '#c4a2ff' },
+  'la-liga': { from: '#ff4b44', to: '#ffa39e' },
+  bundesliga: { from: '#c80a00', to: '#ff8d86' },
+  'serie-a': { from: '#0057b8', to: '#63caff' },
+  'ligue-1': { from: '#085fff', to: '#ff7fde' },
+  ekstraklasa: { from: '#001ca7', to: '#68baff' },
 }
 
 const FALLBACK: LeagueAccent[] = [

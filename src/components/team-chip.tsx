@@ -4,6 +4,7 @@ import { resolveAssetUrl } from '../data/asset-url'
 import type { ChipMode, RowMetrics } from '../lib/row-metrics'
 import type { TeamStanding } from '../types/standings'
 import { TeamTooltip } from './team-tooltip'
+import { useTeamCard } from './team-card-scope'
 
 interface TeamChipProps {
   team: TeamStanding
@@ -11,6 +12,8 @@ interface TeamChipProps {
   metrics: RowMetrics
   /** The most of the line one team may take, not the width it is given. */
   maxWidth: string
+  minWidth: number
+  touchTarget: boolean
   /** False on a crowded row, where the position costs more than it is worth. */
   showRank: boolean
   /** Fixtures this team is short of the rest of the league, 0 when level. */
@@ -27,10 +30,10 @@ interface TeamChipProps {
   digit of empty space between the crest and a single figure position, and that
   gap reads as a mistake every time a leader is on screen.
 
-  The chip is as wide as its own name and no wider, so teams sharing a total sit
-  next to each other from the left rather than spread across the row. Past the
-  cap it truncates, and everything the chip cannot say is in the card that opens
-  on hover, focus or tap.
+  Chips keep a readable minimum width and wrap within their point row. On an
+  exceptionally narrow screen, the crest retains an accessible full name.
+  Everything the chip cannot say is in the shared card opened by hover, focus
+  or tap. Only its active owner renders a card.
 
   A team behind on matches played carries a mark, because its place on the axis
   is provisional and the axis does not say so on its own. It reads as a minus,
@@ -40,23 +43,26 @@ interface TeamChipProps {
   settled". It never disappears, since a distance that may be wrong is worth
   more of the row than the position that sits next to it.
 */
-export function TeamChip({ team, mode, metrics, maxWidth, showRank, behind }: TeamChipProps) {
+export function TeamChip({ team, mode, metrics, maxWidth, minWidth, touchTarget, showRank, behind }: TeamChipProps) {
+  const { activeId, activate, release } = useTeamCard()
   const ref = useRef<HTMLButtonElement>(null)
   const tooltipId = useId()
   const pointerActive = useRef(false)
   const openOnPress = useRef(false)
   const hideTimer = useRef<ReturnType<typeof setTimeout>>()
   const [anchor, setAnchor] = useState<DOMRect | null>(null)
-  const open = anchor !== null
+  const open = activeId === team.id && anchor !== null
 
   const show = useCallback(() => {
     clearTimeout(hideTimer.current)
     if (ref.current) setAnchor(ref.current.getBoundingClientRect())
-  }, [])
+    activate(team.id)
+  }, [activate, team.id])
   const hide = useCallback(() => {
     clearTimeout(hideTimer.current)
     setAnchor(null)
-  }, [])
+    release(team.id)
+  }, [release, team.id])
   const hideSoon = useCallback(() => {
     clearTimeout(hideTimer.current)
     hideTimer.current = setTimeout(hide, 150)
@@ -111,7 +117,7 @@ export function TeamChip({ team, mode, metrics, maxWidth, showRank, behind }: Te
         // screen reader announces with its label and reaches by keyboard
         // without being told how, and focus alone opens the card.
         className="flex min-w-0 cursor-pointer items-center rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-slate-400"
-        style={{ maxWidth, gap: Math.max(3, metrics.chipGap * 0.55) }}
+        style={{ maxWidth, minWidth, minHeight: touchTarget ? 44 : undefined, gap: Math.max(3, metrics.chipGap * 0.55), lineHeight: 1.35 }}
         // Hover is a mouse gesture. A tap is a press, and toggling on press is
         // what lets a card be dismissed by tapping the same chip again.
         onPointerEnter={(event) => {
@@ -146,14 +152,14 @@ export function TeamChip({ team, mode, metrics, maxWidth, showRank, behind }: Te
         />
         {showRank && (
           <span
-            className="shrink-0 tabular-nums text-slate-400"
+            className="shrink-0 font-semibold tabular-nums text-slate-100"
             style={{ fontSize: metrics.rankFontSize }}
           >
             {team.rank}.
           </span>
         )}
         <span
-          className="truncate font-medium text-slate-200"
+          className={mode === 'crest' ? 'sr-only' : 'truncate font-medium text-slate-200'}
           style={{ fontSize: metrics.nameFontSize }}
         >
           {mode === 'full' ? team.name : team.shortName}
@@ -183,7 +189,7 @@ export function TeamChip({ team, mode, metrics, maxWidth, showRank, behind }: Te
           ))}
       </button>
 
-      {anchor && (
+      {open && anchor && (
         <TeamTooltip
           id={tooltipId}
           team={team}

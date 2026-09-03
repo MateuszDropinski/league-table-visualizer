@@ -62,3 +62,16 @@ html {
 ::-webkit-scrollbar-corner {
   background-color: transparent;
 }
+
+/* Floating mobile navigation respects phone safe areas without shrinking the table. */
+@media (width < 64rem) {
+  .league-picker {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  .league-popover {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: calc(max(12px, env(safe-area-inset-bottom)) + 56px);
+    max-height: calc(100dvh - max(12px, env(safe-area-inset-bottom)) - 72px);
+  }
+}

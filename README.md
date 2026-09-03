@@ -13,13 +13,36 @@ The committed 2026/27 standings were checked on **3 September 2026** and contain
 114 clubs. These are manually maintained snapshots, not live scores.
 
 Choose a league in the left sidebar. On narrow screens, the menu button opens
-the league list; its slim rail leaves the table's entire height available.
+a popover from a floating button at the bottom right. No mobile sidebar takes
+space from the table.
 League links have shareable hashes, for example `#ekstraklasa`, and browser
-Back/Forward restores the selection. There is no extra padding below the table.
+Back/Forward restores the selection. There is no extra padding below the table. League abbreviations are omitted.
 
-Select, hover over, or focus a club for its record. Escape closes the card;
+Hover, tap, or focus a club for its record. Only one club card is open at a time;
+moving between clubs replaces the previous card immediately. Escape closes the card;
 Enter or Space toggles it. Amber marks mean fewer matches played than the
 busiest team. The source's order and shared positions are preserved.
+
+## Responsive layout and colour
+
+Clubs have a minimum readable width of 176px for their crest, position and name.
+Crowded totals wrap, and the busiest total determines the minimum height of
+**every** points row. The document may grow and scroll; the points scale remains
+uniform. Touch layouts have 44px targets. If even a single label cannot fit,
+clubs use crests alone with accessible names and full detail cards.
+
+Positions use brighter, semibold text at the same size as club names.
+Brand-inspired colours tint navigation and the page background. The green/red
+points axis still communicates direction. The accents are adapted for a dark
+interface, rather than presented as exact corporate colour specifications.
+References checked 3 September 2026:
+
+- [Premier League](https://www.premierleague.com/): purple.
+- [LaLiga](https://www.laliga.com/en-GB): coral red.
+- [Bundesliga](https://www.bundesliga.com/en/bundesliga): red.
+- [Serie A](https://www.legaseriea.it/): blue.
+- [Ligue 1](https://ligue1.com/en) and [its brand designers](https://www.leroytremblot.com/en/ligue1-mcdonalds): electric blue and pink.
+- [Ekstraklasa](https://ekstraklasa.org/): navy and blue.
 
 ## Manual data updates
 

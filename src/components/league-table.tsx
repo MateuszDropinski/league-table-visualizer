@@ -3,11 +3,12 @@ import { useMemo } from 'react'
 import { computeGrid, type GridRow } from '../lib/layout-engine'
 import type { LeagueAccent } from '../lib/league-accent'
 import { matchesBehind, mostPlayed } from '../lib/matches-behind'
-import { chipLayout, rowMetrics, type RowMetrics } from '../lib/row-metrics'
+import { chipLayout, minimumRowHeight, rowMetrics, TOUCH_TABLE_WIDTH, type RowMetrics } from '../lib/row-metrics'
 import { useElementSize } from '../lib/use-element-size'
 import { useViewportHeight } from '../lib/use-viewport-height'
 import type { StandingsFile, TeamStanding } from '../types/standings'
 import { TeamChip } from './team-chip'
+import { TeamCardScope } from './team-card-scope'
 
 /*
   The points axis, as an actual table.
@@ -49,8 +50,12 @@ export function LeagueTable({ standings, accent }: LeagueTableProps) {
   const viewportHeight = useViewportHeight()
 
   const grid = useMemo(
-    () => computeGrid(standings.teams, viewportHeight),
-    [standings.teams, viewportHeight],
+    () => {
+      const base = computeGrid(standings.teams, viewportHeight)
+      const crowded = Math.max(0, ...base.rows.map((row) => row.teams.length))
+      return computeGrid(standings.teams, viewportHeight, minimumRowHeight(crowded, size.width))
+    },
+    [standings.teams, viewportHeight, size.width],
   )
   const metrics = useMemo(() => rowMetrics(grid.rowHeight), [grid.rowHeight])
   // The line every team's played count is measured against, which is a fact
@@ -58,6 +63,7 @@ export function LeagueTable({ standings, accent }: LeagueTableProps) {
   const played = useMemo(() => mostPlayed(standings.teams), [standings.teams])
 
   return (
+    <TeamCardScope>
     <div ref={ref} className="w-full">
       {grid.rows.length > 0 && (
         <table
@@ -88,6 +94,7 @@ export function LeagueTable({ standings, accent }: LeagueTableProps) {
         </table>
       )}
     </div>
+    </TeamCardScope>
   )
 }
 
@@ -104,7 +111,7 @@ interface PointRowProps {
 function PointRow({ row, height, metrics, accent, width, mostPlayed }: PointRowProps) {
   const occupied = row.teams.length > 0
   const contentWidth = Math.max(0, width - metrics.pointsColumnWidth - metrics.cellPadding * 2 - 2)
-  const layout = chipLayout(metrics, row.teams.length, contentWidth, height)
+  const layout = chipLayout(metrics, row.teams.length, contentWidth)
 
   /*
     A ceiling, not a width. Teams sit next to each other from the left at the
@@ -146,9 +153,7 @@ function PointRow({ row, height, metrics, accent, width, mostPlayed }: PointRowP
       >
         {occupied && (
           <div
-            // Wrapping is allowed only when the row is tall enough for a second
-            // line. A row that is not stays on one line and lets the names
-            // truncate, which is the whole reason the line count is computed.
+            // The grid has already reserved equal-height rows for these lines.
             className={`flex items-center ${layout.lines > 1 ? 'flex-wrap' : 'flex-nowrap'}`}
             style={{ columnGap: metrics.chipGap, rowGap: metrics.chipRowGap }}
           >
@@ -159,6 +164,8 @@ function PointRow({ row, height, metrics, accent, width, mostPlayed }: PointRowP
                 mode={layout.mode}
                 metrics={metrics}
                 maxWidth={chipMaxWidth}
+                minWidth={layout.minWidth}
+                touchTarget={width < TOUCH_TABLE_WIDTH}
                 showRank={layout.showRank}
                 behind={matchesBehind(team, mostPlayed)}
               />

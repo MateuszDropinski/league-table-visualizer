@@ -8,7 +8,7 @@ in package.json are shared by local development and CI.
 
 Display one league at a time: Premier League, La Liga, Bundesliga, Serie A,
 Ligue 1 or Ekstraklasa. Desktop navigation sits beside the table. Mobile uses a
-compact menu rail. Neither reserves any table height. Keep the whole viewport
+floating bottom-right button opening a popover, with no mobile sidebar. Neither reserves any table height. Keep the whole viewport
 available to the points axis and do not add bottom padding for floating controls.
 
 The user explicitly chose manually verified static standings. Do not introduce
@@ -30,15 +30,20 @@ club counts must be updated in src/data/leagues.ts if the competition changes.
 
 - Every integer point value between highest and lowest occupied totals gets a
   row, including empty levels. All rows have exactly equal height.
-- Row height is max(22px, viewport height / row count). A wide spread on a short
-  screen deliberately scrolls the document. Never create a nested table scroller.
+- Row height is the maximum of 22px, viewport height / row count, and the
+  minimum needed by the busiest wrapped total. The document scrolls when needed.
+  Never create a nested table scroller.
 - Never skip, compress or round away a point value. Do not force short rows to
   fit when this makes names unreadable.
 - Content sizes vary continuously with row height, with type at least 12px.
-- Shared-point clubs keep the source's order and pack from the left. Wrap only
-  when the row can hold the resulting lines. Names may shorten or truncate;
-  every club opens a full record on hover, focus or tap.
-- Team cards render in a portal, stay inside the viewport and close on Escape.
+- Shared-point clubs keep source order and wrap at a minimum label width of
+  176px. Grow all point rows equally to accommodate the most crowded total.
+  Use logos alone only when one label cannot fit. Keep accessible full names.
+- Team cards share one active owner per table, render in a portal, stay inside
+  the viewport and close on Escape. A delayed dismissal must not close another
+  club's card. Describe the interaction as hover or tap.
+- No league abbreviations in navigation. Use subtle league colour accents and
+  bright semibold positions; keep the point-axis direction visually clear.
 - Games in hand are measured against the league's busiest club. Their amber
   marker takes priority over displaying rank when horizontal room is limited.
 
