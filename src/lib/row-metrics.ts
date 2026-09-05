@@ -106,7 +106,7 @@ export function rowLineBudget(metrics: RowMetrics, rowHeight: number, gridScroll
   return Math.max(1, Math.floor((contentHeight + metrics.chipRowGap) / (metrics.chipHeight + metrics.chipRowGap)))
 }
 
-/** Prefer a single line in the richest state that fits, independently per row. */
+/** Prefer the richest state that fits the row's existing height budget. */
 export function chipLayout(
   metrics: RowMetrics,
   widths: readonly ChipWidths[],
@@ -116,28 +116,20 @@ export function chipLayout(
   const available = Math.max(0, contentWidth - 1)
   const indexes = widths.map((_, index) => index)
   for (const mode of CHIP_MODES) {
-    if (lineWidth(widths.map(width => width[mode]), metrics.chipGap) <= available) {
-      return { mode, lines: indexes.length ? [indexes] : [], overflow: false }
-    }
-  }
-
-  if (maxLines > 1) {
-    for (const mode of CHIP_MODES) {
-      if (widths.some(width => width[mode] > available)) continue
-      const lines: number[][] = []
-      let used = 0
-      for (const index of indexes) {
-        const width = widths[index][mode]
-        if (!lines.length || used + metrics.chipGap + width > available) {
-          lines.push([index])
-          used = width
-        } else {
-          lines[lines.length - 1].push(index)
-          used += metrics.chipGap + width
-        }
+    if (widths.some(width => width[mode] > available)) continue
+    const lines: number[][] = []
+    let used = 0
+    for (const index of indexes) {
+      const width = widths[index][mode]
+      if (!lines.length || used + metrics.chipGap + width > available) {
+        lines.push([index])
+        used = width
+      } else {
+        lines[lines.length - 1].push(index)
+        used += metrics.chipGap + width
       }
-      if (lines.length <= maxLines) return { mode, lines, overflow: false }
     }
+    if (lines.length <= maxLines) return { mode, lines, overflow: false }
   }
 
   // At physically impossible densities, keep every crest/rank reachable on

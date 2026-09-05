@@ -17,10 +17,18 @@ test('desktop type stays readable and positions are as large as names', () => {
 
 test('each row chooses the richest single-line state independently', () => {
   const metrics = rowMetrics(80, true)
-  assert.equal(chipLayout(metrics, chips(2), 300, 3).mode, 'full')
-  assert.equal(chipLayout(metrics, chips(3), 300, 3).mode, 'abbreviated')
-  assert.equal(chipLayout(metrics, chips(4), 300, 3).mode, 'crest')
-  for (const count of [2, 3, 4]) assert.equal(chipLayout(metrics, chips(count), 300, 3).lines.length, 1)
+  assert.equal(chipLayout(metrics, chips(2), 300, 1).mode, 'full')
+  assert.equal(chipLayout(metrics, chips(3), 300, 1).mode, 'abbreviated')
+  assert.equal(chipLayout(metrics, chips(4), 300, 1).mode, 'crest')
+  for (const count of [2, 3, 4]) assert.equal(chipLayout(metrics, chips(count), 300, 1).lines.length, 1)
+})
+
+test('existing row height is used for rich labels before shortening them', () => {
+  const metrics = rowMetrics(80, true)
+  const layout = chipLayout(metrics, chips(4), 300, 2)
+  assert.equal(layout.mode, 'full')
+  assert.equal(layout.lines.length, 2)
+  assert.deepEqual(layout.lines, [[0, 1], [2, 3]])
 })
 
 test('actual name widths decide fit instead of equal minimum-width slots', () => {
