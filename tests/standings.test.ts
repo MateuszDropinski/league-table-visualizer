@@ -17,12 +17,15 @@ test('malformed, missing and mismatched league files are rejected', () => {
   assert.throws(() => validateStandings(data, leagues[0]), /expected 20 clubs/)
 })
 
-test('published shared ranks and league-specific tied ordering are preserved', () => {
+test('shared ranks and league-specific tied ordering are preserved', () => {
   const data = readSnapshot('bundesliga.json')
   const original = JSON.stringify(data)
   validateStandings(data, leagues[2])
   assert.equal(JSON.stringify(data), original)
-  assert.equal(data.teams[2].rank, data.teams[3].rank)
+  const shared = structuredClone(data)
+  shared.teams[1].rank = shared.teams[0].rank
+  validateStandings(shared, leagues[2])
+  assert.equal(shared.teams[0].rank, shared.teams[1].rank)
   // Equal points do not imply universal goal-difference ordering.
   const pl = readSnapshot('premier-league.json')
   ;[pl.teams[0], pl.teams[3]] = [pl.teams[3], pl.teams[0]]
