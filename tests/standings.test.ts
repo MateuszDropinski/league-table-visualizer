@@ -28,7 +28,9 @@ test('shared ranks and league-specific tied ordering are preserved', () => {
   assert.equal(shared.teams[0].rank, shared.teams[1].rank)
   // Equal points do not imply universal goal-difference ordering.
   const pl = readSnapshot('premier-league.json')
-  ;[pl.teams[0], pl.teams[3]] = [pl.teams[3], pl.teams[0]]
+  const tiedIndex = pl.teams.findIndex((team, index) => team.points === pl.teams[index + 1]?.points)
+  assert.notEqual(tiedIndex, -1)
+  ;[pl.teams[tiedIndex], pl.teams[tiedIndex + 1]] = [pl.teams[tiedIndex + 1], pl.teams[tiedIndex]]
   pl.teams.forEach((team, index) => { team.rank = index + 1 })
   validateStandings(pl, leagues[0])
 })
