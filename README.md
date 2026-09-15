@@ -9,7 +9,7 @@ Wide spreads scroll with the page so names remain readable.
 ## Current standings
 
 Premier League, La Liga, Bundesliga, Serie A, Ligue 1 and Ekstraklasa.
-The committed 2026/27 standings were checked on **3 September 2026** and contain
+The committed 2026/27 standings were checked on **15 September 2026** and contain
 114 clubs. These are manually maintained snapshots, not live scores.
 
 Choose a league in the left sidebar. On narrow screens, the menu button opens
