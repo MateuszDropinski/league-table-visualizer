@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-09-16",
+  "checkedAt": "2026-09-18",
   "league": {
     "country": "Spain",
     "id": 2,
@@ -51,6 +51,22 @@
       "won": 5
     },
     {
+      "drawn": 0,
+      "form": [],
+      "goalDifference": 2,
+      "goalsAgainst": 6,
+      "goalsFor": 8,
+      "id": 2768471305,
+      "logo": "https://e0.365dm.com/football/badges/64/1189.png",
+      "lost": 1,
+      "name": "Real Betis",
+      "played": 6,
+      "points": 15,
+      "rank": 3,
+      "shortName": "Real Betis",
+      "won": 5
+    },
+    {
       "drawn": 1,
       "form": [],
       "goalDifference": 8,
@@ -62,7 +78,7 @@
       "name": "Atletico Madrid",
       "played": 6,
       "points": 13,
-      "rank": 3,
+      "rank": 4,
       "shortName": "A Madrid",
       "won": 4
     },
@@ -78,24 +94,8 @@
       "name": "Sevilla",
       "played": 6,
       "points": 13,
-      "rank": 4,
-      "shortName": "Sevilla",
-      "won": 4
-    },
-    {
-      "drawn": 0,
-      "form": [],
-      "goalDifference": 1,
-      "goalsAgainst": 6,
-      "goalsFor": 7,
-      "id": 2768471305,
-      "logo": "https://e0.365dm.com/football/badges/64/1189.png",
-      "lost": 1,
-      "name": "Real Betis",
-      "played": 5,
-      "points": 12,
       "rank": 5,
-      "shortName": "Real Betis",
+      "shortName": "Sevilla",
       "won": 4
     },
     {
@@ -245,14 +245,14 @@
     {
       "drawn": 2,
       "form": [],
-      "goalDifference": -3,
-      "goalsAgainst": 6,
+      "goalDifference": -4,
+      "goalsAgainst": 7,
       "goalsFor": 3,
       "id": 2646355676,
       "logo": "https://e0.365dm.com/football/badges/64/1199.png",
-      "lost": 2,
+      "lost": 3,
       "name": "Getafe",
-      "played": 5,
+      "played": 6,
       "points": 5,
       "rank": 15,
       "shortName": "Getafe",
