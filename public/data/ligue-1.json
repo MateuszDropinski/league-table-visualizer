@@ -6,7 +6,7 @@
     "country": "France",
     "season": 2026
   },
-  "checkedAt": "2026-09-15",
+  "checkedAt": "2026-09-18",
   "sources": [
     {
       "name": "Sky Sports",
@@ -19,11 +19,27 @@
   ],
   "teams": [
     {
+      "id": 2245743576,
+      "name": "Monaco",
+      "shortName": "Monaco",
+      "logo": "https://e0.365dm.com/football/badges/64/525.png",
+      "rank": 1,
+      "points": 13,
+      "played": 5,
+      "won": 4,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 8,
+      "goalsAgainst": 3,
+      "goalDifference": 5,
+      "form": []
+    },
+    {
       "id": 4132112737,
       "name": "Lille",
       "shortName": "Lille",
       "logo": "https://e0.365dm.com/football/badges/64/818.png",
-      "rank": 1,
+      "rank": 2,
       "points": 10,
       "played": 4,
       "won": 3,
@@ -32,22 +48,6 @@
       "goalsFor": 7,
       "goalsAgainst": 2,
       "goalDifference": 5,
-      "form": []
-    },
-    {
-      "id": 2245743576,
-      "name": "Monaco",
-      "shortName": "Monaco",
-      "logo": "https://e0.365dm.com/football/badges/64/525.png",
-      "rank": 2,
-      "points": 10,
-      "played": 4,
-      "won": 3,
-      "drawn": 1,
-      "lost": 0,
-      "goalsFor": 6,
-      "goalsAgainst": 2,
-      "goalDifference": 4,
       "form": []
     },
     {
@@ -169,13 +169,13 @@
       "logo": "https://e0.365dm.com/football/badges/64/691.png",
       "rank": 10,
       "points": 4,
-      "played": 4,
+      "played": 5,
       "won": 1,
       "drawn": 1,
-      "lost": 2,
-      "goalsFor": 8,
-      "goalsAgainst": 7,
-      "goalDifference": 1,
+      "lost": 3,
+      "goalsFor": 9,
+      "goalsAgainst": 9,
+      "goalDifference": 0,
       "form": []
     },
     {

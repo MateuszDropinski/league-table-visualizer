@@ -6,7 +6,7 @@
     "country": "Germany",
     "season": 2026
   },
-  "checkedAt": "2026-09-15",
+  "checkedAt": "2026-09-18",
   "sources": [
     {
       "name": "Bundesliga",
@@ -19,11 +19,27 @@
   ],
   "teams": [
     {
+      "id": 2892397448,
+      "name": "Bayern Munich",
+      "shortName": "Bayern",
+      "logo": "https://e0.365dm.com/football/badges/64/530.png",
+      "rank": 1,
+      "points": 10,
+      "played": 4,
+      "won": 3,
+      "drawn": 1,
+      "lost": 0,
+      "goalsFor": 14,
+      "goalsAgainst": 2,
+      "goalDifference": 12,
+      "form": []
+    },
+    {
       "id": 1477954535,
       "name": "Freiburg",
       "shortName": "Freiburg",
       "logo": "https://e0.365dm.com/football/badges/64/982.png",
-      "rank": 1,
+      "rank": 2,
       "points": 9,
       "played": 3,
       "won": 3,
@@ -39,7 +55,7 @@
       "name": "Borussia Dortmund",
       "shortName": "Dortmund",
       "logo": "https://e0.365dm.com/football/badges/64/241.png",
-      "rank": 2,
+      "rank": 3,
       "points": 9,
       "played": 3,
       "won": 3,
@@ -55,7 +71,7 @@
       "name": "Augsburg",
       "shortName": "Augsburg",
       "logo": "https://e0.365dm.com/football/badges/64/979.png",
-      "rank": 3,
+      "rank": 4,
       "points": 7,
       "played": 3,
       "won": 2,
@@ -64,22 +80,6 @@
       "goalsFor": 9,
       "goalsAgainst": 3,
       "goalDifference": 6,
-      "form": []
-    },
-    {
-      "id": 2892397448,
-      "name": "Bayern Munich",
-      "shortName": "Bayern",
-      "logo": "https://e0.365dm.com/football/badges/64/530.png",
-      "rank": 4,
-      "points": 7,
-      "played": 3,
-      "won": 2,
-      "drawn": 1,
-      "lost": 0,
-      "goalsFor": 7,
-      "goalsAgainst": 2,
-      "goalDifference": 5,
       "form": []
     },
     {
@@ -265,13 +265,13 @@
       "logo": "https://e0.365dm.com/football/badges/64/5394.png",
       "rank": 16,
       "points": 1,
-      "played": 3,
+      "played": 4,
       "won": 0,
       "drawn": 1,
-      "lost": 2,
+      "lost": 3,
       "goalsFor": 4,
-      "goalsAgainst": 10,
-      "goalDifference": -6,
+      "goalsAgainst": 17,
+      "goalDifference": -13,
       "form": []
     },
     {

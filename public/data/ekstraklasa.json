@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-09-15",
+  "checkedAt": "2026-09-18",
   "league": {
     "country": "Poland",
     "id": 6,
@@ -31,6 +31,22 @@
       "won": 7
     },
     {
+      "drawn": 2,
+      "form": [],
+      "goalDifference": 5,
+      "goalsAgainst": 12,
+      "goalsFor": 17,
+      "id": 2895545413,
+      "logo": "https://media.cms.ekstraklasa.org/teams/WIS/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
+      "lost": 2,
+      "name": "Wisła Kraków",
+      "played": 9,
+      "points": 17,
+      "rank": 2,
+      "shortName": "Wisła Kraków",
+      "won": 5
+    },
+    {
       "drawn": 4,
       "form": [],
       "goalDifference": 9,
@@ -42,7 +58,7 @@
       "name": "Legia Warszawa",
       "played": 8,
       "points": 16,
-      "rank": 2,
+      "rank": 3,
       "shortName": "Legia Warszawa",
       "won": 4
     },
@@ -58,7 +74,7 @@
       "name": "Lech Poznań",
       "played": 7,
       "points": 16,
-      "rank": 3,
+      "rank": 4,
       "shortName": "Lech Poznań",
       "won": 5
     },
@@ -74,24 +90,8 @@
       "name": "Zagłębie Lubin",
       "played": 8,
       "points": 15,
-      "rank": 4,
-      "shortName": "Zagłębie Lubin",
-      "won": 4
-    },
-    {
-      "drawn": 2,
-      "form": [],
-      "goalDifference": 4,
-      "goalsAgainst": 11,
-      "goalsFor": 15,
-      "id": 2895545413,
-      "logo": "https://media.cms.ekstraklasa.org/teams/WIS/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
-      "lost": 2,
-      "name": "Wisła Kraków",
-      "played": 8,
-      "points": 14,
       "rank": 5,
-      "shortName": "Wisła Kraków",
+      "shortName": "Zagłębie Lubin",
       "won": 4
     },
     {
@@ -175,17 +175,17 @@
       "won": 3
     },
     {
-      "drawn": 5,
+      "drawn": 6,
       "form": [],
       "goalDifference": 0,
-      "goalsAgainst": 11,
-      "goalsFor": 11,
+      "goalsAgainst": 13,
+      "goalsFor": 13,
       "id": 4029590400,
       "logo": "https://media.cms.ekstraklasa.org/teams/WID/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
       "lost": 2,
       "name": "Widzew Łódź",
-      "played": 8,
-      "points": 8,
+      "played": 9,
+      "points": 9,
       "rank": 11,
       "shortName": "Widzew Łódź",
       "won": 1
@@ -241,17 +241,33 @@
     {
       "drawn": 3,
       "form": [],
-      "goalDifference": -3,
-      "goalsAgainst": 13,
-      "goalsFor": 10,
+      "goalDifference": -4,
+      "goalsAgainst": 15,
+      "goalsFor": 11,
       "id": 3603567904,
       "logo": "https://media.cms.ekstraklasa.org/teams/ŚLĄ/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
-      "lost": 4,
+      "lost": 5,
       "name": "Śląsk Wrocław",
-      "played": 8,
+      "played": 9,
       "points": 6,
       "rank": 15,
       "shortName": "Śląsk Wrocław",
+      "won": 1
+    },
+    {
+      "drawn": 2,
+      "form": [],
+      "goalDifference": -6,
+      "goalsAgainst": 17,
+      "goalsFor": 11,
+      "id": 943237534,
+      "logo": "https://media.cms.ekstraklasa.org/teams/WIE/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
+      "lost": 5,
+      "name": "Wieczysta Kraków",
+      "played": 8,
+      "points": 5,
+      "rank": 16,
+      "shortName": "Wieczysta Kraków",
       "won": 1
     },
     {
@@ -266,24 +282,8 @@
       "name": "Motor Lublin",
       "played": 8,
       "points": 5,
-      "rank": 16,
-      "shortName": "Motor Lublin",
-      "won": 1
-    },
-    {
-      "drawn": 1,
-      "form": [],
-      "goalDifference": -6,
-      "goalsAgainst": 15,
-      "goalsFor": 9,
-      "id": 943237534,
-      "logo": "https://media.cms.ekstraklasa.org/teams/WIE/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
-      "lost": 5,
-      "name": "Wieczysta Kraków",
-      "played": 7,
-      "points": 4,
       "rank": 17,
-      "shortName": "Wieczysta Kraków",
+      "shortName": "Motor Lublin",
       "won": 1
     },
     {
