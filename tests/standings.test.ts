@@ -23,6 +23,23 @@ test('shared ranks and league-specific tied ordering are preserved', () => {
   validateStandings(data, leagues[2])
   assert.equal(JSON.stringify(data), original)
   const shared = structuredClone(data)
+  // Shared-rank coverage must not depend on the current leaders being tied.
+  shared.teams.forEach((team, index) => {
+    Object.assign(team, {
+      rank: index + 1,
+      points: 0,
+      played: 0,
+      won: 0,
+      drawn: 0,
+      lost: 0,
+      goalsFor: 0,
+      goalsAgainst: 0,
+      goalDifference: 0,
+      form: [],
+    })
+    delete team.pointsAdjustment
+    delete team.adjustmentNote
+  })
   shared.teams[1].rank = shared.teams[0].rank
   validateStandings(shared, leagues[2])
   assert.equal(shared.teams[0].rank, shared.teams[1].rank)
