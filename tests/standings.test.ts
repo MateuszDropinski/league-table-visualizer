@@ -82,3 +82,19 @@ test('invalid dates and invalid form are rejected', () => {
   invalid.teams[0].form = null
   assert.throws(() => validateStandings(invalid, leagues[0]), /invalid recent form/)
 })
+
+test('checked dates follow Warsaw midnight in summer and winter', () => {
+  const data = readSnapshot('premier-league.json')
+  for (const [beforeMidnight, midnight, today, tomorrow] of [
+    ['2026-09-19T21:59:59Z', '2026-09-19T22:00:00Z', '2026-09-20', '2026-09-21'],
+    ['2026-01-19T22:59:59Z', '2026-01-19T23:00:00Z', '2026-01-20', '2026-01-21'],
+    ['2026-03-29T21:59:59Z', '2026-03-29T22:00:00Z', '2026-03-30', '2026-03-31'],
+    ['2026-10-25T22:59:59Z', '2026-10-25T23:00:00Z', '2026-10-26', '2026-10-27'],
+  ]) {
+    data.checkedAt = today
+    assert.throws(() => validateStandings(data, leagues[0], new Date(beforeMidnight)), /future/)
+    validateStandings(data, leagues[0], new Date(midnight))
+    data.checkedAt = tomorrow
+    assert.throws(() => validateStandings(data, leagues[0], new Date(midnight)), /future/)
+  }
+})

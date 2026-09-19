@@ -17,15 +17,29 @@ const https = (value: unknown): boolean => {
   try { return new URL(value).protocol === 'https:' } catch { return false }
 }
 
+// checkedAt is recorded by the nightly updater in Poland, including DST.
+const checkedDateFormatter = new Intl.DateTimeFormat('en-CA', {
+  timeZone: 'Europe/Warsaw',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+})
+
+function checkedDateToday(now: Date): string {
+  const parts = checkedDateFormatter.formatToParts(now)
+  const part = (type: string) => parts.find((value) => value.type === type)!.value
+  return `${part('year')}-${part('month')}-${part('day')}`
+}
+
 /** Shared by the browser and CI. Accounting checks never re-sort a source table. */
-export function validateStandings(value: unknown, expected: ExpectedLeague): asserts value is StandingsFile {
+export function validateStandings(value: unknown, expected: ExpectedLeague, now: Date = new Date()): asserts value is StandingsFile {
   requireValue(record(value), 'expected an object')
   const { league, checkedAt, sources, teams } = value
   requireValue(record(league), 'missing league metadata')
   requireValue(league.slug === expected.slug && league.name === expected.name && league.country === expected.country, 'league does not match requested file')
   requireValue(integer(league.id) && league.id > 0 && integer(league.season) && league.season >= 2000, 'invalid league identity or season')
   requireValue(text(checkedAt) && /^\d{4}-\d{2}-\d{2}$/.test(checkedAt) && Number.isFinite(Date.parse(checkedAt)) && new Date(checkedAt).toISOString().slice(0, 10) === checkedAt, 'invalid checked date')
-  requireValue(checkedAt <= new Date().toISOString().slice(0, 10), 'checked date is in the future')
+  requireValue(checkedAt <= checkedDateToday(now), 'checked date is in the future')
   requireValue(Array.isArray(sources) && sources.length > 0, 'missing published sources')
   for (const source of sources) requireValue(record(source) && text(source.name) && https(source.url), 'invalid source')
   requireValue(Array.isArray(teams) && teams.length === expected.teamCount, `expected ${expected.teamCount} clubs`)
