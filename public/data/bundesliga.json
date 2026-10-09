@@ -6,7 +6,7 @@
     "country": "Germany",
     "season": 2026
   },
-  "checkedAt": "2026-09-21",
+  "checkedAt": "2026-10-10",
   "sources": [
     {
       "name": "Bundesliga",
@@ -24,14 +24,14 @@
       "shortName": "Dortmund",
       "logo": "https://e0.365dm.com/football/badges/64/241.png",
       "rank": 1,
-      "points": 12,
-      "played": 4,
-      "won": 4,
+      "points": 15,
+      "played": 5,
+      "won": 5,
       "drawn": 0,
       "lost": 0,
-      "goalsFor": 9,
+      "goalsFor": 10,
       "goalsAgainst": 2,
-      "goalDifference": 7,
+      "goalDifference": 8,
       "form": []
     },
     {
@@ -137,13 +137,13 @@
       "logo": "https://e0.365dm.com/football/badges/64/933.png",
       "rank": 8,
       "points": 7,
-      "played": 4,
+      "played": 5,
       "won": 2,
       "drawn": 1,
-      "lost": 1,
+      "lost": 2,
       "goalsFor": 8,
-      "goalsAgainst": 8,
-      "goalDifference": 0,
+      "goalsAgainst": 9,
+      "goalDifference": -1,
       "form": []
     },
     {
