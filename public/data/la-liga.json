@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-11",
+  "checkedAt": "2026-10-13",
   "league": {
     "country": "Spain",
     "id": 2,
@@ -83,17 +83,17 @@
       "won": 6
     },
     {
-      "drawn": 1,
+      "drawn": 2,
       "form": [],
       "goalDifference": 1,
-      "goalsAgainst": 9,
-      "goalsFor": 10,
+      "goalsAgainst": 12,
+      "goalsFor": 13,
       "id": 2550096223,
       "logo": "https://e0.365dm.com/football/badges/64/675.png",
       "lost": 2,
       "name": "Sevilla",
-      "played": 7,
-      "points": 13,
+      "played": 8,
+      "points": 14,
       "rank": 5,
       "shortName": "Sevilla",
       "won": 4
@@ -277,6 +277,22 @@
     {
       "drawn": 3,
       "form": [],
+      "goalDifference": -4,
+      "goalsAgainst": 15,
+      "goalsFor": 11,
+      "id": 1160719801,
+      "logo": "https://e0.365dm.com/football/badges/64/1170.png",
+      "lost": 3,
+      "name": "Levante",
+      "played": 7,
+      "points": 6,
+      "rank": 17,
+      "shortName": "Levante",
+      "won": 1
+    },
+    {
+      "drawn": 3,
+      "form": [],
       "goalDifference": -6,
       "goalsAgainst": 17,
       "goalsFor": 11,
@@ -286,24 +302,8 @@
       "name": "Elche",
       "played": 8,
       "points": 6,
-      "rank": 17,
-      "shortName": "Elche",
-      "won": 1
-    },
-    {
-      "drawn": 2,
-      "form": [],
-      "goalDifference": -4,
-      "goalsAgainst": 12,
-      "goalsFor": 8,
-      "id": 1160719801,
-      "logo": "https://e0.365dm.com/football/badges/64/1170.png",
-      "lost": 3,
-      "name": "Levante",
-      "played": 6,
-      "points": 5,
       "rank": 18,
-      "shortName": "Levante",
+      "shortName": "Elche",
       "won": 1
     },
     {
