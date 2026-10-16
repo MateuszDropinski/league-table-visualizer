@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-13",
+  "checkedAt": "2026-10-17",
   "league": {
     "country": "Poland",
     "id": 6,
@@ -95,7 +95,7 @@
       "won": 6
     },
     {
-      "drawn": 2,
+      "drawn": 3,
       "form": [],
       "goalDifference": 3,
       "goalsAgainst": 14,
@@ -104,8 +104,8 @@
       "logo": "https://media.cms.ekstraklasa.org/teams/WIS/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
       "lost": 3,
       "name": "Wisła Kraków",
-      "played": 10,
-      "points": 17,
+      "played": 11,
+      "points": 18,
       "rank": 6,
       "shortName": "Wisła Kraków",
       "won": 5
@@ -207,7 +207,7 @@
       "won": 3
     },
     {
-      "drawn": 6,
+      "drawn": 7,
       "form": [],
       "goalDifference": -1,
       "goalsAgainst": 15,
@@ -216,8 +216,8 @@
       "logo": "https://media.cms.ekstraklasa.org/teams/WID/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
       "lost": 3,
       "name": "Widzew Łódź",
-      "played": 10,
-      "points": 9,
+      "played": 11,
+      "points": 10,
       "rank": 13,
       "shortName": "Widzew Łódź",
       "won": 1
@@ -241,14 +241,14 @@
     {
       "drawn": 2,
       "form": [],
-      "goalDifference": -4,
-      "goalsAgainst": 19,
-      "goalsFor": 15,
+      "goalDifference": -5,
+      "goalsAgainst": 21,
+      "goalsFor": 16,
       "id": 943237534,
       "logo": "https://media.cms.ekstraklasa.org/teams/WIE/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
-      "lost": 6,
+      "lost": 7,
       "name": "Wieczysta Kraków",
-      "played": 10,
+      "played": 11,
       "points": 8,
       "rank": 15,
       "shortName": "Wieczysta Kraków",
@@ -289,18 +289,18 @@
     {
       "drawn": 0,
       "form": [],
-      "goalDifference": -12,
-      "goalsAgainst": 25,
-      "goalsFor": 13,
+      "goalDifference": -11,
+      "goalsAgainst": 26,
+      "goalsFor": 15,
       "id": 3979742536,
       "logo": "https://media.cms.ekstraklasa.org/teams/RCZ/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
       "lost": 9,
       "name": "Raków Częstochowa",
-      "played": 10,
-      "points": 3,
+      "played": 11,
+      "points": 6,
       "rank": 18,
       "shortName": "Raków Częstochowa",
-      "won": 1
+      "won": 2
     }
   ]
 }

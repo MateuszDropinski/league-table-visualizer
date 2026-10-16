@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-13",
+  "checkedAt": "2026-10-17",
   "league": {
     "country": "Italy",
     "id": 4,
@@ -83,6 +83,22 @@
       "won": 4
     },
     {
+      "drawn": 1,
+      "form": [],
+      "goalDifference": 4,
+      "goalsAgainst": 9,
+      "goalsFor": 13,
+      "id": 855810609,
+      "logo": "https://e0.365dm.com/football/badges/64/1003.png",
+      "lost": 2,
+      "name": "Frosinone",
+      "played": 7,
+      "points": 13,
+      "rank": 5,
+      "shortName": "Frosinone",
+      "won": 4
+    },
+    {
       "drawn": 3,
       "form": [],
       "goalDifference": 6,
@@ -94,7 +110,7 @@
       "name": "AC Milan",
       "played": 6,
       "points": 12,
-      "rank": 5,
+      "rank": 6,
       "shortName": "AC Milan",
       "won": 3
     },
@@ -110,7 +126,7 @@
       "name": "Juventus",
       "played": 6,
       "points": 11,
-      "rank": 6,
+      "rank": 7,
       "shortName": "Juventus",
       "won": 3
     },
@@ -126,7 +142,7 @@
       "name": "Como",
       "played": 6,
       "points": 11,
-      "rank": 7,
+      "rank": 8,
       "shortName": "Como",
       "won": 3
     },
@@ -142,24 +158,8 @@
       "name": "Napoli",
       "played": 6,
       "points": 10,
-      "rank": 8,
-      "shortName": "Napoli",
-      "won": 3
-    },
-    {
-      "drawn": 1,
-      "form": [],
-      "goalDifference": 2,
-      "goalsAgainst": 7,
-      "goalsFor": 9,
-      "id": 855810609,
-      "logo": "https://e0.365dm.com/football/badges/64/1003.png",
-      "lost": 2,
-      "name": "Frosinone",
-      "played": 6,
-      "points": 10,
       "rank": 9,
-      "shortName": "Frosinone",
+      "shortName": "Napoli",
       "won": 3
     },
     {
@@ -181,14 +181,14 @@
     {
       "drawn": 2,
       "form": [],
-      "goalDifference": 0,
-      "goalsAgainst": 10,
-      "goalsFor": 10,
+      "goalDifference": -2,
+      "goalsAgainst": 14,
+      "goalsFor": 12,
       "id": 1602961047,
       "logo": "https://e0.365dm.com/football/badges/64/988.png",
-      "lost": 2,
+      "lost": 3,
       "name": "Sassuolo",
-      "played": 6,
+      "played": 7,
       "points": 8,
       "rank": 11,
       "shortName": "Sassuolo",

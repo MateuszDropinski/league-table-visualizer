@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-13",
+  "checkedAt": "2026-10-17",
   "league": {
     "country": "Spain",
     "id": 2,
@@ -131,17 +131,17 @@
       "won": 3
     },
     {
-      "drawn": 4,
+      "drawn": 5,
       "form": [],
       "goalDifference": 1,
-      "goalsAgainst": 11,
-      "goalsFor": 12,
+      "goalsAgainst": 12,
+      "goalsFor": 13,
       "id": 2361838380,
       "logo": "https://e0.365dm.com/football/badges/64/459.png",
       "lost": 2,
       "name": "Deportivo La Coruna",
-      "played": 8,
-      "points": 10,
+      "played": 9,
+      "points": 11,
       "rank": 8,
       "shortName": "Deportivo",
       "won": 2
@@ -275,17 +275,17 @@
       "won": 2
     },
     {
-      "drawn": 3,
+      "drawn": 4,
       "form": [],
       "goalDifference": -4,
-      "goalsAgainst": 15,
-      "goalsFor": 11,
+      "goalsAgainst": 16,
+      "goalsFor": 12,
       "id": 1160719801,
       "logo": "https://e0.365dm.com/football/badges/64/1170.png",
       "lost": 3,
       "name": "Levante",
-      "played": 7,
-      "points": 6,
+      "played": 8,
+      "points": 7,
       "rank": 17,
       "shortName": "Levante",
       "won": 1
