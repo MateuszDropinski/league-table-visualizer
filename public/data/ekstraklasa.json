@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-18",
+  "checkedAt": "2026-10-20",
   "league": {
     "country": "Poland",
     "id": 6,
@@ -159,6 +159,22 @@
       "won": 4
     },
     {
+      "drawn": 2,
+      "form": [],
+      "goalDifference": -5,
+      "goalsAgainst": 15,
+      "goalsFor": 10,
+      "id": 187560739,
+      "logo": "https://media.cms.ekstraklasa.org/teams/WPŁ/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
+      "lost": 4,
+      "name": "Wisła Płock",
+      "played": 10,
+      "points": 14,
+      "rank": 10,
+      "shortName": "Wisła Płock",
+      "won": 4
+    },
+    {
       "drawn": 3,
       "form": [],
       "goalDifference": -3,
@@ -170,7 +186,7 @@
       "name": "Cracovia",
       "played": 11,
       "points": 12,
-      "rank": 10,
+      "rank": 11,
       "shortName": "Cracovia",
       "won": 3
     },
@@ -186,7 +202,7 @@
       "name": "Motor Lublin",
       "played": 11,
       "points": 12,
-      "rank": 11,
+      "rank": 12,
       "shortName": "Motor Lublin",
       "won": 3
     },
@@ -202,25 +218,9 @@
       "name": "Jagiellonia Białystok",
       "played": 10,
       "points": 12,
-      "rank": 12,
+      "rank": 13,
       "shortName": "Jagiellonia Białystok",
       "won": 4
-    },
-    {
-      "drawn": 2,
-      "form": [],
-      "goalDifference": -6,
-      "goalsAgainst": 15,
-      "goalsFor": 9,
-      "id": 187560739,
-      "logo": "https://media.cms.ekstraklasa.org/teams/WPŁ/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
-      "lost": 4,
-      "name": "Wisła Płock",
-      "played": 9,
-      "points": 11,
-      "rank": 13,
-      "shortName": "Wisła Płock",
-      "won": 3
     },
     {
       "drawn": 7,
@@ -257,14 +257,14 @@
     {
       "drawn": 2,
       "form": [],
-      "goalDifference": -14,
-      "goalsAgainst": 23,
+      "goalDifference": -15,
+      "goalsAgainst": 24,
       "goalsFor": 9,
       "id": 2323473331,
       "logo": "https://media.cms.ekstraklasa.org/teams/RAD/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
-      "lost": 6,
+      "lost": 7,
       "name": "Radomiak Radom",
-      "played": 10,
+      "played": 11,
       "points": 8,
       "rank": 16,
       "shortName": "Radomiak Radom",
