@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-20",
+  "checkedAt": "2026-10-22",
   "league": {
     "country": "Spain",
     "id": 2,
@@ -179,19 +179,19 @@
       "won": 3
     },
     {
-      "drawn": 3,
+      "drawn": 4,
       "form": [],
-      "goalDifference": 1,
-      "goalsAgainst": 6,
-      "goalsFor": 7,
-      "id": 3514151793,
-      "logo": "https://e0.365dm.com/football/badges/64/1195.png",
-      "lost": 2,
-      "name": "Athletic Club",
-      "played": 7,
-      "points": 9,
+      "goalDifference": -2,
+      "goalsAgainst": 17,
+      "goalsFor": 15,
+      "id": 1160719801,
+      "logo": "https://e0.365dm.com/football/badges/64/1170.png",
+      "lost": 3,
+      "name": "Levante",
+      "played": 9,
+      "points": 10,
       "rank": 11,
-      "shortName": "Ath Club",
+      "shortName": "Levante",
       "won": 2
     },
     {
@@ -213,6 +213,22 @@
     {
       "drawn": 3,
       "form": [],
+      "goalDifference": -1,
+      "goalsAgainst": 9,
+      "goalsFor": 8,
+      "id": 3514151793,
+      "logo": "https://e0.365dm.com/football/badges/64/1195.png",
+      "lost": 3,
+      "name": "Athletic Club",
+      "played": 8,
+      "points": 9,
+      "rank": 13,
+      "shortName": "Ath Club",
+      "won": 2
+    },
+    {
+      "drawn": 3,
+      "form": [],
       "goalDifference": -5,
       "goalsAgainst": 17,
       "goalsFor": 12,
@@ -222,7 +238,7 @@
       "name": "Rayo Vallecano",
       "played": 8,
       "points": 9,
-      "rank": 13,
+      "rank": 14,
       "shortName": "R Vallecano",
       "won": 2
     },
@@ -238,7 +254,7 @@
       "name": "Getafe",
       "played": 9,
       "points": 9,
-      "rank": 14,
+      "rank": 15,
       "shortName": "Getafe",
       "won": 2
     },
@@ -254,7 +270,7 @@
       "name": "Espanyol",
       "played": 9,
       "points": 8,
-      "rank": 15,
+      "rank": 16,
       "shortName": "Espanyol",
       "won": 2
     },
@@ -270,25 +286,9 @@
       "name": "Racing Santander",
       "played": 9,
       "points": 8,
-      "rank": 16,
+      "rank": 17,
       "shortName": "R Santandr",
       "won": 2
-    },
-    {
-      "drawn": 4,
-      "form": [],
-      "goalDifference": -4,
-      "goalsAgainst": 16,
-      "goalsFor": 12,
-      "id": 1160719801,
-      "logo": "https://e0.365dm.com/football/badges/64/1170.png",
-      "lost": 3,
-      "name": "Levante",
-      "played": 8,
-      "points": 7,
-      "rank": 17,
-      "shortName": "Levante",
-      "won": 1
     },
     {
       "drawn": 4,
