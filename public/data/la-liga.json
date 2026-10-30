@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-26",
+  "checkedAt": "2026-10-31",
   "league": {
     "country": "Spain",
     "id": 2,
@@ -165,14 +165,14 @@
     {
       "drawn": 3,
       "form": [],
-      "goalDifference": 1,
-      "goalsAgainst": 14,
+      "goalDifference": 0,
+      "goalsAgainst": 15,
       "goalsFor": 15,
       "id": 554140517,
       "logo": "https://e0.365dm.com/football/badges/64/666.png",
-      "lost": 4,
+      "lost": 5,
       "name": "Villarreal",
-      "played": 10,
+      "played": 11,
       "points": 12,
       "rank": 10,
       "shortName": "Villarreal",
@@ -197,6 +197,22 @@
     {
       "drawn": 2,
       "form": [],
+      "goalDifference": -1,
+      "goalsAgainst": 14,
+      "goalsFor": 13,
+      "id": 466734304,
+      "logo": "https://e0.365dm.com/football/badges/64/544.png",
+      "lost": 6,
+      "name": "Espanyol",
+      "played": 11,
+      "points": 11,
+      "rank": 12,
+      "shortName": "Espanyol",
+      "won": 3
+    },
+    {
+      "drawn": 2,
+      "form": [],
       "goalDifference": -10,
       "goalsAgainst": 20,
       "goalsFor": 10,
@@ -206,7 +222,7 @@
       "name": "Osasuna",
       "played": 10,
       "points": 11,
-      "rank": 12,
+      "rank": 13,
       "shortName": "Osasuna",
       "won": 3
     },
@@ -222,7 +238,7 @@
       "name": "Racing Santander",
       "played": 10,
       "points": 11,
-      "rank": 13,
+      "rank": 14,
       "shortName": "R Santandr",
       "won": 3
     },
@@ -238,7 +254,7 @@
       "name": "Levante",
       "played": 10,
       "points": 10,
-      "rank": 14,
+      "rank": 15,
       "shortName": "Levante",
       "won": 2
     },
@@ -254,7 +270,7 @@
       "name": "Elche",
       "played": 10,
       "points": 10,
-      "rank": 15,
+      "rank": 16,
       "shortName": "Elche",
       "won": 2
     },
@@ -270,7 +286,7 @@
       "name": "Rayo Vallecano",
       "played": 9,
       "points": 9,
-      "rank": 16,
+      "rank": 17,
       "shortName": "R Vallecano",
       "won": 2
     },
@@ -286,24 +302,8 @@
       "name": "Getafe",
       "played": 10,
       "points": 9,
-      "rank": 17,
-      "shortName": "Getafe",
-      "won": 2
-    },
-    {
-      "drawn": 2,
-      "form": [],
-      "goalDifference": -2,
-      "goalsAgainst": 14,
-      "goalsFor": 12,
-      "id": 466734304,
-      "logo": "https://e0.365dm.com/football/badges/64/544.png",
-      "lost": 6,
-      "name": "Espanyol",
-      "played": 10,
-      "points": 8,
       "rank": 18,
-      "shortName": "Espanyol",
+      "shortName": "Getafe",
       "won": 2
     },
     {
