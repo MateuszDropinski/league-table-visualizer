@@ -6,7 +6,7 @@
     "country": "France",
     "season": 2026
   },
-  "checkedAt": "2026-10-31",
+  "checkedAt": "2026-11-01",
   "sources": [
     {
       "name": "Sky Sports",
@@ -243,19 +243,19 @@
       "form": []
     },
     {
-      "id": 2211935725,
-      "name": "Le Mans",
-      "shortName": "Le Mans",
-      "logo": "https://e0.365dm.com/football/badges/64/829.png",
+      "id": 3516939740,
+      "name": "Troyes",
+      "shortName": "Troyes",
+      "logo": "https://e0.365dm.com/football/badges/64/683.png",
       "rank": 15,
-      "points": 7,
-      "played": 8,
-      "won": 1,
-      "drawn": 4,
-      "lost": 3,
-      "goalsFor": 11,
+      "points": 8,
+      "played": 9,
+      "won": 2,
+      "drawn": 2,
+      "lost": 5,
+      "goalsFor": 7,
       "goalsAgainst": 16,
-      "goalDifference": -5,
+      "goalDifference": -9,
       "form": []
     },
     {
@@ -275,19 +275,19 @@
       "form": []
     },
     {
-      "id": 3516939740,
-      "name": "Troyes",
-      "shortName": "Troyes",
-      "logo": "https://e0.365dm.com/football/badges/64/683.png",
+      "id": 2211935725,
+      "name": "Le Mans",
+      "shortName": "Le Mans",
+      "logo": "https://e0.365dm.com/football/badges/64/829.png",
       "rank": 17,
-      "points": 5,
-      "played": 8,
+      "points": 7,
+      "played": 9,
       "won": 1,
-      "drawn": 2,
-      "lost": 5,
-      "goalsFor": 5,
-      "goalsAgainst": 16,
-      "goalDifference": -11,
+      "drawn": 4,
+      "lost": 4,
+      "goalsFor": 11,
+      "goalsAgainst": 18,
+      "goalDifference": -7,
       "form": []
     },
     {
