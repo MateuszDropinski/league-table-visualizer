@@ -6,7 +6,7 @@
     "country": "France",
     "season": 2026
   },
-  "checkedAt": "2026-11-03",
+  "checkedAt": "2026-11-07",
   "sources": [
     {
       "name": "Sky Sports",
@@ -163,11 +163,27 @@
       "form": []
     },
     {
+      "id": 1786962536,
+      "name": "Toulouse",
+      "shortName": "Toulouse",
+      "logo": "https://e0.365dm.com/football/badges/64/526.png",
+      "rank": 10,
+      "points": 13,
+      "played": 10,
+      "won": 3,
+      "drawn": 4,
+      "lost": 3,
+      "goalsFor": 15,
+      "goalsAgainst": 14,
+      "goalDifference": 1,
+      "form": []
+    },
+    {
       "id": 1717072509,
       "name": "Brest",
       "shortName": "Brest",
       "logo": "https://e0.365dm.com/football/badges/64/698.png",
-      "rank": 10,
+      "rank": 11,
       "points": 12,
       "played": 9,
       "won": 3,
@@ -183,7 +199,7 @@
       "name": "Lorient",
       "shortName": "Lorient",
       "logo": "https://e0.365dm.com/football/badges/64/599.png",
-      "rank": 11,
+      "rank": 12,
       "points": 12,
       "played": 9,
       "won": 3,
@@ -195,35 +211,19 @@
       "form": []
     },
     {
-      "id": 1786962536,
-      "name": "Toulouse",
-      "shortName": "Toulouse",
-      "logo": "https://e0.365dm.com/football/badges/64/526.png",
-      "rank": 12,
-      "points": 10,
-      "played": 9,
-      "won": 2,
-      "drawn": 4,
-      "lost": 3,
-      "goalsFor": 12,
-      "goalsAgainst": 13,
-      "goalDifference": -1,
-      "form": []
-    },
-    {
       "id": 1799395360,
       "name": "Strasbourg",
       "shortName": "Strasbourg",
       "logo": "https://e0.365dm.com/football/badges/64/685.png",
       "rank": 13,
       "points": 10,
-      "played": 9,
+      "played": 10,
       "won": 3,
       "drawn": 1,
-      "lost": 5,
-      "goalsFor": 17,
-      "goalsAgainst": 19,
-      "goalDifference": -2,
+      "lost": 6,
+      "goalsFor": 18,
+      "goalsAgainst": 22,
+      "goalDifference": -4,
       "form": []
     },
     {

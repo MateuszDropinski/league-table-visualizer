@@ -6,7 +6,7 @@
     "country": "England",
     "season": 2026
   },
-  "checkedAt": "2026-11-03",
+  "checkedAt": "2026-11-07",
   "sources": [
     {
       "name": "Sky Sports",
@@ -83,11 +83,27 @@
       "form": []
     },
     {
+      "id": 1324311631,
+      "name": "Everton",
+      "shortName": "Everton",
+      "logo": "https://e0.365dm.com/football/badges/64/229.png",
+      "rank": 5,
+      "points": 16,
+      "played": 10,
+      "won": 4,
+      "drawn": 4,
+      "lost": 2,
+      "goalsFor": 12,
+      "goalsAgainst": 10,
+      "goalDifference": 2,
+      "form": []
+    },
+    {
       "id": 497224050,
       "name": "Liverpool",
       "shortName": "Liverpool",
       "logo": "https://e0.365dm.com/football/badges/64/155.png",
-      "rank": 5,
+      "rank": 6,
       "points": 15,
       "played": 9,
       "won": 4,
@@ -103,7 +119,7 @@
       "name": "Brentford",
       "shortName": "Brentford",
       "logo": "https://e0.365dm.com/football/badges/64/194.png",
-      "rank": 6,
+      "rank": 7,
       "points": 14,
       "played": 9,
       "won": 3,
@@ -112,22 +128,6 @@
       "goalsFor": 16,
       "goalsAgainst": 9,
       "goalDifference": 7,
-      "form": []
-    },
-    {
-      "id": 1324311631,
-      "name": "Everton",
-      "shortName": "Everton",
-      "logo": "https://e0.365dm.com/football/badges/64/229.png",
-      "rank": 7,
-      "points": 13,
-      "played": 9,
-      "won": 3,
-      "drawn": 4,
-      "lost": 2,
-      "goalsFor": 9,
-      "goalsAgainst": 9,
-      "goalDifference": 0,
       "form": []
     },
     {
@@ -265,13 +265,13 @@
       "logo": "https://e0.365dm.com/football/badges/64/571.png",
       "rank": 16,
       "points": 9,
-      "played": 9,
+      "played": 10,
       "won": 3,
       "drawn": 0,
-      "lost": 6,
-      "goalsFor": 9,
-      "goalsAgainst": 16,
-      "goalDifference": -7,
+      "lost": 7,
+      "goalsFor": 10,
+      "goalsAgainst": 19,
+      "goalDifference": -9,
       "form": []
     },
     {

@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-03",
+  "checkedAt": "2026-11-07",
   "league": {
     "country": "Italy",
     "id": 4,
@@ -307,35 +307,35 @@
       "won": 2
     },
     {
-      "drawn": 2,
-      "form": [],
-      "goalDifference": -12,
-      "goalsAgainst": 23,
-      "goalsFor": 11,
-      "id": 3111062801,
-      "logo": "https://e0.365dm.com/football/badges/64/1089.png",
-      "lost": 7,
-      "name": "Udinese",
-      "played": 10,
-      "points": 5,
-      "rank": 19,
-      "shortName": "Udinese",
-      "won": 1
-    },
-    {
       "drawn": 0,
       "form": [],
-      "goalDifference": -14,
-      "goalsAgainst": 20,
-      "goalsFor": 6,
+      "goalDifference": -13,
+      "goalsAgainst": 21,
+      "goalsFor": 8,
       "id": 2260747703,
       "logo": "https://e0.365dm.com/football/badges/64/1662.png",
       "lost": 9,
       "name": "Venezia",
-      "played": 10,
-      "points": 3,
-      "rank": 20,
+      "played": 11,
+      "points": 6,
+      "rank": 19,
       "shortName": "Venezia",
+      "won": 2
+    },
+    {
+      "drawn": 2,
+      "form": [],
+      "goalDifference": -13,
+      "goalsAgainst": 25,
+      "goalsFor": 12,
+      "id": 3111062801,
+      "logo": "https://e0.365dm.com/football/badges/64/1089.png",
+      "lost": 8,
+      "name": "Udinese",
+      "played": 11,
+      "points": 5,
+      "rank": 20,
+      "shortName": "Udinese",
       "won": 1
     }
   ]

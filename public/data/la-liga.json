@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-03",
+  "checkedAt": "2026-11-07",
   "league": {
     "country": "Spain",
     "id": 2,
@@ -99,7 +99,7 @@
       "won": 6
     },
     {
-      "drawn": 2,
+      "drawn": 3,
       "form": [],
       "goalDifference": -2,
       "goalsAgainst": 19,
@@ -108,8 +108,8 @@
       "logo": "https://e0.365dm.com/football/badges/64/675.png",
       "lost": 4,
       "name": "Sevilla",
-      "played": 11,
-      "points": 17,
+      "played": 12,
+      "points": 18,
       "rank": 6,
       "shortName": "Sevilla",
       "won": 5
@@ -147,6 +147,22 @@
       "won": 3
     },
     {
+      "drawn": 4,
+      "form": [],
+      "goalDifference": -2,
+      "goalsAgainst": 17,
+      "goalsFor": 15,
+      "id": 3886177146,
+      "logo": "https://e0.365dm.com/football/badges/64/1181.png",
+      "lost": 5,
+      "name": "Alaves",
+      "played": 12,
+      "points": 13,
+      "rank": 9,
+      "shortName": "Alaves",
+      "won": 3
+    },
+    {
       "drawn": 3,
       "form": [],
       "goalDifference": 0,
@@ -158,7 +174,7 @@
       "name": "Villarreal",
       "played": 11,
       "points": 12,
-      "rank": 9,
+      "rank": 10,
       "shortName": "Villarreal",
       "won": 3
     },
@@ -174,25 +190,9 @@
       "name": "Celta Vigo",
       "played": 11,
       "points": 12,
-      "rank": 10,
+      "rank": 11,
       "shortName": "Celta Vigo",
       "won": 2
-    },
-    {
-      "drawn": 3,
-      "form": [],
-      "goalDifference": -2,
-      "goalsAgainst": 17,
-      "goalsFor": 15,
-      "id": 3886177146,
-      "logo": "https://e0.365dm.com/football/badges/64/1181.png",
-      "lost": 5,
-      "name": "Alaves",
-      "played": 11,
-      "points": 12,
-      "rank": 11,
-      "shortName": "Alaves",
-      "won": 3
     },
     {
       "drawn": 3,
