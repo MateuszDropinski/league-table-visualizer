@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-23",
+  "checkedAt": "2026-11-24",
   "league": {
     "country": "Poland",
     "id": 6,
@@ -161,14 +161,14 @@
     {
       "drawn": 4,
       "form": [],
-      "goalDifference": -2,
-      "goalsAgainst": 24,
-      "goalsFor": 22,
+      "goalDifference": -3,
+      "goalsAgainst": 26,
+      "goalsFor": 23,
       "id": 1419881640,
       "logo": "https://media.cms.ekstraklasa.org/teams/MOT/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
-      "lost": 5,
+      "lost": 6,
       "name": "Motor Lublin",
-      "played": 14,
+      "played": 15,
       "points": 19,
       "rank": 10,
       "shortName": "Motor Lublin",
@@ -289,18 +289,18 @@
     {
       "drawn": 2,
       "form": [],
-      "goalDifference": -10,
-      "goalsAgainst": 28,
-      "goalsFor": 18,
+      "goalDifference": -9,
+      "goalsAgainst": 29,
+      "goalsFor": 20,
       "id": 943237534,
       "logo": "https://media.cms.ekstraklasa.org/teams/WIE/efed6802-8252-44a1-9d1b-943d224c4b50/crest.jpg",
       "lost": 10,
       "name": "Wieczysta Kraków",
-      "played": 14,
-      "points": 8,
+      "played": 15,
+      "points": 11,
       "rank": 18,
       "shortName": "Wieczysta Kraków",
-      "won": 2
+      "won": 3
     }
   ]
 }

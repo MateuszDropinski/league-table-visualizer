@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-23",
+  "checkedAt": "2026-11-24",
   "league": {
     "country": "Spain",
     "id": 2,
@@ -243,6 +243,22 @@
       "won": 2
     },
     {
+      "drawn": 6,
+      "form": [],
+      "goalDifference": -5,
+      "goalsAgainst": 22,
+      "goalsFor": 17,
+      "id": 1160719801,
+      "logo": "https://e0.365dm.com/football/badges/64/1170.png",
+      "lost": 5,
+      "name": "Levante",
+      "played": 13,
+      "points": 12,
+      "rank": 15,
+      "shortName": "Levante",
+      "won": 2
+    },
+    {
       "drawn": 3,
       "form": [],
       "goalDifference": -7,
@@ -254,7 +270,7 @@
       "name": "Rayo Vallecano",
       "played": 12,
       "points": 12,
-      "rank": 15,
+      "rank": 16,
       "shortName": "R Vallecano",
       "won": 3
     },
@@ -270,7 +286,7 @@
       "name": "Valencia",
       "played": 13,
       "points": 12,
-      "rank": 16,
+      "rank": 17,
       "shortName": "Valencia",
       "won": 3
     },
@@ -286,38 +302,22 @@
       "name": "Getafe",
       "played": 13,
       "points": 12,
-      "rank": 17,
+      "rank": 18,
       "shortName": "Getafe",
       "won": 3
     },
     {
       "drawn": 5,
       "form": [],
-      "goalDifference": -5,
-      "goalsAgainst": 21,
-      "goalsFor": 16,
-      "id": 1160719801,
-      "logo": "https://e0.365dm.com/football/badges/64/1170.png",
-      "lost": 5,
-      "name": "Levante",
-      "played": 12,
-      "points": 11,
-      "rank": 18,
-      "shortName": "Levante",
-      "won": 2
-    },
-    {
-      "drawn": 4,
-      "form": [],
       "goalDifference": -6,
-      "goalsAgainst": 20,
-      "goalsFor": 14,
+      "goalsAgainst": 21,
+      "goalsFor": 15,
       "id": 928596010,
       "logo": "https://e0.365dm.com/football/badges/64/1202.png",
       "lost": 6,
       "name": "Elche",
-      "played": 12,
-      "points": 10,
+      "played": 13,
+      "points": 11,
       "rank": 19,
       "shortName": "Elche",
       "won": 2

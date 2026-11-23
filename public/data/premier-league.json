@@ -6,7 +6,7 @@
     "country": "England",
     "season": 2026
   },
-  "checkedAt": "2026-11-23",
+  "checkedAt": "2026-11-24",
   "sources": [
     {
       "name": "Sky Sports",
@@ -99,11 +99,27 @@
       "form": []
     },
     {
+      "id": 3284439232,
+      "name": "Brentford",
+      "shortName": "Brentford",
+      "logo": "https://e0.365dm.com/football/badges/64/194.png",
+      "rank": 6,
+      "points": 17,
+      "played": 11,
+      "won": 4,
+      "drawn": 5,
+      "lost": 2,
+      "goalsFor": 20,
+      "goalsAgainst": 11,
+      "goalDifference": 9,
+      "form": []
+    },
+    {
       "id": 2791079434,
       "name": "Leeds United",
       "shortName": "Leeds",
       "logo": "https://e0.365dm.com/football/badges/64/183.png",
-      "rank": 6,
+      "rank": 7,
       "points": 17,
       "played": 11,
       "won": 4,
@@ -112,22 +128,6 @@
       "goalsFor": 14,
       "goalsAgainst": 9,
       "goalDifference": 5,
-      "form": []
-    },
-    {
-      "id": 1324311631,
-      "name": "Everton",
-      "shortName": "Everton",
-      "logo": "https://e0.365dm.com/football/badges/64/229.png",
-      "rank": 7,
-      "points": 16,
-      "played": 10,
-      "won": 4,
-      "drawn": 4,
-      "lost": 2,
-      "goalsFor": 12,
-      "goalsAgainst": 10,
-      "goalDifference": 2,
       "form": []
     },
     {
@@ -147,11 +147,27 @@
       "form": []
     },
     {
+      "id": 1324311631,
+      "name": "Everton",
+      "shortName": "Everton",
+      "logo": "https://e0.365dm.com/football/badges/64/229.png",
+      "rank": 9,
+      "points": 16,
+      "played": 11,
+      "won": 4,
+      "drawn": 4,
+      "lost": 3,
+      "goalsFor": 12,
+      "goalsAgainst": 14,
+      "goalDifference": -2,
+      "form": []
+    },
+    {
       "id": 1582438642,
       "name": "Tottenham Hotspur",
       "shortName": "Spurs",
       "logo": "https://e0.365dm.com/football/badges/64/608.png",
-      "rank": 9,
+      "rank": 10,
       "points": 15,
       "played": 11,
       "won": 4,
@@ -160,22 +176,6 @@
       "goalsFor": 12,
       "goalsAgainst": 11,
       "goalDifference": 1,
-      "form": []
-    },
-    {
-      "id": 3284439232,
-      "name": "Brentford",
-      "shortName": "Brentford",
-      "logo": "https://e0.365dm.com/football/badges/64/194.png",
-      "rank": 10,
-      "points": 14,
-      "played": 10,
-      "won": 3,
-      "drawn": 5,
-      "lost": 2,
-      "goalsFor": 16,
-      "goalsAgainst": 11,
-      "goalDifference": 5,
       "form": []
     },
     {
