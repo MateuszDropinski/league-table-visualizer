@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-24",
+  "checkedAt": "2026-11-27",
   "league": {
     "country": "Spain",
     "id": 2,
@@ -99,6 +99,22 @@
       "won": 7
     },
     {
+      "drawn": 2,
+      "form": [],
+      "goalDifference": -10,
+      "goalsAgainst": 33,
+      "goalsFor": 23,
+      "id": 935400043,
+      "logo": "https://e0.365dm.com/football/badges/64/1197.png",
+      "lost": 6,
+      "name": "Racing Santander",
+      "played": 14,
+      "points": 20,
+      "rank": 6,
+      "shortName": "R Santandr",
+      "won": 6
+    },
+    {
       "drawn": 4,
       "form": [],
       "goalDifference": -2,
@@ -110,24 +126,8 @@
       "name": "Sevilla",
       "played": 13,
       "points": 19,
-      "rank": 6,
-      "shortName": "Sevilla",
-      "won": 5
-    },
-    {
-      "drawn": 2,
-      "form": [],
-      "goalDifference": -12,
-      "goalsAgainst": 32,
-      "goalsFor": 20,
-      "id": 935400043,
-      "logo": "https://e0.365dm.com/football/badges/64/1197.png",
-      "lost": 6,
-      "name": "Racing Santander",
-      "played": 13,
-      "points": 17,
       "rank": 7,
-      "shortName": "R Santandr",
+      "shortName": "Sevilla",
       "won": 5
     },
     {
@@ -245,14 +245,14 @@
     {
       "drawn": 6,
       "form": [],
-      "goalDifference": -5,
-      "goalsAgainst": 22,
-      "goalsFor": 17,
+      "goalDifference": -7,
+      "goalsAgainst": 25,
+      "goalsFor": 18,
       "id": 1160719801,
       "logo": "https://e0.365dm.com/football/badges/64/1170.png",
-      "lost": 5,
+      "lost": 6,
       "name": "Levante",
-      "played": 13,
+      "played": 14,
       "points": 12,
       "rank": 15,
       "shortName": "Levante",

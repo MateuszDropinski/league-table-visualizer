@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-24",
+  "checkedAt": "2026-11-27",
   "league": {
     "country": "Italy",
     "id": 4,
@@ -131,6 +131,22 @@
       "won": 6
     },
     {
+      "drawn": 4,
+      "form": [],
+      "goalDifference": 2,
+      "goalsAgainst": 15,
+      "goalsFor": 17,
+      "id": 4194880492,
+      "logo": "https://e0.365dm.com/football/badges/64/1104.png",
+      "lost": 4,
+      "name": "Bologna",
+      "played": 13,
+      "points": 19,
+      "rank": 8,
+      "shortName": "Bologna",
+      "won": 5
+    },
+    {
       "drawn": 3,
       "form": [],
       "goalDifference": 5,
@@ -142,24 +158,8 @@
       "name": "Napoli",
       "played": 12,
       "points": 18,
-      "rank": 8,
-      "shortName": "Napoli",
-      "won": 5
-    },
-    {
-      "drawn": 3,
-      "form": [],
-      "goalDifference": 2,
-      "goalsAgainst": 15,
-      "goalsFor": 17,
-      "id": 4194880492,
-      "logo": "https://e0.365dm.com/football/badges/64/1104.png",
-      "lost": 4,
-      "name": "Bologna",
-      "played": 12,
-      "points": 18,
       "rank": 9,
-      "shortName": "Bologna",
+      "shortName": "Napoli",
       "won": 5
     },
     {
@@ -307,6 +307,22 @@
       "won": 2
     },
     {
+      "drawn": 1,
+      "form": [],
+      "goalDifference": -17,
+      "goalsAgainst": 25,
+      "goalsFor": 8,
+      "id": 2260747703,
+      "logo": "https://e0.365dm.com/football/badges/64/1662.png",
+      "lost": 10,
+      "name": "Venezia",
+      "played": 13,
+      "points": 7,
+      "rank": 19,
+      "shortName": "Venezia",
+      "won": 2
+    },
+    {
       "drawn": 3,
       "form": [],
       "goalDifference": -13,
@@ -318,25 +334,9 @@
       "name": "Udinese",
       "played": 12,
       "points": 6,
-      "rank": 19,
+      "rank": 20,
       "shortName": "Udinese",
       "won": 1
-    },
-    {
-      "drawn": 0,
-      "form": [],
-      "goalDifference": -17,
-      "goalsAgainst": 25,
-      "goalsFor": 8,
-      "id": 2260747703,
-      "logo": "https://e0.365dm.com/football/badges/64/1662.png",
-      "lost": 10,
-      "name": "Venezia",
-      "played": 12,
-      "points": 6,
-      "rank": 20,
-      "shortName": "Venezia",
-      "won": 2
     }
   ]
 }
